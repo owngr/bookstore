@@ -18,6 +18,7 @@
       <p>
         <label class="form-label" for="isbn">ISBN</label>
         <input
+            @input="searchIsbn"
             class="form-control"
             id="isbn"
             v-model="isbn"
@@ -38,13 +39,6 @@
             name="title"
         >
       </p>
-      <h1>Auteurs</h1>
-      <div v-for="(author, index) in authors" v-bind:key="index">
-        <input v-bind:key="author.value">
-      </div>
-      <button @click="addAuthor">
-        New Author
-      </button>
       <p>
         <label class="form-label" for="editor">Éditeur</label>
         <input
@@ -55,6 +49,14 @@
             name="editor"
         >
       </p>
+      <h1>Auteurs</h1>
+      <div v-for="(author, index) in authors" v-bind:key="index">
+        <input v-bind:key="author.value" v-model="author.value">
+      </div>
+      <button @click="addAuthor" class="btn btn-secondary">
+        New Author
+      </button>
+
       <p>
         <label class="form-label" for="distributor">Distributeur</label>
         <input
@@ -89,14 +91,36 @@ export default {
       errors: [],
       isbn: null,
       title: null,
-      authors: [{value: ''}],
+      authors: [({value: ''})],
       editor: null,
       distributor: null,
     }
   },
   methods: {
     addAuthor: function () {
-      this.authors.push(({value: ''}));
+      this.authors.push({value: ''});
+    },
+    searchIsbn: function () {
+      console.debug("fetching data")
+      console.log(this.isbn.length)
+      if (this.isbn.length === 10 || this.isbn.length === 13) {
+        fetch("/api/book/ISBN?isbn="+this.isbn)
+            .then((response) => response.text())
+            .then((data) => {
+              this.fillData(JSON.parse(data));
+            });
+      }
+    },
+    fillData: function (data) {
+      console.log(data);
+      this.isbn = data.isbn;
+      this.title = data.title;
+      console.log(typeof data.authors);
+      console.log(this.authors);
+      this.authors = data.authors.map(a => {
+        return {value: a}
+      });
+      console.log(this.authors);
     }
   },
   //   checkForm: function (e) {
