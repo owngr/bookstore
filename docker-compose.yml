@@ -1,0 +1,26 @@
+version: '3'
+services:
+  backend:
+    build: .
+    ports:
+    - "8080:8080"
+  postgres:
+    container_name: postgres
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=bookstore
+      - POSTGRES_PASSWORD=BraveNewWorld
+    ports:
+      - "5432:5432"
+  flyway:
+    container_name: flyway
+    depends_on:
+      - postgres
+    environment:
+      - FLYWAY_USER=bookstore
+      - FLYWAY_PASSWORD=BraveNewWorld
+      - FLYWAY_URL=jdbc:postgresql://postgres:5432/
+    image: flyway/flyway:7
+    volumes:
+      - ./sqlVersions:/flyway/sql
+    command: -locations=filesystem:/flyway/sql -connectRetries=60 migrate

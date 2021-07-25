@@ -1,16 +1,21 @@
 package ch.wngr.bookstore.services
 
+import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.models.ScraperBook
+import ch.wngr.bookstore.repositories.AuthorRepository
 import khttp.responses.Response
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.lang.Exception
 
 
 @Service
 class GoogleScraperService : ScraperService {
+    @field:Autowired
+    private lateinit var authorRepository: AuthorRepository
     val GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes";
 
     override fun getBookInfo(isbn: String): ScraperBook {
@@ -29,6 +34,10 @@ class GoogleScraperService : ScraperService {
                 println("publisher not found")
             }
             val authors: List<String> = jsonArrayToStringList(volumeInfo["authors"] as JSONArray)
+            if (!authors.isEmpty()) {
+                val author: Author? = authorRepository.findByName(authors[0])
+                if (author )
+            }
             return ScraperBook(
                 isbn = isbn,
                 title = title,
