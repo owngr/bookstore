@@ -1,6 +1,5 @@
 package ch.wngr.bookstore.services
 
-import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.repositories.AuthorRepository
 import khttp.responses.Response
@@ -11,58 +10,48 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.lang.Exception
 
-
 @Service
 class GoogleScraperService : ScraperService {
     @field:Autowired
     private lateinit var authorRepository: AuthorRepository
-    val GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes";
+    val GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes"
 
     override fun getBookInfo(isbn: String): ScraperBook {
         try {
             val response: Response = khttp.get(
                 url = GOOGLE_API_URL,
                 params = mapOf("q" to "isbn:$isbn")
-            );
+            )
             val obj: JSONObject = response.jsonObject
             val volumeInfo: JSONObject = (obj["items"] as JSONArray).getJSONObject(0)["volumeInfo"] as JSONObject
             val title: String = volumeInfo["title"] as String
-            var publisher = "";
+            var publisher = ""
             try {
                 publisher = volumeInfo["publisher"] as String
             } catch (e: JSONException) {
                 println("publisher not found")
             }
             val authors: List<String> = jsonArrayToStringList(volumeInfo["authors"] as JSONArray)
-            if (!authors.isEmpty()) {
-                val author: Author? = authorRepository.findByName(authors[0])
-                if (author )
-            }
             return ScraperBook(
                 isbn = isbn,
                 title = title,
                 authors = authors,
                 editor = publisher,
                 distributor = "",
-            );
+            )
         } catch (e: Exception) {
             println(e)
             throw e
         }
-
-
     }
-
 
     companion object {
         fun jsonArrayToStringList(jsonArray: JSONArray): ArrayList<String> {
-            val list: ArrayList<String> = arrayListOf();
+            val list: ArrayList<String> = arrayListOf()
             for (i in 0 until jsonArray.length()) {
                 list.add(jsonArray[i] as String)
             }
             return list
         }
     }
-
-
 }

@@ -70,11 +70,14 @@
 
 
       <p>
-        <input
-            type="submit"
-            value="Submit"
+        <button
             class="btn btn-primary"
+            @click="addBook"
+            type="button"
+            value="submit"
         >
+          Add book
+        </button>
       </p>
 
     </form>
@@ -97,6 +100,23 @@ export default {
     }
   },
   methods: {
+    addBook: function () {
+      const requestOptions = {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          isbn: this.isbn,
+          title: this.title,
+          // authors: null,
+          authors: this.authors.map(a => a.value),
+          editor: this.editor,
+          distributor: this.distributor,
+        })
+      };
+      fetch("/api/book/stock", requestOptions)
+          .then(response => response.json())
+          .then(data => console.log(data));
+    },
     addAuthor: function () {
       this.authors.push({value: ''});
     },
@@ -104,7 +124,7 @@ export default {
       console.debug("fetching data")
       console.log(this.isbn.length)
       if (this.isbn.length === 10 || this.isbn.length === 13) {
-        fetch("/api/book/ISBN?isbn="+this.isbn)
+        fetch("/api/book/ISBN?isbn=" + this.isbn)
             .then((response) => response.text())
             .then((data) => {
               this.fillData(JSON.parse(data));
