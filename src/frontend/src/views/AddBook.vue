@@ -143,44 +143,9 @@ export default {
       console.log(this.authors);
     }
   },
-  //   checkForm: function (e) {
-  //     if (this.name && this.age) {
-  //       return true;
-  //     }
-  //
-  //     this.errors = [];
-  //
-  //     if (!this.name) {
-  //       this.errors.push('Name required.');
-  //     }
-  //     if (!this.age) {
-  //       this.errors.push('Age required.');
-  //     }
-  //
-  //     e.preventDefault();
-  //   }
-  // },
+
   setup() {
-    // const errors = [];
-    // const name = ref(null);
-    // const age = ref(null);
-    // const movie = ref(null);
-    // function checkForm(e) {
-    //   if (this.name && this.age) {
-    //     return true;
-    //   }
-    //
-    //   this.errors = [];
-    //
-    //   if (!this.name) {
-    //     this.errors.push('Name required.');
-    //   }
-    //   if (!this.age) {
-    //     this.errors.push('Age required.');
-    //   }
-    //
-    //   e.preventDefault();
-    // }
+
   }
 }
 </script>

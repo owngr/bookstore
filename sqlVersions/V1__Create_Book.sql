@@ -32,4 +32,11 @@ CREATE TABLE book_author
     book_id integer REFERENCES book(id),
     author_id integer REFERENCES author(id),
     primary key (book_id, author_id)
-)
+);
+
+CREATE TABLE stock
+(
+    id serial PRIMARY KEY ,
+    amount integer,
+    book_id integer REFERENCES book(id)
+);
