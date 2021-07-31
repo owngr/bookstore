@@ -11,6 +11,9 @@
           <router-link class="nav-link" to="/">Go to Home</router-link>
         </li>
         <li class="nav-item">
+          <router-link class="nav-link" to="/stock">Stock</router-link>
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" to="/book/add">Ajout de livres</router-link>
         </li>
       </ul>
