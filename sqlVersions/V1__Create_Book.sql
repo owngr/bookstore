@@ -24,7 +24,8 @@ CREATE TABLE book
     isbn varchar(13),
     title varchar(100),
     distributor_id  integer REFERENCES distributor(id),
-    publisher integer REFERENCES publisher(id)
+    publisher integer REFERENCES publisher(id),
+    description text
 );
 
 CREATE TABLE book_author

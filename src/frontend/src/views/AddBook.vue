@@ -8,16 +8,11 @@
         method="post"
     >
 
-      <p v-if="errors.length">
-        <b>Please correct the following error(s):</b>
-      <ul>
-        <li v-bind="error in errors">{{ error }}</li>
-      </ul>
-      </p>
+      <Message v-for="msg of messages" :severity="msg.severity" :key="msg.content">{{msg.content}}</Message>
 
       <p>
         <label class="form-label" for="isbn">ISBN</label>
-        <input
+        <InputText
             @input="searchIsbn"
             class="form-control"
             id="isbn"
@@ -26,36 +21,32 @@
             name="isnbn"
             minlength="10"
             maxlength="13"
-        >
+        />
       </p>
 
       <p>
         <label class="form-label" for="title">Titre</label>
-        <input
-            class="form-control"
+        <InputText
             id="title"
             v-model="title"
             type="text"
             name="title"
-        >
+        />
       </p>
       <p>
         <label class="form-label" for="editor">Éditeur</label>
-        <input
+        <InputText
             id="editor"
             type="text"
-            class="form-control"
             v-model="editor"
             name="editor"
-        >
+        />
       </p>
       <h1>Auteurs</h1>
       <div v-for="(author, index) in authors" v-bind:key="index">
         <input v-bind:key="author.value" v-model="author.value">
       </div>
-      <button @click="addAuthor" class="btn btn-secondary">
-        New Author
-      </button>
+      <Button @click="addAuthor" label="nouvel auteur·rice"/>
 
       <p>
         <label class="form-label" for="distributor">Distributeur</label>
@@ -67,17 +58,18 @@
             name="distributor"
         >
       </p>
+      <p>
+        <Textarea v-model="description" rows="10" cols="100"></Textarea>
+      </p>
 
 
       <p>
-        <button
-            class="btn btn-primary"
+        <Button
+            label="Ajouter le livre"
             @click="addBook"
             type="button"
             value="submit"
-        >
-          Add book
-        </button>
+        />
       </p>
 
     </form>
@@ -88,7 +80,7 @@
 
 export default {
   name: "AddBook",
-  el: '#app',
+  el: '#addbook',
   data() {
     return {
       errors: [],
@@ -97,6 +89,8 @@ export default {
       aauthors: [({value: ''})],
       editor: null,
       distributor: null,
+      description: null,
+      messages: [],
     }
   },
   methods: {
@@ -111,11 +105,12 @@ export default {
           authors: this.authors.map(a => a.value),
           editor: this.editor,
           distributor: this.distributor,
+          description: this.description,
         })
       };
       fetch("/api/book/stock", requestOptions)
-          .then(response => response.json())
-          .then(data => console.log(data));
+          .then(() => this.messages.push({severity: 'success', content: `Le livre a été ajouté`}))
+          .catch(error => this.messages.push({severity: 'error', content: `Le livre n'a pas pu être ajouté: ${error}`}))
     },
     addAuthor: function () {
       this.authors.push({value: ''});
@@ -128,7 +123,8 @@ export default {
             .then((response) => response.text())
             .then((data) => {
               this.fillData(JSON.parse(data));
-            });
+            })
+            .catch(() => this.messages.push({severity: 'warn', content: `Le livre n'a pas pu être trouvé`}))
       }
     },
     fillData: function (data) {
@@ -140,6 +136,7 @@ export default {
       this.authors = data.authors.map(a => {
         return {value: a}
       });
+      this.description = data.description;
       console.log(this.authors);
     }
   },

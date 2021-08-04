@@ -37,7 +37,7 @@ class StockServiceImpl @Autowired constructor(
                 }
                 authors.add(author)
             }
-            val newBook = Book(book.isbn, book.title, authors = authors)
+            val newBook = Book(book.isbn, book.title, authors = authors, description = book.description)
             existingBook = bookRepository.save(newBook)
         }
         // add the book to the stock
@@ -65,6 +65,7 @@ class StockServiceImpl @Autowired constructor(
                 editor = null,
                 distributor = null,
                 amount = stockEnt.amount,
+                description = stockEnt.book.description,
             )
             stockEntryList.add(stockEntry)
         }

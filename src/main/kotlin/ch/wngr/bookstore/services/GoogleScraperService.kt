@@ -31,6 +31,12 @@ class GoogleScraperService : ScraperService {
             } catch (e: JSONException) {
                 println("publisher not found")
             }
+            var description = ""
+            try {
+                description = volumeInfo["description"] as String
+            } catch (e: JSONException) {
+                println("description not found")
+            }
             val authors: List<String> = jsonArrayToStringList(volumeInfo["authors"] as JSONArray)
             return ScraperBook(
                 isbn = isbn,
@@ -38,6 +44,7 @@ class GoogleScraperService : ScraperService {
                 authors = authors,
                 editor = publisher,
                 distributor = "",
+                description = description,
             )
         } catch (e: Exception) {
             println(e)

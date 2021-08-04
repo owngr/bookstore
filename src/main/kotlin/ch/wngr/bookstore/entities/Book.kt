@@ -1,6 +1,13 @@
 package ch.wngr.bookstore.entities
 
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
+import javax.persistence.Table
 
 @Entity
 @Table(name = "book")
@@ -17,4 +24,5 @@ class Book(
         inverseJoinColumns = [JoinColumn(name = "author_id")]
     )
     var authors: Set<Author> = HashSet(),
+    var description: String = "",
 )

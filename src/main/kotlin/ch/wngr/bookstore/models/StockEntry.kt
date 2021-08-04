@@ -7,4 +7,5 @@ data class StockEntry(
     var editor: String?,
     var distributor: String?,
     var amount: Int?,
+    var description: String?,
 )

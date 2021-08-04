@@ -6,5 +6,6 @@ data class ScraperBook(
     val authors: List<String>,
     var editor: String?,
     var distributor: String?,
+    var description: String = "",
 )
 
