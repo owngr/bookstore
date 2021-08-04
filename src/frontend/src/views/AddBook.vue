@@ -94,7 +94,7 @@ export default {
       errors: [],
       isbn: null,
       title: null,
-      authors: [({value: ''})],
+      aauthors: [({value: ''})],
       editor: null,
       distributor: null,
     }

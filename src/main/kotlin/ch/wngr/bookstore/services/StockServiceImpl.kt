@@ -4,6 +4,7 @@ import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Stock
 import ch.wngr.bookstore.models.ScraperBook
+import ch.wngr.bookstore.models.StockEntry
 import ch.wngr.bookstore.repositories.AuthorRepository
 import ch.wngr.bookstore.repositories.BookRepository
 import ch.wngr.bookstore.repositories.StockRepository
@@ -48,5 +49,25 @@ class StockServiceImpl @Autowired constructor(
             stock = Stock(1, book = existingBook)
         }
         stockRepository.save(stock)
+    }
+
+    override fun getStock(): List<StockEntry> {
+        val stockEntryList: MutableList<StockEntry> = ArrayList()
+        var stockEntry: StockEntry
+        val stock: List<Stock> = stockRepository.findByAmountGreaterThan(0)
+        for (stockEnt: Stock in stock) {
+            stockEntry = StockEntry(
+                isbn = stockEnt.book.isbn,
+                title = stockEnt.book.title,
+                authors = stockEnt.book.authors.map(fun(author: Author): String {
+                    return author.name
+                }).toList(),
+                editor = null,
+                distributor = null,
+                amount = stockEnt.amount,
+            )
+            stockEntryList.add(stockEntry)
+        }
+        return stockEntryList
     }
 }
