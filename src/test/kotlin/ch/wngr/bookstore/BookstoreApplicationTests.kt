@@ -9,5 +9,4 @@ class BookstoreApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }
