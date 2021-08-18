@@ -24,6 +24,7 @@
         <node.version>v14.17.3</node.version>
         <kotlin.version>1.5.20</kotlin.version>
         <npm.version>6.14.13</npm.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
         <dependency>
@@ -185,6 +186,13 @@
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
+                            <nonFilteredFileExtensions>
+                                <nonFilteredFileExtension>eot</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>swf</nonFilteredFileExtension>
+                            </nonFilteredFileExtensions>
                         </configuration>
                     </execution>
                 </executions>
