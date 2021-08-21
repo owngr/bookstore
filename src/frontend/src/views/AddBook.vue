@@ -118,7 +118,7 @@ export default {
     searchIsbn: function () {
       console.debug("fetching data")
       console.log(this.isbn.length)
-      if (this.isbn.length === 10 || this.isbn.length === 13) {
+      if (this.isbn.length === 13) {
         fetch("/api/book/ISBN?isbn=" + this.isbn)
             .then((response) => response.text())
             .then((data) => {
