@@ -60,7 +60,7 @@ class StockServiceImpl @Autowired constructor(
         existingPublisher = publisherRepository.findByName(publisher)
         if (existingPublisher == null) {
             existingPublisher = Publisher(name = publisher)
-            publisherRepository.save(existingPublisher)
+            existingPublisher = publisherRepository.save(existingPublisher)
         }
         return existingPublisher
     }
