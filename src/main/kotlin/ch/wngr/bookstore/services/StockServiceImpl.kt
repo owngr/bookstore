@@ -2,11 +2,13 @@ package ch.wngr.bookstore.services
 
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
+import ch.wngr.bookstore.entities.Publisher
 import ch.wngr.bookstore.entities.Stock
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.models.StockEntry
 import ch.wngr.bookstore.repositories.AuthorRepository
 import ch.wngr.bookstore.repositories.BookRepository
+import ch.wngr.bookstore.repositories.PublisherRepository
 import ch.wngr.bookstore.repositories.StockRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -15,7 +17,8 @@ import org.springframework.stereotype.Service
 class StockServiceImpl @Autowired constructor(
     val authorRepository: AuthorRepository,
     val bookRepository: BookRepository,
-    val stockRepository: StockRepository
+    val stockRepository: StockRepository,
+    val publisherRepository: PublisherRepository,
 
 ) : StockService {
 
@@ -37,7 +40,8 @@ class StockServiceImpl @Autowired constructor(
                 }
                 authors.add(author)
             }
-            val newBook = Book(book.isbn, book.title, authors = authors, description = book.description)
+            val publisher = book.editor?.let { getOrCreatePublisher(it) }
+            val newBook = Book(book.isbn, book.title, authors = authors, description = book.description, publisher = publisher)
             existingBook = bookRepository.save(newBook)
         }
         // add the book to the stock
@@ -51,6 +55,16 @@ class StockServiceImpl @Autowired constructor(
         stockRepository.save(stock)
     }
 
+    fun getOrCreatePublisher(publisher: String): Publisher {
+        var existingPublisher: Publisher?
+        existingPublisher = publisherRepository.findByName(publisher)
+        if (existingPublisher == null) {
+            existingPublisher = Publisher(name = publisher)
+            publisherRepository.save(existingPublisher)
+        }
+        return existingPublisher
+    }
+
     override fun getStock(): List<StockEntry> {
         val stockEntryList: MutableList<StockEntry> = ArrayList()
         var stockEntry: StockEntry
@@ -62,7 +76,7 @@ class StockServiceImpl @Autowired constructor(
                 authors = stockEnt.book.authors.map(fun(author: Author): String {
                     return author.name
                 }).toList(),
-                editor = null,
+                editor = stockEnt.book.publisher?.name,
                 distributor = null,
                 amount = stockEnt.amount,
                 description = stockEnt.book.description,

@@ -7,6 +7,7 @@ import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.JoinTable
 import javax.persistence.ManyToMany
+import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity
@@ -25,4 +26,7 @@ class Book(
     )
     var authors: Set<Author> = HashSet(),
     var description: String = "",
+    @ManyToOne
+    @JoinColumn(name = "publisher")
+    var publisher: Publisher? = Publisher()
 )
