@@ -3,12 +3,10 @@
   <div class="card">
     <form
         id="app"
-        @submit="checkForm"
-        action="https://vuejs.org/"
-        method="post"
+        @submit.prevent="addBook"
     >
 
-      <Message v-for="msg of messages" :severity="msg.severity" :key="msg.content">{{msg.content}}</Message>
+      <Message v-for="msg of messages" :sticky="false" :severity="msg.severity" :key="msg.content">{{msg.content}}</Message>
 
       <p>
         <label class="form-label" for="isbn">ISBN</label>
@@ -44,19 +42,19 @@
       </p>
       <h1>Auteurs</h1>
       <div v-for="(author, index) in authors" v-bind:key="index">
-        <input v-bind:key="author.value" v-model="author.value">
+        <InputText v-bind:key="author.value" v-model="author.value"/>
       </div>
-      <Button @click="addAuthor" label="nouvel auteur·rice"/>
+      <Button @click="addAuthor" label="nouve̛l·le auteur·rice"/>
 
       <p>
         <label class="form-label" for="distributor">Distributeur</label>
-        <input
+        <InputText
             id="distributor"
             class="form-control"
             v-model="distributor"
             type="text"
             name="distributor"
-        >
+        />
       </p>
       <p>
         <Textarea v-model="description" rows="10" cols="100"></Textarea>
@@ -66,8 +64,7 @@
       <p>
         <Button
             label="Ajouter le livre"
-            @click="addBook"
-            type="button"
+            type="submit"
             value="submit"
         />
       </p>
@@ -86,7 +83,7 @@ export default {
       errors: [],
       isbn: null,
       title: null,
-      aauthors: [({value: ''})],
+      authors: [({value: ''})],
       editor: null,
       distributor: null,
       description: null,
