@@ -1,8 +1,14 @@
 <template>
   <h1>Stock</h1>
   <div>
-    <DataTable :value="stockEntries" responsiveLayout="scroll" ref="dt" csv-separator=";" stripedRows
-               :globalFilterFields="['isbn','title','authors','editor']">
+    <DataTable
+        :value="stockEntries"
+        responsiveLayout="scroll"
+        ref="dt" csv-separator=";"
+        stripedRows
+         :globalFilterFields="['isbn','title','authors','editor']"
+        v-model:filters="filters"
+    >
       <template #header>
         <div class="p-d-flex p-jc-between p-ai-center">
           <button  label="Export" @click="exportCSV($event)">Exporter</button>
