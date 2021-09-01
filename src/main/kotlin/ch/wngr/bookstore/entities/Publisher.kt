@@ -14,6 +14,10 @@ class Publisher(
     var id: Int? = -1,
 ) {
     constructor(name: String) : this(name, -1)
+
+    override fun toString(): String {
+        return this.name
+    }
 }
 
 

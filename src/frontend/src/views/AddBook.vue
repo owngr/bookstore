@@ -32,15 +32,25 @@
         />
       </p>
       <p>
-        <label class="form-label" for="editor">Éditeur</label>
-        <InputText
-            id="editor"
-            type="text"
-            v-model="editor"
-            name="editor"
-        />
+<!--        <label class="form-label" for="editor">Éditeur</label>-->
+<!--        <InputText-->
+<!--            id="editor"-->
+<!--            type="text"-->
+<!--            v-model="editor"-->
+<!--            name="editor"-->
+<!--        />-->
       </p>
-      <h1>Auteurs</h1>
+
+      <h5>Editeur</h5>
+      <Dropdown
+          v-model="editor"
+          :options="editors"
+          :editable="true"
+          :filter="true"
+          :option-label="getEditorName"
+          placeholder="Sélectionner un éditeur"
+      />
+      <h1>Auteur·rices</h1>
       <div v-for="(author, index) in authors" v-bind:key="index">
         <InputText v-bind:key="author.value" v-model="author.value"/>
       </div>
@@ -85,6 +95,7 @@ export default {
       title: null,
       authors: [({value: ''})],
       editor: null,
+      editors: [],
       distributor: null,
       description: null,
       messages: [],
@@ -133,17 +144,44 @@ export default {
       this.authors = data.authors.map(a => {
         return {value: a}
       });
+      this.editor = data.editor
       this.description = data.description;
       console.log(this.authors);
+    },
+
+    // needed because primevue doesn't understand that it can take the value itself
+    getEditorName: function (editor) {
+      return editor
+    },
+
+    fetchEditors: function () {
+      fetch("/api/editor")
+        .then((response) => response.json())
+        .then((data) => {
+          // needded because Drodpown doesn't work with simple list
+          this.editors = data
+        })
+      .catch(() => this.messages.push({severity: 'error', content: `Les éditeurs n'ont pas pu être chargés`}))
     }
   },
 
-  setup() {
-
-  }
+  mounted() {
+    this.fetchEditors();
+  },
 }
 </script>
 
 <style scoped>
+
+ div >>> .p-hidden-accessible {
+   border: 0;
+   clip: rect(0 0 0 0);
+   height: 1px;
+   margin: -1px;
+   overflow: hidden;
+   padding: 0;
+   position: absolute;
+   width: 1px;
+ }
 
 </style>

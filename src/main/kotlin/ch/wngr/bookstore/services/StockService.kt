@@ -9,4 +9,6 @@ interface StockService {
 
     fun addBook(book: ScraperBook)
     fun getStock(): List<StockEntry>
+    fun getEditors(): List<String>
+    fun getBookInfo(isbn: String) : ScraperBook
 }

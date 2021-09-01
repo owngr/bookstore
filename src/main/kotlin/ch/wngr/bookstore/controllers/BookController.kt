@@ -14,7 +14,7 @@ class BookController @Autowired constructor(
 ) {
     @GetMapping("/ISBN")
     fun fetchBookInfo(isbn: String): ScraperBook {
-        return scraperService.getBookInfo(isbn)
+        return stockService.getBookInfo(isbn)
     }
 
     @PostMapping("/stock")

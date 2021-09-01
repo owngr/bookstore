@@ -12,4 +12,8 @@ class Author(
     var books: Set<Book>? = HashSet()
 ) {
     constructor(name: String) : this(name, -1, null)
+
+    override fun toString(): String {
+        return this.name
+    }
 }

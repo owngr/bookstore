@@ -10,10 +10,13 @@ import Menubar from 'primevue/menubar';
 import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
 import InputMask from 'primevue/inputmask';
-import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
+import Dropdown from 'primevue/dropdown';
+import Button from 'primevue/button';
+// import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
+
+import "primevue/resources/themes/saga-blue/theme.css";
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
-import Button from 'primevue/button';
 const app = createApp(App)
 
 app.use(PrimeVue)
@@ -27,4 +30,5 @@ app.component('Button', Button)
 app.component('InputNumber', InputNumber)
 app.component('InputText', InputText)
 app.component('InputMask', InputMask)
+app.component('Dropdown', Dropdown)
 app.mount('#app')

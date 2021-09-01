@@ -19,6 +19,7 @@ class StockServiceImpl @Autowired constructor(
     val bookRepository: BookRepository,
     val stockRepository: StockRepository,
     val publisherRepository: PublisherRepository,
+    val scraperService: ScraperService,
 
 ) : StockService {
 
@@ -73,9 +74,11 @@ class StockServiceImpl @Autowired constructor(
             stockEntry = StockEntry(
                 isbn = stockEnt.book.isbn,
                 title = stockEnt.book.title,
-                authors = stockEnt.book.authors.map(fun(author: Author): String {
-                    return author.name
-                }).toList(),
+                authors = stockEnt.book.authors.map(
+                    fun(author: Author): String {
+                        return author.name
+                    }
+                ).toList(),
                 editor = stockEnt.book.publisher?.name,
                 distributor = null,
                 amount = stockEnt.amount,
@@ -84,5 +87,30 @@ class StockServiceImpl @Autowired constructor(
             stockEntryList.add(stockEntry)
         }
         return stockEntryList
+    }
+
+    override fun getEditors(): List<String> {
+        return publisherRepository.findAll().toList().map(Publisher::toString)
+    }
+
+    override fun getBookInfo(isbn: String): ScraperBook {
+        // first check if we have the book already in stock
+        val book: Book?
+        val scraperBook: ScraperBook
+        book = bookRepository.findByIsbn(isbn)
+        if (book != null) {
+            scraperBook = ScraperBook(
+                isbn = isbn,
+                title = book.title,
+                authors = book.authors.map(Author::toString),
+                editor = book.publisher.toString(),
+                distributor = "",
+                description = book.description,
+
+            )
+        } else {
+            scraperBook = scraperService.getBookInfo(isbn)
+        }
+        return scraperBook
     }
 }
