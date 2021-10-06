@@ -9,15 +9,13 @@ import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity
-@Table(name = "publisher")
-class Publisher(
+@Table(name = "distributor")
+class Distributor(
     var name: String = "",
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = -1,
-    @ManyToOne
-    @JoinColumn(name = "default_distributor_id")
-    var defaultDistributor: Distributor? = Distributor(),
 ) {
+    constructor(name: String) : this(name, -1)
 
     override fun toString(): String {
         return this.name

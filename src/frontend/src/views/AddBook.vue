@@ -47,8 +47,10 @@
           :options="editors"
           :editable="true"
           :filter="true"
-          :option-label="getEditorName"
+          optionLabel="name"
+          optionValue="name"
           placeholder="Sélectionner un éditeur"
+          @change="onEditorChange"
       />
       <h1>Auteur·rices</h1>
       <div v-for="(author, index) in authors" v-bind:key="index">
@@ -84,7 +86,7 @@
 </template>
 
 <script>
-
+import EditorService from "@/service/EditorService";
 export default {
   name: "AddBook",
   el: '#addbook',
@@ -155,15 +157,29 @@ export default {
     },
 
     fetchEditors: function () {
-      fetch("/api/editor")
+      EditorService.getAll()
         .then((response) => response.json())
         .then((data) => {
           // needded because Drodpown doesn't work with simple list
           this.editors = data
         })
       .catch(() => this.messages.push({severity: 'error', content: `Les éditeurs n'ont pas pu être chargés`}))
-    }
+    },
+
+    onEditorChange: function (event) {
+      console.log(event.value)
+      if (event.value && event.value.length !== 0) {
+        console.log("inside first loop")
+        console.log(this.editors)
+        const editor = this.editors.find(e => e.name === event.value)
+        if (editor && editor.defaultDistributor) {
+          this.distributor = editor.defaultDistributor
+        }
+      }
+    },
   },
+
+
 
   mounted() {
     this.fetchEditors();

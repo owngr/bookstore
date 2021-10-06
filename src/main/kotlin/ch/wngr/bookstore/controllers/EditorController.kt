@@ -1,6 +1,7 @@
 package ch.wngr.bookstore.controllers
 
 
+import ch.wngr.bookstore.models.Editor
 import ch.wngr.bookstore.services.StockService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +14,7 @@ class EditorController @Autowired constructor(
     private val stockService: StockService,
 ) {
     @GetMapping()
-    fun fetchAllEditors(): List<String> {
+    fun fetchAllEditors(): List<Editor> {
         return stockService.getEditors()
     }
 }

@@ -28,5 +28,8 @@ class Book(
     var description: String = "",
     @ManyToOne
     @JoinColumn(name = "publisher")
-    var publisher: Publisher? = Publisher()
+    var publisher: Publisher? = Publisher(),
+    @ManyToOne
+    @JoinColumn(name = "distributor_id")
+    var distributor: Distributor? = Distributor(),
 )

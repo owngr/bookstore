@@ -1,6 +1,9 @@
 <template>
   <h1>Stock</h1>
   <div>
+    <Dialog header="Mise à jour entrée stock" v-model:visible="displayEditDialog" :style="{width: '50vw'}">
+      <StockEntryEdit v-model:book="book" @close-dialog="closeEditDialog"/>
+    </Dialog>
     <DataTable
         :value="stockEntries"
         responsiveLayout="scroll"
@@ -19,7 +22,11 @@
         </div>
       </template>
       <Column field="isbn" header="ISBN"></Column>
-      <Column field="title" sortable="true" header="Titre"></Column>
+      <Column field="title" :sortable="true" header="Titre">
+        <template #body="slotProps">
+          <a @click="openEditDialog(slotProps.data)">{{slotProps.data.title}}</a>
+        </template>
+      </Column>
       <Column field="authors" header="Auteur·rices">
         <template #body="slotProps">
           <li v-for="author in slotProps.data.authors" v-bind:key="author">
@@ -28,7 +35,7 @@
         </template>
       </Column>
       <Column field="editor" header="Maison d'édition"></Column>
-      <Column field="description" header="Résumé" hidden="true"></Column>
+      <Column field="description" header="Résumé" :hidden="true"></Column>
       <Column field="amount" header="Quantité" :exportable="false"></Column>
     </DataTable>
   </div>
@@ -38,10 +45,14 @@
 // import { ref, onMounted } from 'vue';
 import StockService from '../service/StockService';
 import {FilterMatchMode} from 'primevue/api';
+import StockEntryEdit from "@/components/StockEntryEdit";
 
 
 export default {
   name: "Stock",
+  components: {
+    StockEntryEdit
+  },
   el: '#app',
   data() {
     return {
@@ -49,22 +60,26 @@ export default {
       filters: {
         'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
       },
+      displayEditDialog: false,
+      book: {}
     }
   },
-  stockService: null,
-  created() {
-    this.stockService = new StockService();
-  },
+
   mounted() {
-    this.stockService.getStock().then(data => {
-      console.log("stockService finished")
-      console.log(data)
+    StockService.getStock().then(data => {
       this.stockEntries = data}
     );
   },
   methods: {
     exportCSV() {
       this.$refs.dt.exportCSV();
+    },
+    openEditDialog(book) {
+      this.book = book
+      this.displayEditDialog = true;
+    },
+    closeEditDialog() {
+      this.displayEditDialog = false;
     }
   }
 }

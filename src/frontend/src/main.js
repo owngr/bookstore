@@ -12,6 +12,7 @@ import InputText from 'primevue/inputtext';
 import InputMask from 'primevue/inputmask';
 import Dropdown from 'primevue/dropdown';
 import Button from 'primevue/button';
+import Dialog from "primevue/dialog";
 // import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
 
 import "primevue/resources/themes/saga-blue/theme.css";
@@ -31,4 +32,5 @@ app.component('InputNumber', InputNumber)
 app.component('InputText', InputText)
 app.component('InputMask', InputMask)
 app.component('Dropdown', Dropdown)
+app.component('Dialog', Dialog)
 app.mount('#app')

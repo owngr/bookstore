@@ -1,25 +1,31 @@
 package ch.wngr.bookstore.services
 
+import ch.wngr.bookstore.converters.toEditor
+import ch.wngr.bookstore.converters.toScrapperBook
+import ch.wngr.bookstore.converters.toStockEntry
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Publisher
 import ch.wngr.bookstore.entities.Stock
+import ch.wngr.bookstore.models.Editor
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.models.StockEntry
-import ch.wngr.bookstore.repositories.AuthorRepository
 import ch.wngr.bookstore.repositories.BookRepository
 import ch.wngr.bookstore.repositories.PublisherRepository
 import ch.wngr.bookstore.repositories.StockRepository
+import javassist.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class StockServiceImpl @Autowired constructor(
-    val authorRepository: AuthorRepository,
     val bookRepository: BookRepository,
     val stockRepository: StockRepository,
-    val publisherRepository: PublisherRepository,
     val scraperService: ScraperService,
+    val authorService: AuthorService,
+    val publisherRepository: PublisherRepository,
+    val distributorService: DistributorService,
+    val publisherService: PublisherService,
 
 ) : StockService {
 
@@ -34,15 +40,19 @@ class StockServiceImpl @Autowired constructor(
         if (existingBook == null) {
             val authors: MutableSet<Author> = HashSet()
             for (authorName: String in book.authors) {
-                var author: Author? = authorRepository.findByName(authorName)
-                if (author == null) {
-                    author = Author(authorName)
-                    author = authorRepository.save(author)
-                }
+                var author: Author = authorService.getOrCreateAuthor(authorName)
                 authors.add(author)
             }
-            val publisher = book.editor?.let { getOrCreatePublisher(it) }
-            val newBook = Book(book.isbn, book.title, authors = authors, description = book.description, publisher = publisher)
+            val publisher = book.editor?.let { publisherService.getOrCreatePublisher(it, book.distributor) }
+            val distributor = book.distributor?.let { distributorService.getOrCreateDistributor(it)}
+            val newBook = Book(
+                isbn = book.isbn,
+                title = book.title,
+                authors = authors,
+                description = book.description,
+                publisher = publisher,
+                distributor = distributor,
+            )
             existingBook = bookRepository.save(newBook)
         }
         // add the book to the stock
@@ -56,41 +66,19 @@ class StockServiceImpl @Autowired constructor(
         stockRepository.save(stock)
     }
 
-    fun getOrCreatePublisher(publisher: String): Publisher {
-        var existingPublisher: Publisher?
-        existingPublisher = publisherRepository.findByName(publisher)
-        if (existingPublisher == null) {
-            existingPublisher = Publisher(name = publisher)
-            existingPublisher = publisherRepository.save(existingPublisher)
-        }
-        return existingPublisher
-    }
-
     override fun getStock(): List<StockEntry> {
         val stockEntryList: MutableList<StockEntry> = ArrayList()
         var stockEntry: StockEntry
         val stock: List<Stock> = stockRepository.findByAmountGreaterThan(0)
         for (stockEnt: Stock in stock) {
-            stockEntry = StockEntry(
-                isbn = stockEnt.book.isbn,
-                title = stockEnt.book.title,
-                authors = stockEnt.book.authors.map(
-                    fun(author: Author): String {
-                        return author.name
-                    }
-                ).toList(),
-                editor = stockEnt.book.publisher?.name,
-                distributor = null,
-                amount = stockEnt.amount,
-                description = stockEnt.book.description,
-            )
+            stockEntry = stockEnt.toStockEntry()
             stockEntryList.add(stockEntry)
         }
         return stockEntryList
     }
 
-    override fun getEditors(): List<String> {
-        return publisherRepository.findAll().toList().map(Publisher::toString)
+    override fun getEditors(): List<Editor> {
+        return publisherRepository.findAll().toList().map(Publisher::toEditor)
     }
 
     override fun getBookInfo(isbn: String): ScraperBook {
@@ -99,18 +87,39 @@ class StockServiceImpl @Autowired constructor(
         val scraperBook: ScraperBook
         book = bookRepository.findByIsbn(isbn)
         if (book != null) {
-            scraperBook = ScraperBook(
-                isbn = isbn,
-                title = book.title,
-                authors = book.authors.map(Author::toString),
-                editor = book.publisher.toString(),
-                distributor = "",
-                description = book.description,
-
-            )
+            scraperBook = book.toScrapperBook()
         } else {
             scraperBook = scraperService.getBookInfo(isbn)
+            // we try to guess the distributor
+            val publisher = scraperBook.editor?.let { publisherRepository.findByName(it) }
+            scraperBook.distributor = publisher?.defaultDistributor?.toString()
         }
         return scraperBook
+    }
+
+    override fun updateStock(stockEntry: StockEntry): StockEntry {
+        val book = bookRepository.findByIsbn(stockEntry.isbn)
+        val stock = book?.let { stockRepository.findByBook_Id(it.id) }
+        if (stock != null) {
+            stock.amount = stockEntry.amount!!
+            stockRepository.save(stock)
+        }
+        if (book != null) {
+            book.isbn = stockEntry.isbn
+            val authors: MutableSet<Author> = HashSet()
+            for (authorName: String in stockEntry.authors) {
+                val author: Author = authorService.getOrCreateAuthor(authorName)
+                authors.add(author)
+            }
+            book.authors = authors
+            book.description = stockEntry.description!!
+            book.publisher = stockEntry.editor?.let { publisherService.getOrCreatePublisher(it, stockEntry.distributor) }
+            book.distributor = stockEntry.distributor?.let { distributorService.getOrCreateDistributor(it) }
+            bookRepository.save(book)
+            return stockRepository.findByBook_Id(book.id)!!.toStockEntry()
+        } else {
+            println("The book could not be found")
+            throw NotFoundException("The book could not be found")
+        }
     }
 }

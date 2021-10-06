@@ -1,0 +1,2 @@
+ALTER TABLE publisher
+ADD default_distributor_id integer references distributor;
