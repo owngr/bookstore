@@ -1,8 +1,10 @@
+import handleErrors from "@/helpers/httpHelper";
 
 class StockService {
 
     getStock() {
         return fetch("/api/stock")
+            .then(handleErrors)
             .then(res => res.json());
     }
 
@@ -13,8 +15,23 @@ class StockService {
             body: JSON.stringify(body)
         };
         return fetch("/api/stock", requestOptions)
+            .then(handleErrors)
             .then(res => res.json())
     }
+
+    addBook(body) {
+        const requestOptions = {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+        }
+        return fetch("/api/book/stock", requestOptions)
+            .then(handleErrors)
+    }
+
+
 }
+
+
 
 export default new StockService()

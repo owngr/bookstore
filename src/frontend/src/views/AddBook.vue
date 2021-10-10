@@ -108,6 +108,7 @@
 import EditorService from "@/service/EditorService";
 import DistributorService from "@/service/DistributorService";
 import AuthorForm from "@/components/AuthorForm";
+import StockService from "@/service/StockService";
 
 
 
@@ -133,20 +134,16 @@ export default {
   },
   methods: {
     addBook: function () {
-      const requestOptions = {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          isbn: this.isbn,
-          title: this.title,
-          // authors: null,
-          authors: this.authors.map(a => a.value),
-          editor: this.editor,
-          distributor: this.distributor,
-          description: this.description,
-        })
-      };
-      fetch("/api/book/stock", requestOptions)
+      const body = {
+            isbn: this.isbn,
+            title: this.title,
+            // authors: null,
+            authors: this.authors.map(a => a.value),
+            editor: this.editor,
+            distributor: this.distributor,
+            description: this.description,
+          }
+      StockService.addBook(body)
           .then(() => this.messages.push({severity: 'success', content: `Le livre a été ajouté`}))
           .catch(error => this.messages.push({severity: 'error', content: `Le livre n'a pas pu être ajouté: ${error}`}))
     },
