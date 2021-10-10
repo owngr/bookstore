@@ -8,59 +8,88 @@
 
       <Message v-for="msg of messages" :sticky="false" :severity="msg.severity" :key="msg.content">{{msg.content}}</Message>
 
-      <p>
-        <label class="form-label" for="isbn">ISBN</label>
-        <InputText
-            @input="searchIsbn"
-            class="form-control"
-            id="isbn"
-            v-model="isbn"
-            type="number"
-            name="isnbn"
-            minlength="10"
-            maxlength="13"
-        />
-      </p>
+      <table>
+        <tr>
+          <td>
+            <label class="form-label" for="isbn">ISBN</label>
+          </td>
+          <td>
+            <InputText
+                @input="searchIsbn"
+                class="form-control"
+                id="isbn"
+                v-model="isbn"
+                type="number"
+                name="isnbn"
+                minlength="10"
+                maxlength="13"
+            />
+          </td>
 
-      <p>
-        <label class="form-label" for="title">Titre</label>
-        <InputText
-            id="title"
-            v-model="title"
-            type="text"
-            name="title"
-        />
-      </p>
-      <p>
-      </p>
+        </tr>
 
-      <label class="form-label" for="editor">Maison d'édition</label>
-      <AutoComplete
-          id="editor"
-          v-model="editor"
-          field="name"
-          :dropdown="true"
-          :suggestions="filteredEditors"
-          @complete="searchEditors"
-          @item-select="onEditorChange"
-      />
-      <p>
-        <AuthorForm
-            :add-author-function="addAuthor"
-            :authors="authors"
-            :delete-author-function="deleteAuthor"
-        />
-      </p>
-      <h4>Auteur·rices</h4>
+        <tr>
+          <td>
+          <label class="form-label" for="title">Titre</label>
+          </td>
+          <td>
+            <InputText
+                id="title"
+                v-model="title"
+                type="text"
+                name="title"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td><label class="form-label" for="editor">Maison d'édition</label></td>
+          <td>
+            <AutoComplete
+                id="editor"
+                v-model="editor"
+                field="name"
+                :dropdown="true"
+                :suggestions="filteredEditors"
+                @complete="searchEditors"
+                @item-select="onEditorChange"
+            />
+          </td>
+        </tr>
 
-      <p>
-        <label class="form-label" for="distributor">Distributeur</label>
-        <AutoComplete
-        id="distributor" v-model="distributor" :dropdown="true" :suggestions="filteredDistributors" @complete="searchDistributor"/>
-      </p>
-      <p>
-        <Textarea v-model="description" rows="10" cols="100"></Textarea>
-      </p>
+
+
+        <tr>
+          <td style="vertical-align: top">
+            <label class="form-label" for="authors">Auteur·ices</label>
+          </td>
+          <td>
+            <AuthorForm
+                id="authors"
+                :add-author-function="addAuthor"
+                :authors="authors"
+                :delete-author-function="deleteAuthor"
+            />
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <label class="form-label" for="distributor">Distributeur</label>
+          </td>
+          <td>
+            <AutoComplete
+                id="distributor" v-model="distributor" :dropdown="true" :suggestions="filteredDistributors" @complete="searchDistributor"/>
+          </td>
+
+        </tr>
+        <tr>
+          <td colspan="2">
+            <Textarea v-model="description" rows="10" style="width: 100%"></Textarea>
+          </td>
+
+        </tr>
+      </table>
+
 
 
       <p>

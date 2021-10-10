@@ -1,6 +1,5 @@
 <template>
-  <label class="form-label" for="authors">Auteur·ices</label>
-  <div v-for="(author, index) in authors" v-bind:key="index" id="authors">
+  <div v-for="(author, index) in authors" v-bind:key="index">
     <InputText v-model="author.value"/>
     <Button @click="deleteAuthorFunction(index)" v-if="index !== 0" label="X" />
   </div>
