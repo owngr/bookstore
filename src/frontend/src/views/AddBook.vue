@@ -32,25 +32,16 @@
         />
       </p>
       <p>
-<!--        <label class="form-label" for="editor">Éditeur</label>-->
-<!--        <InputText-->
-<!--            id="editor"-->
-<!--            type="text"-->
-<!--            v-model="editor"-->
-<!--            name="editor"-->
-<!--        />-->
       </p>
 
       <h5>Editeur</h5>
-      <Dropdown
+      <AutoComplete
           v-model="editor"
-          :options="editors"
-          :editable="true"
-          :filter="true"
-          optionLabel="name"
-          optionValue="name"
-          placeholder="Sélectionner un éditeur"
-          @change="onEditorChange"
+          field="name"
+          :dropdown="true"
+          :suggestions="filteredEditors"
+          @complete="searchEditors"
+          @item-select="onEditorChange"
       />
       <h1>Auteur·rices</h1>
       <div v-for="(author, index) in authors" v-bind:key="index">
@@ -60,13 +51,7 @@
 
       <p>
         <label class="form-label" for="distributor">Distributeur</label>
-        <InputText
-            id="distributor"
-            class="form-control"
-            v-model="distributor"
-            type="text"
-            name="distributor"
-        />
+        <AutoComplete v-model="distributor" :dropdown="true" :suggestions="filteredDistributors" @complete="searchDistributor"/>
       </p>
       <p>
         <Textarea v-model="description" rows="10" cols="100"></Textarea>
@@ -87,6 +72,7 @@
 
 <script>
 import EditorService from "@/service/EditorService";
+import DistributorService from "@/service/DistributorService";
 export default {
   name: "AddBook",
   el: '#addbook',
@@ -98,7 +84,10 @@ export default {
       authors: [({value: ''})],
       editor: null,
       editors: [],
+      filteredEditors: [],
       distributor: null,
+      distributors: [],
+      filteredDistributors: [],
       description: null,
       messages: [],
     }
@@ -166,12 +155,42 @@ export default {
       .catch(() => this.messages.push({severity: 'error', content: `Les éditeurs n'ont pas pu être chargés`}))
     },
 
-    onEditorChange: function (event) {
+    fetchDistributors: function () {
+      DistributorService.getAll()
+        .then((response) => response.json())
+        .then((data) => {
+          this.distributors = data
+          console.log(data)
+        })
+        .catch(() => this.messages.push({severity: 'error', content: `Les distributeurs n'ont pas pu être chargés`}))
+    },
+
+
+    searchDistributor: function (event) {
+      this.filteredDistributors = []
+      this.distributors.forEach(e => {
+        if (e.toLowerCase().includes(event.query.toLowerCase())) {
+          this.filteredDistributors.push(e)
+        }
+      })
+    },
+
+    searchEditors: function (event) {
       console.log(event.value)
+      this.filteredEditors = []
+      this.editors.forEach(e => {
+        if (e.name.toLowerCase().includes(event.query.toLowerCase())) {
+          this.filteredEditors.push(e)
+        }
+      })
+    },
+
+    onEditorChange: function (event) {
+      console.log(event)
       if (event.value && event.value.length !== 0) {
         console.log("inside first loop")
         console.log(this.editors)
-        const editor = this.editors.find(e => e.name === event.value)
+        const editor = this.editors.find(e => e.name === event.value.name)
         if (editor && editor.defaultDistributor) {
           this.distributor = editor.defaultDistributor
         }
@@ -183,6 +202,7 @@ export default {
 
   mounted() {
     this.fetchEditors();
+    this.fetchDistributors()
   },
 }
 </script>

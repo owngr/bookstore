@@ -1,6 +1,7 @@
 package ch.wngr.bookstore.services
 
 import ch.wngr.bookstore.entities.Distributor
+import ch.wngr.bookstore.entities.Publisher
 import ch.wngr.bookstore.repositories.DistributorRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -18,5 +19,9 @@ class DistributorServiceImpl @Autowired constructor(
             existingDistributor = distributorRepository.save(existingDistributor)
         }
         return existingDistributor
+    }
+
+    override fun getDistributors(): List<String> {
+        return distributorRepository.findAll().map(Distributor::toString)
     }
 }
