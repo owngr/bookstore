@@ -88,6 +88,14 @@
           </td>
 
         </tr>
+        <tr>
+          <td>
+            <label class="form-label" for="price">Prix</label>
+          </td>
+          <td>
+            <InputNumber v-model="price" mode="currency" currency="CHF" />
+          </td>
+        </tr>
       </table>
 
 
@@ -129,6 +137,7 @@ export default {
       distributors: [],
       filteredDistributors: [],
       description: null,
+      price: null,
       messages: [],
     }
   },
@@ -142,6 +151,7 @@ export default {
             editor: this.editor,
             distributor: this.distributor,
             description: this.description,
+            price: this.price
           }
       StockService.addBook(body)
           .then(() => this.messages.push({severity: 'success', content: `Le livre a été ajouté`}))

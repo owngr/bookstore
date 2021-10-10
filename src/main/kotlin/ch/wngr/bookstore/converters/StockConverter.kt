@@ -15,5 +15,6 @@ fun Stock.toStockEntry() = StockEntry(
     editor = book.publisher?.name,
     distributor = null,
     amount = amount,
-    description = book.description
+    description = book.description,
+    price = book.price,
 )

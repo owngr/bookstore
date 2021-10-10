@@ -8,4 +8,5 @@ data class StockEntry(
     var distributor: String?,
     var amount: Int?,
     var description: String?,
+    var price: Float?,
 )

@@ -32,4 +32,5 @@ class Book(
     @ManyToOne
     @JoinColumn(name = "distributor_id")
     var distributor: Distributor? = Distributor(),
+    var price: Float? = null,
 )

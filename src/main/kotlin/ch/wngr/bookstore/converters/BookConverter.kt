@@ -11,4 +11,5 @@ fun Book.toScrapperBook() = ScraperBook(
     editor = publisher.toString(),
     distributor = "",
     description = description,
+    price = price,
 )

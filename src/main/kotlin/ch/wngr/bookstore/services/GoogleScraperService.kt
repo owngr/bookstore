@@ -45,6 +45,7 @@ class GoogleScraperService : ScraperService {
                 editor = publisher,
                 distributor = "",
                 description = description,
+                price = null,
             )
         } catch (e: Exception) {
             println(e)

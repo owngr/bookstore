@@ -52,6 +52,7 @@ class StockServiceImpl @Autowired constructor(
                 description = book.description,
                 publisher = publisher,
                 distributor = distributor,
+                price = book.price,
             )
             existingBook = bookRepository.save(newBook)
         }
@@ -115,6 +116,7 @@ class StockServiceImpl @Autowired constructor(
             book.description = stockEntry.description!!
             book.publisher = stockEntry.editor?.let { publisherService.getOrCreatePublisher(it, stockEntry.distributor) }
             book.distributor = stockEntry.distributor?.let { distributorService.getOrCreateDistributor(it) }
+            book.price = stockEntry.price
             bookRepository.save(book)
             return stockRepository.findByBook_Id(book.id)!!.toStockEntry()
         } else {
