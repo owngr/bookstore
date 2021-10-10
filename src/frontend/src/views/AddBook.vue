@@ -109,6 +109,8 @@ import EditorService from "@/service/EditorService";
 import DistributorService from "@/service/DistributorService";
 import AuthorForm from "@/components/AuthorForm";
 
+
+
 export default {
   name: "AddBook",
   components: {AuthorForm},
@@ -177,6 +179,9 @@ export default {
       });
       this.editor = data.editor
       this.description = data.description;
+      if(this.editor && this.editor.length > 0) {
+        this.changeEditor(this.editor)
+      }
       console.log(this.authors);
     },
 
@@ -224,16 +229,19 @@ export default {
         }
       })
     },
+    changeEditor: function(editorName) {
+      console.log("editor name")
+      console.log(editorName)
+      const editor = this.editors.find(e => e.name === editorName)
+      if (editor && editor.defaultDistributor) {
+        this.distributor = editor.defaultDistributor
+      }
+    },
 
     onEditorChange: function (event) {
-      console.log(event)
       if (event.value && event.value.length !== 0) {
-        console.log("inside first loop")
-        console.log(this.editors)
-        const editor = this.editors.find(e => e.name === event.value.name)
-        if (editor && editor.defaultDistributor) {
-          this.distributor = editor.defaultDistributor
-        }
+        const editorName = event.value.name
+        this.changeEditor(editorName);
       }
     },
   },
