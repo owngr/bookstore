@@ -6,7 +6,8 @@
         @submit.prevent="addBook"
     >
 
-      <Message v-for="msg of messages" :sticky="false" :severity="msg.severity" :key="msg.content">{{msg.content}}</Message>
+      <Message v-for="msg of messages" :sticky="false" :severity="msg.severity" :key="msg.content">{{ msg.content }}
+      </Message>
 
       <table>
         <tr>
@@ -30,7 +31,7 @@
 
         <tr>
           <td>
-          <label class="form-label" for="title">Titre</label>
+            <label class="form-label" for="title">Titre</label>
           </td>
           <td>
             <InputText
@@ -57,7 +58,6 @@
         </tr>
 
 
-
         <tr>
           <td style="vertical-align: top">
             <label class="form-label" for="authors">Auteur·ices</label>
@@ -78,7 +78,8 @@
           </td>
           <td>
             <AutoComplete
-                id="distributor" v-model="distributor" :dropdown="true" :suggestions="filteredDistributors" @complete="searchDistributor"/>
+                id="distributor" v-model="distributor" :dropdown="true" :suggestions="filteredDistributors"
+                @complete="searchDistributor"/>
           </td>
 
         </tr>
@@ -93,11 +94,10 @@
             <label class="form-label" for="price">Prix</label>
           </td>
           <td>
-            <InputNumber v-model="price" mode="currency" currency="CHF" />
+            <InputNumber v-model="price" mode="currency" currency="CHF"/>
           </td>
         </tr>
       </table>
-
 
 
       <p>
@@ -117,7 +117,6 @@ import EditorService from "@/service/EditorService";
 import DistributorService from "@/service/DistributorService";
 import AuthorForm from "@/components/AuthorForm";
 import StockService from "@/service/StockService";
-
 
 
 export default {
@@ -144,15 +143,15 @@ export default {
   methods: {
     addBook: function () {
       const body = {
-            isbn: this.isbn,
-            title: this.title,
-            // authors: null,
-            authors: this.authors.map(a => a.value),
-            editor: this.editor,
-            distributor: this.distributor,
-            description: this.description,
-            price: this.price
-          }
+        isbn: this.isbn,
+        title: this.title,
+        // authors: null,
+        authors: this.authors.map(a => a.value),
+        editor: this.editor,
+        distributor: this.distributor,
+        description: this.description,
+        price: this.price
+      }
       StockService.addBook(body)
           .then(() => this.messages.push({severity: 'success', content: `Le livre a été ajouté`}))
           .catch(error => this.messages.push({severity: 'error', content: `Le livre n'a pas pu être ajouté: ${error}`}))
@@ -186,7 +185,7 @@ export default {
       });
       this.editor = data.editor
       this.description = data.description;
-      if(this.editor && this.editor.length > 0) {
+      if (this.editor && this.editor.length > 0) {
         this.changeEditor(this.editor)
       }
       console.log(this.authors);
@@ -199,22 +198,22 @@ export default {
 
     fetchEditors: function () {
       EditorService.getAll()
-        .then((response) => response.json())
-        .then((data) => {
-          // needded because Drodpown doesn't work with simple list
-          this.editors = data
-        })
-      .catch(() => this.messages.push({severity: 'error', content: `Les éditeurs n'ont pas pu être chargés`}))
+          .then((response) => response.json())
+          .then((data) => {
+            // needded because Drodpown doesn't work with simple list
+            this.editors = data
+          })
+          .catch(() => this.messages.push({severity: 'error', content: `Les éditeurs n'ont pas pu être chargés`}))
     },
 
     fetchDistributors: function () {
       DistributorService.getAll()
-        .then((response) => response.json())
-        .then((data) => {
-          this.distributors = data
-          console.log(data)
-        })
-        .catch(() => this.messages.push({severity: 'error', content: `Les distributeurs n'ont pas pu être chargés`}))
+          .then((response) => response.json())
+          .then((data) => {
+            this.distributors = data
+            console.log(data)
+          })
+          .catch(() => this.messages.push({severity: 'error', content: `Les distributeurs n'ont pas pu être chargés`}))
     },
 
 
@@ -236,7 +235,7 @@ export default {
         }
       })
     },
-    changeEditor: function(editorName) {
+    changeEditor: function (editorName) {
       console.log("editor name")
       console.log(editorName)
       const editor = this.editors.find(e => e.name === editorName)
@@ -254,7 +253,6 @@ export default {
   },
 
 
-
   mounted() {
     this.fetchEditors();
     this.fetchDistributors()
@@ -264,15 +262,15 @@ export default {
 
 <style scoped>
 
- div >>> .p-hidden-accessible {
-   border: 0;
-   clip: rect(0 0 0 0);
-   height: 1px;
-   margin: -1px;
-   overflow: hidden;
-   padding: 0;
-   position: absolute;
-   width: 1px;
- }
+div >>> .p-hidden-accessible {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
 
 </style>
