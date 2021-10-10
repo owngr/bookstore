@@ -34,8 +34,9 @@
       <p>
       </p>
 
-      <h5>Editeur</h5>
+      <label class="form-label" for="editor">Maison d'édition</label>
       <AutoComplete
+          id="editor"
           v-model="editor"
           field="name"
           :dropdown="true"
@@ -43,15 +44,19 @@
           @complete="searchEditors"
           @item-select="onEditorChange"
       />
-      <h1>Auteur·rices</h1>
-      <div v-for="(author, index) in authors" v-bind:key="index">
-        <InputText v-bind:key="author.value" v-model="author.value"/>
-      </div>
-      <Button @click="addAuthor" label="nouve̛l·le auteur·rice"/>
+      <p>
+        <AuthorForm
+            :add-author-function="addAuthor"
+            :authors="authors"
+            :delete-author-function="deleteAuthor"
+        />
+      </p>
+      <h4>Auteur·rices</h4>
 
       <p>
         <label class="form-label" for="distributor">Distributeur</label>
-        <AutoComplete v-model="distributor" :dropdown="true" :suggestions="filteredDistributors" @complete="searchDistributor"/>
+        <AutoComplete
+        id="distributor" v-model="distributor" :dropdown="true" :suggestions="filteredDistributors" @complete="searchDistributor"/>
       </p>
       <p>
         <Textarea v-model="description" rows="10" cols="100"></Textarea>
@@ -73,8 +78,11 @@
 <script>
 import EditorService from "@/service/EditorService";
 import DistributorService from "@/service/DistributorService";
+import AuthorForm from "@/components/AuthorForm";
+
 export default {
   name: "AddBook",
+  components: {AuthorForm},
   el: '#addbook',
   data() {
     return {
@@ -113,6 +121,9 @@ export default {
     },
     addAuthor: function () {
       this.authors.push({value: ''});
+    },
+    deleteAuthor: function (index) {
+      this.authors.splice(index, 1)
     },
     searchIsbn: function () {
       console.debug("fetching data")
