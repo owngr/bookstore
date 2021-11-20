@@ -40,11 +40,11 @@ class StockServiceImpl @Autowired constructor(
         if (existingBook == null) {
             val authors: MutableSet<Author> = HashSet()
             for (authorName: String in book.authors) {
-                var author: Author = authorService.getOrCreateAuthor(authorName)
+                val author: Author = authorService.getOrCreateAuthor(authorName)
                 authors.add(author)
             }
             val publisher = book.editor?.let { publisherService.getOrCreatePublisher(it, book.distributor) }
-            val distributor = book.distributor?.let { distributorService.getOrCreateDistributor(it)}
+            val distributor = book.distributor?.let { distributorService.getOrCreateDistributor(it) }
             val newBook = Book(
                 isbn = book.isbn,
                 title = book.title,
@@ -113,6 +113,7 @@ class StockServiceImpl @Autowired constructor(
                 authors.add(author)
             }
             book.authors = authors
+            book.title = stockEntry.title
             book.description = stockEntry.description!!
             book.publisher = stockEntry.editor?.let { publisherService.getOrCreatePublisher(it, stockEntry.distributor) }
             book.distributor = stockEntry.distributor?.let { distributorService.getOrCreateDistributor(it) }

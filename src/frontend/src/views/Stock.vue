@@ -2,7 +2,13 @@
   <h1>Stock</h1>
   <div>
     <Dialog header="Mise à jour entrée stock" v-model:visible="displayEditDialog" :style="{width: '50vw'}">
-      <StockEntryEdit v-model:book="book" @close-dialog="closeEditDialog"/>
+      <StockEntryEdit
+          v-model:book="book"
+          :edit-mode="true"
+          @close-dialog="closeEditDialog"
+          submit-button-text="Mettre à jour le livre"
+          :process-form-function="updateStock"
+      />
     </Dialog>
     <DataTable
         :value="stockEntries"
@@ -66,11 +72,14 @@ export default {
   },
 
   mounted() {
-    StockService.getStock().then(data => {
-      this.stockEntries = data}
-    );
+    this.fetchStock();
   },
   methods: {
+    fetchStock() {
+      StockService.getStock().then(data => {
+        this.stockEntries = data}
+      );
+    },
     exportCSV() {
       this.$refs.dt.exportCSV();
     },
@@ -80,6 +89,22 @@ export default {
     },
     closeEditDialog() {
       this.displayEditDialog = false;
+    },
+    updateStock(book) {
+      const body = {
+        isbn: book.isbn,
+        title: book.title,
+        // authors: null,
+        authors: book.authors.map(a => a.value),
+        editor: book.editor,
+        distributor: book.distributor,
+        description: book.description,
+        price: book.price,
+        amount: book.amount,
+      }
+      this.closeEditDialog();
+      return StockService.updateStock(body)
+        .then(this.fetchStock)
     }
   }
 }

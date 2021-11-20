@@ -13,7 +13,7 @@ fun Stock.toStockEntry() = StockEntry(
         }
     ).toList(),
     editor = book.publisher?.name,
-    distributor = null,
+    distributor = book.distributor?.toString(),
     amount = amount,
     description = book.description,
     price = book.price,
