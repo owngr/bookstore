@@ -9,4 +9,5 @@ data class StockEntry(
     var amount: Int?,
     var description: String?,
     var price: Float?,
+    var hasCover: Boolean,
 )

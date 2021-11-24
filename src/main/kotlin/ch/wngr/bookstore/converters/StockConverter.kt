@@ -17,4 +17,5 @@ fun Stock.toStockEntry() = StockEntry(
     amount = amount,
     description = book.description,
     price = book.price,
+    hasCover = book.hasCover,
 )

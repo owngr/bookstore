@@ -43,6 +43,7 @@
       <Column field="editor" header="Maison d'édition"></Column>
       <Column field="description" header="Résumé" :hidden="true"></Column>
       <Column field="amount" header="Quantité" :exportable="false"></Column>
+      <Column field="hasCover" header="Couverture" :exportable="false" :sortable="true" ></Column>
     </DataTable>
   </div>
 </template>

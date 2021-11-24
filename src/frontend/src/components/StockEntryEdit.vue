@@ -113,9 +113,11 @@
           </td>
 
         </tr>
-        <td colspan="2">
-          <FileUpload mode="advanced" name="demo[]" @uploader="fileUpload" :customUpload="true" accept="image/*" />
-        </td>
+        <tr v-if="editMode">
+          <td colspan="2">
+            <FileUpload mode="advanced" name="demo[]" @uploader="fileUpload" :customUpload="true" accept="image/*" />
+          </td>
+        </tr>
       </table>
       <p>
         <Button

@@ -31,7 +31,7 @@ class BookController @Autowired constructor(
 //    }
 
     @PostMapping("/cover")
-    fun addCover(@RequestParam("file") cover: MultipartFile) {
-        return coverService.uploadBookCover(cover)
+    fun addCover(@RequestParam("file") cover: MultipartFile, @RequestParam("isbn") isbn: String) {
+        return coverService.uploadBookCover(cover, isbn)
     }
 }

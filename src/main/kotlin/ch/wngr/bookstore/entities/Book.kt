@@ -33,4 +33,5 @@ class Book(
     @JoinColumn(name = "distributor_id")
     var distributor: Distributor? = Distributor(),
     var price: Float? = null,
+    var hasCover: Boolean = false,
 )
