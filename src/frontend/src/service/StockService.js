@@ -29,6 +29,15 @@ class StockService {
             .then(handleErrors)
     }
 
+    addCover(formData, isbn) {
+        const requestOptions = {
+            method: "POST",
+            body: formData
+        }
+        return fetch("/api/book/cover?" + new URLSearchParams({ isbn } ), requestOptions)
+            .then(handleErrors)
+    }
+
 
 }
 

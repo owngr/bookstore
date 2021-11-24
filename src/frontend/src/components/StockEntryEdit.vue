@@ -113,7 +113,9 @@
           </td>
 
         </tr>
-
+        <td colspan="2">
+          <FileUpload mode="advanced" name="demo[]" @uploader="fileUpload" :customUpload="true" accept="image/*" />
+        </td>
       </table>
       <p>
         <Button
@@ -135,6 +137,7 @@
 import EditorService from "@/service/EditorService";
 import DistributorService from "@/service/DistributorService";
 import AuthorForm from "@/components/AuthorForm";
+import StockService from "@/service/StockService";
 export default {
   name: "StockEntryEdit",
   components: { AuthorForm },
@@ -159,6 +162,7 @@ export default {
       filteredEditors: [],
       distributors: [],
       filteredDistributors: [],
+      formData: null
     }
   },
   methods: {
@@ -260,7 +264,17 @@ export default {
         this.changeEditor(editorName);
       }
     },
+
+    fileUpload(event) {
+      this.formData = new FormData();
+      this.formData.append("file", event.files[0])
+      StockService.addCover(this.formData, this.bookCopy.isbn)
+          .then(() => this.messages.push({severity: 'success', content: `L'image a pu être uploadé`}))
+          .catch(() => this.messages.push({severity: 'error', content: `L'image n'a pas pu être uploadé`}))
+    },
   },
+
+
   created() {
     // this.bookCopy =
     this.bookCopy = JSON.parse(JSON.stringify(this.book))

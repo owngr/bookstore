@@ -1,16 +1,19 @@
 package ch.wngr.bookstore.controllers
 
 import ch.wngr.bookstore.models.ScraperBook
+import ch.wngr.bookstore.services.CoverService
 import ch.wngr.bookstore.services.ScraperService
 import ch.wngr.bookstore.services.StockService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/book")
 class BookController @Autowired constructor(
     private val scraperService: ScraperService,
     private val stockService: StockService,
+    private val coverService: CoverService,
 ) {
     @GetMapping("/ISBN")
     fun fetchBookInfo(isbn: String): ScraperBook {
@@ -20,5 +23,15 @@ class BookController @Autowired constructor(
     @PostMapping("/stock")
     fun addBookToStock(@RequestBody book: ScraperBook) {
         return stockService.addBook(book)
+    }
+
+//    @PostMapping("/cover")
+//    fun addCover(@RequestBody cover: Cover) {
+//        return coverService.uploadBookCover(cover.isbn, cover.image)
+//    }
+
+    @PostMapping("/cover")
+    fun addCover(@RequestParam("file") cover: MultipartFile) {
+        return coverService.uploadBookCover(cover)
     }
 }
