@@ -1,9 +1,9 @@
 import handleErrors from "@/helpers/httpHelper";
 
-class StockService {
+class InventoryService {
 
-    getStock() {
-        return fetch("/api/stock")
+    getInventory() {
+        return fetch("/api/inventory")
             .then(handleErrors)
             .then(res => res.json());
     }
@@ -38,17 +38,9 @@ class StockService {
             .then(handleErrors)
     }
 
-    deleteStock() {
-        const requestOptions = {
-            method: "DELETE",
-        }
-        return fetch("/api/stock", requestOptions)
-            .then(handleErrors)
-    }
-
 
 }
 
 
 
-export default new StockService()
+export default new InventoryService()

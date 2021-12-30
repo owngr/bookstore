@@ -19,6 +19,10 @@ export default {
         {
           label:'Ajout de livres',
           to: '/book/add',
+        },
+        {
+          label: 'Inventaire',
+          to: '/inventory',
         }
       ]
     }

@@ -149,6 +149,8 @@ export default {
       type: Boolean,
       default: false,
     },
+    // used after reload
+    initMessages: [],
     submitButtonText: {
       type: Text,
       default: "Ajouter le livre",
@@ -191,6 +193,8 @@ export default {
       if (this.bookCopy.editor && this.bookCopy.editor.length > 0) {
         this.changeEditor(this.bookCopy.editor)
       }
+      this.bookCopy.price = data.price
+      console.debug("data filled")
     },
     addAuthor: function () {
       this.bookCopy.authors.push({value: ''});
@@ -215,7 +219,8 @@ export default {
       this.processFormFunction(this.bookCopy)
         .then((data) => {
           this.bookCopy = data
-          this.messages.push({severity: 'success', content: `Le stock a été modifié`})
+          // done in parent
+          // this.messages.push({severity: 'success', content: `Le stock a été modifié`})
           this.$emit('close-dialog')
         })
         .catch(() => this.messages.push({severity: 'error', content: `le stock n'a pas pu être modifié`}))
@@ -280,6 +285,7 @@ export default {
   created() {
     // this.bookCopy =
     this.bookCopy = JSON.parse(JSON.stringify(this.book))
+    this.messages = this.initMessages
     this.bookCopy.authors = this.bookCopy.authors.map(a => {
       return {value: a}
     });

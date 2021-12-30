@@ -3,6 +3,8 @@
   <StockEntryEdit
       v-model:book="initBook"
       :process-form-function="addBook"
+      v-model:initMessages="messages"
+      :key="reloadCount"
   />
 
 </template>
@@ -17,6 +19,7 @@ export default {
   el: '#addbook',
   data() {
     return {
+      reloadCount: 0,
       initBook: {
         isbn: null,
         title: null,
@@ -25,11 +28,13 @@ export default {
         distributor: null,
         description: null,
         price: null,
-      }
+      },
+      messages: []
     }
   },
   methods: {
     addBook: function (book) {
+      console.debug("addBook.addbook")
       const body = {
         isbn: book.isbn,
         title: book.title,
@@ -40,6 +45,8 @@ export default {
         description: book.description,
         price: book.price
       }
+      this.reloadCount++
+      this.messages.push({severity: 'success', content: `Le stock a été modifié`})
       return StockService.addBook(body)
     },
   }

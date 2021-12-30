@@ -3,6 +3,7 @@ package ch.wngr.bookstore.controllers
 import ch.wngr.bookstore.models.StockEntry
 import ch.wngr.bookstore.services.StockService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,5 +23,10 @@ internal class StockController @Autowired constructor(
     @PutMapping("")
     fun updateStock(@RequestBody stockEntry: StockEntry): StockEntry {
         return stockService.updateStock(stockEntry)
+    }
+
+    @DeleteMapping()
+    fun deleteSTock() {
+        return stockService.deleteStock()
     }
 }

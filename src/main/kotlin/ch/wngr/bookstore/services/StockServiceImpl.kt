@@ -8,6 +8,7 @@ import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Publisher
 import ch.wngr.bookstore.entities.Stock
 import ch.wngr.bookstore.models.Editor
+import ch.wngr.bookstore.models.Inventory
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.models.StockEntry
 import ch.wngr.bookstore.repositories.BookRepository
@@ -124,5 +125,13 @@ class StockServiceImpl @Autowired constructor(
             println("The book could not be found")
             throw NotFoundException("The book could not be found")
         }
+    }
+
+    override fun getInventory(): Inventory {
+        return stockRepository.getInventory()
+    }
+
+    override fun deleteStock() {
+        return stockRepository.deleteAll()
     }
 }

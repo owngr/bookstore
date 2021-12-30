@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import Home from "@/views/Home.vue";
 import AddBook from "@/views/AddBook";
 import Stock from "@/views/Stock";
+import Inventory from "@/views/Inventory";
 
 const routes = [
     {
@@ -19,6 +20,11 @@ const routes = [
         name: "BookAdd",
         component: AddBook,
     },
+    {
+        path: "/inventory",
+        name: "Inventory",
+        component: Inventory,
+    }
 ];
 
 const router = createRouter({
