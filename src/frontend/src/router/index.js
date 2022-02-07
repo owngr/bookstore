@@ -3,6 +3,7 @@ import Home from "@/views/Home.vue";
 import AddBook from "@/views/AddBook";
 import Stock from "@/views/Stock";
 import Inventory from "@/views/Inventory";
+import Shop from "@/views/Shop";
 
 const routes = [
     {
@@ -24,6 +25,11 @@ const routes = [
         path: "/inventory",
         name: "Inventory",
         component: Inventory,
+    },
+    {
+        path: "/shop",
+        name: "Shop",
+        component: Shop,
     }
 ];
 

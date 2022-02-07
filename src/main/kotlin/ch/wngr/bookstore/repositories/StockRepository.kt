@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository
 interface StockRepository : CrudRepository<Stock, Int> {
     fun findByBook_Id(id: Int): Stock?
     fun findByAmountGreaterThan(amount: Int): List<Stock>
+    fun findByBook_HasCover(boolean: Boolean): List<Stock>
 
     @Query("select new ch.wngr.bookstore.models.Inventory(sum(s.amount), sum(b.price*s.amount)) from Stock s join Book b on b.id = s.book.id")
     fun getInventory(): Inventory
