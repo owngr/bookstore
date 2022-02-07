@@ -1,0 +1,33 @@
+# .github/workflows/deploy.yml
+name: Deploy
+on: ['deployment', 'workflow_dispatch']
+
+jobs:
+  deployment:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Deploy helm chart
+        uses: WyriHaximus/github-action-helm3@v2
+        with:
+          exec: |
+            helm repo add bitnami https://charts.bitnami.com/bitnami &&
+            helm dependency build infra/bookstore &&
+            helm upgrade bookstore infra/bookstore --install --wait --atomic --namespace=bookstore --values=infra/bookstore/values.yaml
+          kubeconfig: '${{ secrets.KUBECONFIG }}'
+
+      - name: Scale down
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG_BASE64 }}
+        with:
+          args: scale --replicas=0 deployment/bookstore -n bookstore
+
+      - name: Scale up
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG_BASE64 }}
+        with:
+          args: scale --replicas=1 deployment/bookstore -n bookstore
+

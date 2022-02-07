@@ -25,6 +25,7 @@
         <kotlin.version>1.5.20</kotlin.version>
         <npm.version>6.14.13</npm.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gitlab.pat>secret</gitlab.pat>
     </properties>
     <dependencies>
         <dependency>
@@ -50,6 +51,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+<!--        Needed for liveness probe-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -100,6 +107,29 @@
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/sqlVersions</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>sqlVersions</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -224,6 +254,23 @@
                         <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>ghcr.io/olivierwenger/bookstore</name>
+                        <publish>true</publish>
+                    </image>
+                    <docker>
+                        <publishRegistry>
+                            <username>olivier@wngr.ch</username>
+                            <password>${gitlab.pat}</password>
+                            <url>https://ghcr.io/Olivierwenger/</url>
+                        </publishRegistry>
+                    </docker>
+                </configuration>
             </plugin>
         </plugins>
     </build>

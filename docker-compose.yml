@@ -12,6 +12,15 @@ services:
       - POSTGRES_PASSWORD=BraveNewWorld
     ports:
       - "5432:5432"
+#  bookstore:
+#    container_name: bookstore
+#    image: docker.io/library/bookstore:latest
+#    environment:
+#      - spring_profiles_active=dev
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      - flyway
   flyway:
     container_name: flyway
     depends_on:
@@ -22,5 +31,5 @@ services:
       - FLYWAY_URL=jdbc:postgresql://postgres:5432/
     image: flyway/flyway:7
     volumes:
-      - ./sqlVersions:/flyway/sql
+      - ./src/main/resources/sqlVersions:/flyway/sql
     command: -locations=filesystem:/flyway/sql -connectRetries=60 migrate

@@ -58,7 +58,7 @@ export default {
 
 <style scoped>
 
-div >>> .p-hidden-accessible {
+div :deep(.p-hidden-accessible) {
   border: 0;
   clip: rect(0 0 0 0);
   height: 1px;
