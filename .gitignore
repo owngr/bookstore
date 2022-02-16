@@ -37,3 +37,6 @@ build/
 
 ### Project ###
 covers/
+
+### Helm ###
+**/charts/*.tgz
