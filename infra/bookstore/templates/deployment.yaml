@@ -54,6 +54,13 @@ spec:
             value: {{ .Values.postgresql.postgresqlUsername }}
           - name: JDBC_DATABASE_PASSWORD
             value: {{ .Values.postgresql.postgresqlPassword }}
+          volumeMounts:
+            - mountPath: /workspace/covers
+              name: covers
+      volumes:
+        - name: covers
+          persistentVolumeClaim:
+            claimName: bookstore-covers-pvc
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
