@@ -26,8 +26,9 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  # Needed to have right access on the mounted volumes as we don't run as root
+  fsGroup: 1000
 
 securityContext: {}
   # capabilities:
