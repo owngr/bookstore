@@ -26,6 +26,11 @@
                 :disabled="editMode"
             />
           </td>
+          <td rowspan="6">
+            <img v-if="!editMode" :src="bookCopy.coverUrl" alt="" style="width: 200px; height: auto">
+            <img v-if="editMode" :src="'/api/shop/'+bookCopy.isbn" alt="" style="width: 200px; height: auto">
+          </td>
+
         </tr>
 
         <tr>
@@ -194,6 +199,7 @@ export default {
         this.changeEditor(this.bookCopy.editor)
       }
       this.bookCopy.price = data.price
+      this.bookCopy.coverUrl = data.coverUrl
       console.debug("data filled")
     },
     addAuthor: function () {

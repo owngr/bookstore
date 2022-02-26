@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.io.InputStream
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.deleteIfExists
@@ -48,6 +49,18 @@ class CoverServiceImpl @Autowired constructor(
         val tmpPath = Path.of(coverTempDirectory, "$isbn.$extension")
         val coverPath = Path.of(bookCoverDirectory, "$isbn.jpeg")
         val tmpFile = Files.write(tmpPath, image.bytes)
+        Thumbnails.of(File(tmpPath.toUri()))
+            .size(imageWidth, imageHeight)
+            .toFile(File(coverPath.toUri()))
+        tmpFile.deleteIfExists()
+    }
+
+    override fun fetchAndUploadCover(url: String, isbn: String) {
+        val imageUrl = URL(url)
+        val inputStream: InputStream = imageUrl.openStream()
+        val tmpPath = Path.of(coverTempDirectory, "$isbn.jpeg")
+        val coverPath = Path.of(bookCoverDirectory, "$isbn.jpeg")
+        val tmpFile = Files.write(tmpPath, inputStream.readBytes())
         Thumbnails.of(File(tmpPath.toUri()))
             .size(imageWidth, imageHeight)
             .toFile(File(coverPath.toUri()))

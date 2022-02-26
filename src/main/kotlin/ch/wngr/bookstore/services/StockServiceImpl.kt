@@ -27,6 +27,7 @@ class StockServiceImpl @Autowired constructor(
     val publisherRepository: PublisherRepository,
     val distributorService: DistributorService,
     val publisherService: PublisherService,
+    val coverService: CoverService,
 
 ) : StockService {
 
@@ -46,6 +47,11 @@ class StockServiceImpl @Autowired constructor(
             }
             val publisher = book.editor?.let { publisherService.getOrCreatePublisher(it, book.distributor) }
             val distributor = book.distributor?.let { distributorService.getOrCreateDistributor(it) }
+            var hasCover = false
+            if (book.coverUrl.isNotEmpty()) {
+                coverService.fetchAndUploadCover(book.coverUrl, book.isbn)
+                hasCover = true
+            }
             val newBook = Book(
                 isbn = book.isbn,
                 title = book.title,
@@ -54,6 +60,7 @@ class StockServiceImpl @Autowired constructor(
                 publisher = publisher,
                 distributor = distributor,
                 price = book.price,
+                hasCover = hasCover,
             )
             existingBook = bookRepository.save(newBook)
         }

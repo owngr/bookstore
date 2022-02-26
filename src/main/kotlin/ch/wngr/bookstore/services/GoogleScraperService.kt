@@ -8,7 +8,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.lang.Exception
 
 @Service
 class GoogleScraperService : ScraperService {
@@ -24,6 +23,14 @@ class GoogleScraperService : ScraperService {
             )
             val obj: JSONObject = response.jsonObject
             val volumeInfo: JSONObject = (obj["items"] as JSONArray).getJSONObject(0)["volumeInfo"] as JSONObject
+            var coverUrl = ""
+            try {
+                coverUrl = (volumeInfo["imageLinks"] as JSONObject)["thumbnail"] as String
+                coverUrl = coverUrl.replace("http:", "https:")
+            } catch (e: JSONException) {
+                println("cover not found")
+            }
+
             val title: String = volumeInfo["title"] as String
             var publisher = ""
             try {
@@ -46,6 +53,7 @@ class GoogleScraperService : ScraperService {
                 distributor = "",
                 description = description,
                 price = null,
+                coverUrl = coverUrl,
             )
         } catch (e: Exception) {
             println(e)

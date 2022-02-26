@@ -8,5 +8,6 @@ data class ScraperBook(
     var distributor: String?,
     var description: String = "",
     var price: Float?,
+    var coverUrl: String = "",
 )
 

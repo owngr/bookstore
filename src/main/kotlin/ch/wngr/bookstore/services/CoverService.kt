@@ -6,4 +6,5 @@ interface CoverService {
 
     fun uploadBookCover(image: MultipartFile, isbn: String)
     fun downloadBookCover(isbn: String): ByteArray
+    fun fetchAndUploadCover(url: String, isbn: String)
 }
