@@ -4,8 +4,8 @@ metadata:
   name: bookstore-covers-pvc
 spec:
   accessModes:
-  - ReadWriteMany
+  - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi
   storageClassName: hcloud-volumes

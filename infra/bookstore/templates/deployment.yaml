@@ -55,7 +55,7 @@ spec:
           - name: JDBC_DATABASE_PASSWORD
             value: {{ .Values.postgresql.postgresqlPassword }}
           volumeMounts:
-            - mountPath: /workspace/covers
+            - mountPath: /home/cnb/covers
               name: covers
       volumes:
         - name: covers
