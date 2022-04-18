@@ -45,8 +45,31 @@ spec:
             httpGet:
               path: /
               port: http
+          env:
+            - name: WORDPRESS_DB_HOST
+              value: {{ .Release.Name }}-mariadb
+            - name: WORDPRESS_DB_USER
+              value: {{ .Values.mariadb.auth.username }}
+            - name: WORDPRESS_DB_PASSWORD
+              value: {{ .Values.mariadb.auth.password }}
+            - name: WORDPRESS_DB_NAME
+              value: {{ .Values.mariadb.auth.database }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp/uploads
+              subPath: uploads
+              name: filedir
+            - mountPath: /tmp/plugins
+              subPath: plugins
+              name: filedir
+            - mountPath: /tmp/themes
+              subPath: themes
+              name: filedir
+      volumes:
+        - name: filedir
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-filedir
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

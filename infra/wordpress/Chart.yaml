@@ -1,6 +1,10 @@
 apiVersion: v2
 name: wordpress
 description: A Helm chart for Kubernetes
+dependencies:
+  - name: mariadb
+    repository: https://charts.bitnami.com/bitnami
+    version: 10.3.7
 
 # A chart can be either an 'application' or a 'library' chart.
 #

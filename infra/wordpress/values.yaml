@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: wordpress
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
@@ -42,20 +42,21 @@ service:
 
 ingress:
   enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+
   hosts:
-    - host: chart-example.local
+    - host: art-aimer.wngr.ch
       paths:
       - path: /
-        backend:
-          serviceName: chart-example.local
-          servicePort: 80
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+#        backend:
+#          serviceName: chart-example.local
+#          servicePort: 80
+  tls:
+    - secretName: art-aimer-tls
+      hosts:
+        - art-aimer.wngr.ch
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -81,3 +82,10 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+mariadb:
+  auth:
+    username: mariadb
+    password: b20c436d040509dc
+    database: ars_amatoria_db
+
