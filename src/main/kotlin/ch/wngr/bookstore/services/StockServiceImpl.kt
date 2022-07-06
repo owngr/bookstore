@@ -139,6 +139,6 @@ class StockServiceImpl @Autowired constructor(
     }
 
     override fun deleteStock() {
-        return stockRepository.deleteAll()
+        return stockRepository.resetStock()
     }
 }

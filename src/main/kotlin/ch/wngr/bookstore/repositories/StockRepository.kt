@@ -2,9 +2,11 @@ package ch.wngr.bookstore.repositories
 
 import ch.wngr.bookstore.entities.Stock
 import ch.wngr.bookstore.models.Inventory
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 interface StockRepository : CrudRepository<Stock, Int> {
@@ -14,4 +16,9 @@ interface StockRepository : CrudRepository<Stock, Int> {
 
     @Query("select new ch.wngr.bookstore.models.Inventory(sum(s.amount), sum(b.price*s.amount)) from Stock s join Book b on b.id = s.book.id")
     fun getInventory(): Inventory
+
+    @Modifying
+    @Transactional
+    @Query("update Stock set amount = 0")
+    fun resetStock()
 }

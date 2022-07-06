@@ -10,8 +10,4 @@ class BookInfoRepositoryImpl : BookInfoRepository {
 
     }
 
-    private fun Author(author: String) {
-
-    }
-
 }
