@@ -57,13 +57,13 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - mountPath: /tmp/uploads
+            - mountPath: /var/www/html/wp-content/uploads
               subPath: uploads
               name: filedir
-            - mountPath: /tmp/plugins
+            - mountPath: /var/www/html/wp-content/plugins
               subPath: plugins
               name: filedir
-            - mountPath: /tmp/themes
+            - mountPath: /var/www/html/wp-content/themes
               subPath: themes
               name: filedir
       volumes:
