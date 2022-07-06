@@ -23,6 +23,10 @@ export default {
         {
           label: 'Inventaire',
           to: '/inventory',
+        },
+        {
+          label: "Vendre des livres",
+          to: '/book/sell',
         }
       ]
     }

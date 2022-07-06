@@ -14,15 +14,9 @@
             <label class="form-label" for="isbn">ISBN</label>
           </td>
           <td>
-            <InputText
-                @input="searchIsbn"
-                class="form-control"
-                id="isbn"
-                v-model="bookCopy.isbn"
-                type="number"
-                name="isnbn"
-                minlength="10"
-                maxlength="13"
+            <IsbnSearch
+                @book="fillData"
+                @message="this.messages.push($event)"
                 :disabled="editMode"
             />
           </td>
@@ -145,9 +139,10 @@ import EditorService from "@/service/EditorService";
 import DistributorService from "@/service/DistributorService";
 import AuthorForm from "@/components/AuthorForm";
 import StockService from "@/service/StockService";
+import IsbnSearch from "@/components/IsbnSearch";
 export default {
   name: "StockEntryEdit",
-  components: { AuthorForm },
+  components: {IsbnSearch, AuthorForm },
   props: {
     book: {},
     editMode: {
@@ -175,19 +170,8 @@ export default {
     }
   },
   methods: {
-    searchIsbn: function () {
-      console.debug("fetching data")
-      console.log(this.bookCopy.isbn.length)
-      if (this.bookCopy.isbn.length === 13) {
-        fetch("/api/book/ISBN?isbn=" + this.bookCopy.isbn)
-            .then((response) => response.text())
-            .then((data) => {
-              this.fillData(JSON.parse(data));
-            })
-            .catch((e) => this.messages.push({severity: 'warn', content: `Le livre n'a pas pu être trouvé {}`+ e}))
-      }
-    },
     fillData: function (data) {
+      console.debug('found data')
       this.bookCopy.isbn = data.isbn;
       this.bookCopy.title = data.title;
       this.bookCopy.authors = data.authors.map(a => {
