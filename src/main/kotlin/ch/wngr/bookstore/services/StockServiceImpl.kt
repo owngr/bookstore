@@ -6,22 +6,20 @@ import ch.wngr.bookstore.converters.toStockEntry
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Publisher
-import ch.wngr.bookstore.entities.Stock
 import ch.wngr.bookstore.models.Editor
 import ch.wngr.bookstore.models.Inventory
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.models.StockEntry
 import ch.wngr.bookstore.repositories.BookRepository
 import ch.wngr.bookstore.repositories.PublisherRepository
-import ch.wngr.bookstore.repositories.StockRepository
 import javassist.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class StockServiceImpl @Autowired constructor(
     val bookRepository: BookRepository,
-    val stockRepository: StockRepository,
     val scraperService: ScraperService,
     val authorService: AuthorService,
     val publisherRepository: PublisherRepository,
@@ -29,7 +27,7 @@ class StockServiceImpl @Autowired constructor(
     val publisherService: PublisherService,
     val coverService: CoverService,
 
-) : StockService {
+    ) : StockService {
 
     override fun addBook(book: ScraperBook) {
         // check if book info already exist and add it if not
@@ -61,25 +59,20 @@ class StockServiceImpl @Autowired constructor(
                 distributor = distributor,
                 price = book.price,
                 hasCover = hasCover,
+                amount = 1,
             )
-            existingBook = bookRepository.save(newBook)
-        }
-        // add the book to the stock
-        var stock: Stock?
-        stock = stockRepository.findByBook_Id(existingBook.id)
-        if (stock != null) {
-            stock.amount = stock.amount + 1
+            bookRepository.save(newBook)
         } else {
-            stock = Stock(1, book = existingBook)
+            existingBook.amount = existingBook.amount + 1
+            bookRepository.save(existingBook)
         }
-        stockRepository.save(stock)
     }
 
     override fun getStock(): List<StockEntry> {
         val stockEntryList: MutableList<StockEntry> = ArrayList()
         var stockEntry: StockEntry
-        val stock: List<Stock> = stockRepository.findByAmountGreaterThan(0)
-        for (stockEnt: Stock in stock) {
+        val books: List<Book> = bookRepository.findByAmountGreaterThan(0)
+        for (stockEnt: Book in books) {
             stockEntry = stockEnt.toStockEntry()
             stockEntryList.add(stockEntry)
         }
@@ -108,10 +101,10 @@ class StockServiceImpl @Autowired constructor(
 
     override fun updateStock(stockEntry: StockEntry): StockEntry {
         val book = bookRepository.findByIsbn(stockEntry.isbn)
-        val stock = book?.let { stockRepository.findByBook_Id(it.id) }
+        val stock = book?.let { bookRepository.findByIdOrNull(it.id) }
         if (stock != null) {
             stock.amount = stockEntry.amount!!
-            stockRepository.save(stock)
+            bookRepository.save(stock)
         }
         if (book != null) {
             book.isbn = stockEntry.isbn
@@ -123,11 +116,12 @@ class StockServiceImpl @Autowired constructor(
             book.authors = authors
             book.title = stockEntry.title
             book.description = stockEntry.description!!
-            book.publisher = stockEntry.editor?.let { publisherService.getOrCreatePublisher(it, stockEntry.distributor) }
+            book.publisher =
+                stockEntry.editor?.let { publisherService.getOrCreatePublisher(it, stockEntry.distributor) }
             book.distributor = stockEntry.distributor?.let { distributorService.getOrCreateDistributor(it) }
             book.price = stockEntry.price
             bookRepository.save(book)
-            return stockRepository.findByBook_Id(book.id)!!.toStockEntry()
+            return book.toStockEntry()
         } else {
             println("The book could not be found")
             throw NotFoundException("The book could not be found")
@@ -135,16 +129,16 @@ class StockServiceImpl @Autowired constructor(
     }
 
     override fun getInventory(): Inventory {
-        return stockRepository.getInventory()
+        return bookRepository.getInventory()
     }
 
     override fun deleteStock() {
-        return stockRepository.resetStock()
+        return bookRepository.resetStock()
     }
 
     override fun getStockEntry(isbn: String): StockEntry {
         val book = bookRepository.findByIsbn(isbn)
-        val stock = book?.let { stockRepository.findByBook_Id(it.id) }
+        val stock = book?.let { bookRepository.findByIdOrNull(it.id) }
         if (stock != null) {
             val stockEntry = stock.toStockEntry()
             return stockEntry

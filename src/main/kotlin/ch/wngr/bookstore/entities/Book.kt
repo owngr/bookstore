@@ -34,4 +34,5 @@ class Book(
     var distributor: Distributor? = Distributor(),
     var price: Float? = null,
     var hasCover: Boolean = false,
+    var amount: Int = 0,
 )
