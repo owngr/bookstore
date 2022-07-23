@@ -14,7 +14,6 @@ import ch.wngr.bookstore.repositories.BookRepository
 import ch.wngr.bookstore.repositories.PublisherRepository
 import javassist.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -101,12 +100,8 @@ class StockServiceImpl @Autowired constructor(
 
     override fun updateStock(stockEntry: StockEntry): StockEntry {
         val book = bookRepository.findByIsbn(stockEntry.isbn)
-        val stock = book?.let { bookRepository.findByIdOrNull(it.id) }
-        if (stock != null) {
-            stock.amount = stockEntry.amount!!
-            bookRepository.save(stock)
-        }
         if (book != null) {
+            book.amount = stockEntry.amount!!
             book.isbn = stockEntry.isbn
             val authors: MutableSet<Author> = HashSet()
             for (authorName: String in stockEntry.authors) {
@@ -138,10 +133,8 @@ class StockServiceImpl @Autowired constructor(
 
     override fun getStockEntry(isbn: String): StockEntry {
         val book = bookRepository.findByIsbn(isbn)
-        val stock = book?.let { bookRepository.findByIdOrNull(it.id) }
-        if (stock != null) {
-            val stockEntry = stock.toStockEntry()
-            return stockEntry
+        if (book != null) {
+            return book.toStockEntry()
         }
         println("The book could not be found in stock")
         throw NotFoundException("The book could not be found in stock")
