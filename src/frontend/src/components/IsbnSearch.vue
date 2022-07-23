@@ -26,15 +26,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    apiPath: {
+      type: String,
+      default: "/api/book/ISBN?isbn="
+    },
+    resetOnFound: {
+      type: Boolean,
+      default: false,
+    }
   },
   methods: {
     searchIsbn: function () {
       console.debug("fetching data")
       console.log(this.isbn)
       if (this.isbn.length === 13) {
-        fetch("/api/book/ISBN?isbn=" + this.isbn)
+        fetch(this.apiPath + this.isbn)
             .then((response) => response.text())
             .then((data) => {
+              if (this.resetOnFound) {
+                this.isbn = "";
+              }
               this.$emit('book', JSON.parse(data))
             })
             .catch((e) => this.$emit('message', {severity: 'warn', content: `Le livre n'a pas pu être trouvé {}`+ e}))

@@ -4,6 +4,8 @@ import router from './router' // <---
 import PrimeVue from 'primevue/config';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import ColumnGroup from "primevue/columngroup";
+import Row from "primevue/row";
 import Textarea from "primevue/textarea";
 import Message from 'primevue/message';
 import Menubar from 'primevue/menubar';
@@ -27,6 +29,8 @@ app.use(PrimeVue)
 app.use(router)
 app.component('DataTable', DataTable)
 app.component('Column', Column)
+app.component('ColumnGroup', ColumnGroup)
+app.component('Row', Row)
 app.component('Textarea', Textarea)
 app.component('Message', Message)
 app.component('Menubar', Menubar)

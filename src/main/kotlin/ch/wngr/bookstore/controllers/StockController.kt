@@ -5,6 +5,7 @@ import ch.wngr.bookstore.services.StockService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,6 +19,11 @@ internal class StockController @Autowired constructor(
     @GetMapping("")
     fun getStock(): List<StockEntry> {
         return stockService.getStock()
+    }
+
+    @GetMapping("/{isbn}")
+    fun getStockEntry(@PathVariable("isbn") isbn: String): StockEntry {
+        return stockService.getStockEntry(isbn)
     }
 
     @PutMapping("")

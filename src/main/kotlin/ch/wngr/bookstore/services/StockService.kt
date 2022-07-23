@@ -16,4 +16,5 @@ interface StockService {
     fun updateStock(stockEntry: StockEntry): StockEntry
     fun getInventory(): Inventory
     fun deleteStock()
+    fun getStockEntry(isbn: String): StockEntry
 }

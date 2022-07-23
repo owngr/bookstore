@@ -141,4 +141,15 @@ class StockServiceImpl @Autowired constructor(
     override fun deleteStock() {
         return stockRepository.resetStock()
     }
+
+    override fun getStockEntry(isbn: String): StockEntry {
+        val book = bookRepository.findByIsbn(isbn)
+        val stock = book?.let { stockRepository.findByBook_Id(it.id) }
+        if (stock != null) {
+            val stockEntry = stock.toStockEntry()
+            return stockEntry
+        }
+        println("The book could not be found in stock")
+        throw NotFoundException("The book could not be found in stock")
+    }
 }

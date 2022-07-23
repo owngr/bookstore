@@ -4,6 +4,7 @@ import AddBook from "@/views/AddBook";
 import Stock from "@/views/Stock";
 import Inventory from "@/views/Inventory";
 import Shop from "@/views/Shop";
+import SellBook from "@/views/SellBook";
 
 const routes = [
     {
@@ -30,6 +31,11 @@ const routes = [
         path: "/shop",
         name: "Shop",
         component: Shop,
+    },
+    {
+        path: "/book/sell",
+        name: "SellBook",
+        component: SellBook,
     }
 ];
 
