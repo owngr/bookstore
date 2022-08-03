@@ -1,59 +1,60 @@
 <template>
   <InputText
-      @input="searchIsbn"
-      class="form-control"
       id="isbn"
       v-model="isbn"
+      class="form-control"
       type="number"
       name="isnbn"
       minlength="10"
       maxlength="13"
       :disabled="disabled"
+      @input="searchIsbn"
   />
 </template>
 
-<script>
-export default {
-  name: "IsbnSearch",
-  data() {
-    return {
-      isbn: "",
-    }
-  },
-  props: {
-    inputFunction: {},
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    apiPath: {
-      type: String,
-      default: "/api/book/ISBN?isbn="
-    },
-    resetOnFound: {
-      type: Boolean,
-      default: false,
-    }
-  },
-  methods: {
-    searchIsbn: function () {
-      console.debug("fetching data")
-      console.log(this.isbn)
-      if (this.isbn.length === 13) {
-        fetch(this.apiPath + this.isbn)
-            .then((response) => response.text())
-            .then((data) => {
-              if (this.resetOnFound) {
-                this.isbn = "";
-              }
-              this.$emit('book', JSON.parse(data))
-            })
-            .catch((e) => this.$emit('message', {severity: 'warn', content: `Le livre n'a pas pu être trouvé {}`+ e}))
-      }
-    },
-  }
+<script setup>
+import { ref, defineProps, defineEmits } from "vue"
 
+
+const emit = defineEmits(['book'])
+
+const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  apiPath: {
+    type: String,
+    default: "/api/book/ISBN?isbn="
+  },
+  resetOnFound: {
+    type: Boolean,
+    default: false,
+  },
+  initIsbn: {
+    type: String,
+    default: "",
+  },
+})
+console.log(props.initIsbn)
+const isbn = ref(props.initIsbn)
+
+const searchIsbn = () => {
+  console.debug("fetching data")
+  console.log(isbn.value)
+  if (isbn.value.length === 13) {
+    fetch(props.apiPath + isbn.value)
+        .then((response) => response.text())
+        .then((data) => {
+          if (props.resetOnFound) {
+            isbn.value = ""
+          }
+          emit('book', JSON.parse(data))
+        })
+        .catch((e) => this.$emit('message', {severity: 'warn', content: `Le livre n'a pas pu être trouvé {}` + e}))
+  }
 }
+
 </script>
 
 <style scoped>

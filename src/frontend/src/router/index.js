@@ -1,10 +1,10 @@
-import { createWebHashHistory, createRouter } from "vue-router";
-import Home from "@/views/Home.vue";
-import AddBook from "@/views/AddBook";
-import Stock from "@/views/Stock";
-import Inventory from "@/views/Inventory";
-import Shop from "@/views/Shop";
-import SellBook from "@/views/SellBook";
+import { createWebHashHistory, createRouter } from "vue-router"
+import Home from "@/views/Home.vue"
+import AddBook from "@/views/AddBook"
+import Stock from "@/views/Stock"
+import Inventory from "@/views/Inventory"
+import Shop from "@/views/Shop"
+import SellBook from "@/views/SellBook"
 
 const routes = [
     {
@@ -42,6 +42,6 @@ const routes = [
 const router = createRouter({
     history: createWebHashHistory(),
     routes,
-});
+})
 
-export default router;
+export default router

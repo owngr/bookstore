@@ -5,7 +5,8 @@
         @submit.prevent="processForm"
     >
 
-      <Message v-for="msg of messages" :sticky="false" :severity="msg.severity" :key="msg.content">{{msg.content}}</Message>
+      <Message v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{ msg.content }}
+      </Message>
 
 
       <table>
@@ -15,14 +16,16 @@
           </td>
           <td>
             <IsbnSearch
-                @book="fillData"
-                @message="this.messages.push($event)"
                 :disabled="editMode"
+                :init-isbn="book.isbn"
+                @book="fillData"
+                @message="messages.push($event)"
             />
           </td>
           <td rowspan="6">
             <img v-if="!editMode" :src="bookCopy.coverUrl" alt="" style="width: 200px; height: auto">
-            <img v-if="editMode && bookCopy.hasCover" :src="'/api/shop/'+bookCopy.isbn" alt="" style="width: 200px; height: auto">
+            <img v-if="editMode && bookCopy.hasCover" :src="'/api/shop/'+bookCopy.isbn" alt=""
+                 style="width: 200px; height: auto">
           </td>
 
         </tr>
@@ -46,7 +49,6 @@
             <AutoComplete
                 id="editor"
                 v-model="bookCopy.editor"
-                field="name"
                 :dropdown="true"
                 :suggestions="filteredEditors"
                 @complete="searchEditors"
@@ -77,8 +79,8 @@
             <AutoComplete
                 id="distributor" v-model="bookCopy.distributor"
                 :dropdown="true" :suggestions="filteredDistributors"
-                optionValue="name"
-                @complete="searchDistributor"/>
+                option-value="name"
+                @complete="searchDistributors"/>
           </td>
 
         </tr>
@@ -103,9 +105,9 @@
           </td>
           <td>
             <InputText
-                class="form-control"
                 id="amount"
                 v-model="bookCopy.amount"
+                class="form-control"
                 type="number"
                 name="amount"
             />
@@ -114,7 +116,7 @@
         </tr>
         <tr v-if="editMode">
           <td colspan="2">
-            <FileUpload mode="advanced" name="demo[]" @uploader="fileUpload" :customUpload="true" accept="image/*" />
+            <FileUpload mode="advanced" name="demo[]" :custom-upload="true" accept="image/*" @uploader="fileUpload"/>
           </td>
         </tr>
       </table>
@@ -127,168 +129,125 @@
       </p>
 
 
-
-
-
     </form>
   </div>
 </template>
+<script setup>
 
-<script>
-import EditorService from "@/service/EditorService";
-import DistributorService from "@/service/DistributorService";
-import AuthorForm from "@/components/AuthorForm";
-import StockService from "@/service/StockService";
-import IsbnSearch from "@/components/IsbnSearch";
-export default {
-  name: "StockEntryEdit",
-  components: {IsbnSearch, AuthorForm },
-  props: {
-    book: {},
-    editMode: {
-      type: Boolean,
-      default: false,
-    },
-    // used after reload
-    initMessages: [],
-    submitButtonText: {
-      type: Text,
-      default: "Ajouter le livre",
-    },
-    processFormFunction: {}
+import AuthorForm from "@/components/AuthorForm"
+import StockService from "@/service/StockService"
+import IsbnSearch from "@/components/IsbnSearch"
+import {defineProps, ref, defineEmits,} from "vue"
+import {useFetchDistributors, useFetchEditors} from "@/composables/useFetch"
+import {useSearch} from "@/composables/useSearch"
+
+const props = defineProps({
+  book: {},
+  editMode: {
+    type: Boolean,
+    default: false,
   },
-  data() {
-    return {
-      bookCopy: {},
-      editors: [],
-      messages: [],
-      authors: [],
-      filteredEditors: [],
-      distributors: [],
-      filteredDistributors: [],
-      formData: null
-    }
+  // used after reload
+  initMessages: [],
+  submitButtonText: {
+    type: String,
+    default: "Ajouter le livre",
   },
-  methods: {
-    fillData: function (data) {
-      console.debug('found data')
-      this.bookCopy.isbn = data.isbn;
-      this.bookCopy.title = data.title;
-      this.bookCopy.authors = data.authors.map(a => {
-        return {value: a}
-      });
-      this.bookCopy.editor = data.editor
-      this.bookCopy.description = data.description;
-      if (this.bookCopy.editor && this.bookCopy.editor.length > 0) {
-        this.changeEditor(this.bookCopy.editor)
-      }
-      this.bookCopy.price = data.price
-      this.bookCopy.coverUrl = data.coverUrl
-      console.debug("data filled")
-    },
-    addAuthor: function () {
-      this.bookCopy.authors.push({value: ''});
-    },
-    deleteAuthor: function (index) {
-      this.bookCopy.authors.splice(index, 1)
-    },
-    fetchEditors: function () {
-      EditorService.getAll()
-          .then((response) => response.json())
-          .then((data) => {
-            // needded because Drodpown doesn't work with simple list
-            this.editors = data
-          })
-          .catch(() => this.messages.push({severity: 'error', content: `Les éditeurs n'ont pas pu être chargés`}))
-    },
-    // needed because primevue doesn't understand that it can take the value itself
-    getEditorName: function (editor) {
-      return editor
-    },
-    processForm: function () {
-      this.processFormFunction(this.bookCopy)
-        .then((data) => {
-          this.bookCopy = data
-          // done in parent
-          // this.messages.push({severity: 'success', content: `Le stock a été modifié`})
-          this.$emit('close-dialog')
-        })
-        .catch(() => this.messages.push({severity: 'error', content: `le stock n'a pas pu être modifié`}))
-    },
+  processFormFunction: {}
+})
+let bookCopy = ref(JSON.parse(JSON.stringify(props.book)))
+bookCopy.value.authors = bookCopy.value.authors.map(a => {
+  return {value: a}
+})
+let messages = ref(props.initMessages)
+let editors
+({editors, messages} = useFetchEditors())
+let distributors
+({distributors, messages} = useFetchDistributors())
 
 
-    fetchDistributors: function () {
-      DistributorService.getAll()
-          .then((response) => response.json())
-          .then((data) => {
-            this.distributors = data
-            console.log(data)
-          })
-          .catch(() => this.messages.push({severity: 'error', content: `Les distributeurs n'ont pas pu être chargés`}))
-    },
-
-
-    searchDistributor: function (event) {
-      this.filteredDistributors = []
-      this.distributors.forEach(e => {
-        if (e.toLowerCase().includes(event.query.toLowerCase())) {
-          this.filteredDistributors.push(e)
-        }
-      })
-    },
-
-    searchEditors: function (event) {
-      console.log(event.value)
-      this.filteredEditors = []
-      this.editors.forEach(e => {
-        if (e.name.toLowerCase().includes(event.query.toLowerCase())) {
-          this.filteredEditors.push(e)
-        }
-      })
-    },
-    changeEditor: function (editorName) {
-      console.log(editorName)
-      const editor = this.editors.find(e => e.name === editorName)
-      if (editor && editor.defaultDistributor) {
-        this.bookCopy.distributor = editor.defaultDistributor
-      }
-    },
-
-    onEditorChange: function (event) {
-      if (event.value && event.value.length !== 0) {
-        const editorName = event.value.name
-        this.bookCopy.editor = event.value.name
-        this.changeEditor(editorName);
-      }
-    },
-
-    fileUpload(event) {
-      this.formData = new FormData();
-      this.formData.append("file", event.files[0])
-      StockService.addCover(this.formData, this.bookCopy.isbn)
-          .then(() => this.messages.push({severity: 'success', content: `L'image a pu être uploadé`}))
-          .catch(() => this.messages.push({severity: 'error', content: `L'image n'a pas pu être uploadé`}))
-    },
-  },
-
-
-  created() {
-    // this.bookCopy =
-    this.bookCopy = JSON.parse(JSON.stringify(this.book))
-    this.messages = this.initMessages
-    this.bookCopy.authors = this.bookCopy.authors.map(a => {
-      return {value: a}
-    });
-    if (this.bookCopy.editor && this.bookCopy.editor.length > 0) {
-      this.changeEditor(this.bookCopy.editor)
-    }
-    console.log(this.bookCopy.authors)
-  },
-  mounted() {
-    this.fetchEditors();
-    this.fetchDistributors();
-  },
+const changeEditor = (editorName) => {
+  console.log(editorName)
+  const editor = editors.value.find(e => e.name === editorName)
+  if (editor && editor.defaultDistributor) {
+    bookCopy.value.distributor = editor.defaultDistributor
+  }
 }
+if (bookCopy.value.editor && bookCopy.value.editor.length > 0) {
+  changeEditor(bookCopy.value.editor)
+}
+
+let filteredEditors = ref(editors.value)
+let filteredDistributors = ref(distributors.value)
+let formData = ref(null)
+
+const emit = defineEmits(['close-dialog'])
+
+const fillData = (data) => {
+  console.debug('found data')
+  console.debug(data)
+  bookCopy.value.isbn = data.isbn
+  bookCopy.value.title = data.title
+  bookCopy.value.authors = data.authors.map(a => {
+    return {value: a}
+  })
+  bookCopy.value.editor = data.editor
+  bookCopy.value.description = data.description
+  if (bookCopy.value.editor && bookCopy.value.editor.length > 0) {
+    changeEditor(bookCopy.value.editor)
+  }
+  bookCopy.value.price = data.price
+  bookCopy.value.coverUrl = data.coverUrl
+  console.debug("data filled")
+}
+
+const addAuthor = () => {
+  bookCopy.value.authors.push({value: ''})
+}
+
+const deleteAuthor = (index) => {
+  bookCopy.value.authors.splice(index, 1)
+}
+
+// needed because primevue doesn't understand that it can take the value itself
+const processForm = () => {
+  props.processFormFunction(bookCopy.value)
+      .then((data) => {
+        bookCopy = data
+        // done in parent
+        // this.messages.push({severity: 'success', content: `Le stock a été modifié`})
+        emit('close-dialog')
+      })
+      .catch(() => messages.value.push({severity: 'error', content: `le stock n'a pas pu être modifié`}))
+}
+
+
+const onEditorChange = (event) => {
+  if (event.value && event.value.length !== 0) {
+    const editorName = bookCopy.value.editor[0]
+    bookCopy.value.editor = bookCopy.value.editor[0]
+    changeEditor(editorName)
+  }
+}
+
+const fileUpload = (event) => {
+  formData = new FormData()
+  formData.value.append("file", event.files[0])
+  StockService.addCover(formData, bookCopy.value.isbn)
+      .then(() => messages.value.push({severity: 'success', content: `L'image a pu être uploadé`}))
+      .catch(() => messages.value.push({severity: 'error', content: `L'image n'a pas pu être uploadé`}))
+}
+
+const searchEditors = (event) => {
+  filteredEditors.value = [useSearch(editors.value.map(e => e.name), event)]
+}
+
+const searchDistributors = (event) => {
+  filteredDistributors.value = [useSearch(distributors.value, event)]
+}
+
+
+
 </script>
 
 <style scoped>

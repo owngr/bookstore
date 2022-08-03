@@ -1,17 +1,15 @@
 <template>
-  <div v-for="(author, index) in authors" v-bind:key="index">
+  <div v-for="(author, index) in authors" :key="index">
     <InputText v-model="author.value"/>
-    <Button @click="deleteAuthorFunction(index)" v-if="index !== 0" label="X" />
+    <Button v-if="index !== 0" label="X" @click="deleteAuthorFunction(index)" />
   </div>
-  <Button @click="addAuthorFunction" label="nouve̛l·le auteur·rice"/>
+  <Button label="nouve̛l·le auteur·rice" @click="addAuthorFunction"/>
 </template>
-<script>
-export default {
-  name: 'AuthorForm',
-  props: {
+<script setup>
+import {defineProps} from "vue"
+  defineProps({
     addAuthorFunction: {},
     deleteAuthorFunction: {},
     authors: {},
-  }
-}
+  })
 </script>
