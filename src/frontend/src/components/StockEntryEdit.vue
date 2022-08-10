@@ -46,13 +46,14 @@
         <tr>
           <td><label class="form-label" for="editor">Maison d'édition</label></td>
           <td>
-            <AutoComplete
+            <Dropdown
                 id="editor"
                 v-model="bookCopy.editor"
-                :dropdown="true"
-                :suggestions="filteredEditors"
-                @complete="searchEditors"
-                @item-select="onEditorChange"
+                :editable="true"
+                :options="editors"
+                option-label="name"
+                placeholder="Sélectionner"
+                @change="onEditorChange"
             />
           </td>
         </tr>
@@ -76,11 +77,11 @@
             <label class="form-label" for="distributor">Distributeur</label>
           </td>
           <td>
-            <AutoComplete
+            <Dropdown
                 id="distributor" v-model="bookCopy.distributor"
-                :dropdown="true" :suggestions="filteredDistributors"
-                option-value="name"
-                @complete="searchDistributors"/>
+                :filter="true" :options="distributors"
+                :editable="true"
+                placeholder="Sélectionner"/>
           </td>
 
         </tr>
@@ -139,7 +140,6 @@ import StockService from "@/service/StockService"
 import IsbnSearch from "@/components/IsbnSearch"
 import {defineProps, ref, defineEmits,} from "vue"
 import {useFetchDistributors, useFetchEditors} from "@/composables/useFetch"
-import {useSearch} from "@/composables/useSearch"
 
 const props = defineProps({
   book: {},
@@ -169,7 +169,7 @@ let distributors
 const changeEditor = (editorName) => {
   console.log(editorName)
   const editor = editors.value.find(e => e.name === editorName)
-  if (editor && editor.defaultDistributor) {
+  if (editor && editor.defaultDistributor !== "null") {
     bookCopy.value.distributor = editor.defaultDistributor
   }
 }
@@ -177,8 +177,6 @@ if (bookCopy.value.editor && bookCopy.value.editor.length > 0) {
   changeEditor(bookCopy.value.editor)
 }
 
-let filteredEditors = ref(editors.value)
-let filteredDistributors = ref(distributors.value)
 let formData = ref(null)
 
 const emit = defineEmits(['close-dialog'])
@@ -223,10 +221,8 @@ const processForm = () => {
 
 
 const onEditorChange = (event) => {
-  if (event.value && event.value.length !== 0) {
-    const editorName = bookCopy.value.editor[0]
-    bookCopy.value.editor = bookCopy.value.editor[0]
-    changeEditor(editorName)
+  if (event.value && event.value.name !== null) {
+    changeEditor(event.value.name)
   }
 }
 
@@ -236,14 +232,6 @@ const fileUpload = (event) => {
   StockService.addCover(formData, bookCopy.value.isbn)
       .then(() => messages.value.push({severity: 'success', content: `L'image a pu être uploadé`}))
       .catch(() => messages.value.push({severity: 'error', content: `L'image n'a pas pu être uploadé`}))
-}
-
-const searchEditors = (event) => {
-  filteredEditors.value = [...useSearch(editors.value.map(e => e.name), event)]
-}
-
-const searchDistributors = (event) => {
-  filteredDistributors.value = [...useSearch(distributors.value, event)]
 }
 
 
