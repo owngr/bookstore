@@ -1,9 +1,7 @@
 package ch.wngr.bookstore.services
 
-import ch.wngr.bookstore.models.Editor
-import ch.wngr.bookstore.models.Inventory
-import ch.wngr.bookstore.models.ScraperBook
-import ch.wngr.bookstore.models.StockEntry
+import ch.wngr.bookstore.models.*
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,4 +15,7 @@ interface StockService {
     fun getInventory(): Inventory
     fun deleteStock()
     fun getStockEntry(isbn: String): StockEntry
+    fun checkMissingBooks(saleDTOS: List<SaleDTO>): ResponseEntity<List<StockEntry>>
+    fun getMissingBooks(saleDTOS: List<SaleDTO>): ArrayList<StockEntry>
+    fun removeBooks(saleDTO: List<SaleDTO>)
 }

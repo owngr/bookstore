@@ -239,11 +239,11 @@ const fileUpload = (event) => {
 }
 
 const searchEditors = (event) => {
-  filteredEditors.value = [useSearch(editors.value.map(e => e.name), event)]
+  filteredEditors.value = [...useSearch(editors.value.map(e => e.name), event)]
 }
 
 const searchDistributors = (event) => {
-  filteredDistributors.value = [useSearch(distributors.value, event)]
+  filteredDistributors.value = [...useSearch(distributors.value, event)]
 }
 
 

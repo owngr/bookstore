@@ -6,14 +6,13 @@ import ch.wngr.bookstore.converters.toStockEntry
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Publisher
-import ch.wngr.bookstore.models.Editor
-import ch.wngr.bookstore.models.Inventory
-import ch.wngr.bookstore.models.ScraperBook
-import ch.wngr.bookstore.models.StockEntry
+import ch.wngr.bookstore.models.*
 import ch.wngr.bookstore.repositories.BookRepository
 import ch.wngr.bookstore.repositories.PublisherRepository
 import javassist.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
@@ -139,4 +138,47 @@ class StockServiceImpl @Autowired constructor(
         println("The book could not be found in stock")
         throw NotFoundException("The book could not be found in stock")
     }
+
+    override fun checkMissingBooks(saleDTOS: List<SaleDTO>): ResponseEntity<List<StockEntry>> {
+        val missingBooks = getMissingBooks(saleDTOS)
+        if (missingBooks.isEmpty()) {
+            return ResponseEntity(null, HttpStatus.OK)
+        }
+        return ResponseEntity(missingBooks, HttpStatus.CONFLICT)
+    }
+
+
+    override fun getMissingBooks(saleDTOS: List<SaleDTO>): ArrayList<StockEntry> {
+        val reducedSales = HashMap<String, Int>()
+        for (sale in saleDTOS) {
+            if (reducedSales[sale.isbn] == null) {
+                reducedSales[sale.isbn] = sale.quantity!!.or(0)
+            } else {
+                reducedSales.replace(sale.isbn, reducedSales.get(sale.isbn)!! + sale.quantity!!.or(0))
+            }
+        }
+        val missingBooks = ArrayList<StockEntry>()
+        for (sale in reducedSales) {
+            val book = bookRepository.findByIsbn(sale.key)
+            if (book == null) {
+                throw NotFoundException(String.format("The book with isbn %s could not be found in stock", sale.key))
+            } else if (book.amount < sale.value) {
+                missingBooks.add(book.toStockEntry())
+            }
+        }
+        return missingBooks
+    }
+
+    override fun removeBooks(saleDTOS: List<SaleDTO>) {
+        for (sale in saleDTOS) {
+            val book = bookRepository.findByIsbn(sale.isbn)
+            if (book != null) {
+                book.amount -= sale.quantity!!.or(0)
+                bookRepository.save(book)
+            } else {
+                throw NotFoundException(String.format("The book with isbn %s could not be found in stock", sale.isbn))
+            }
+        }
+    }
+
 }

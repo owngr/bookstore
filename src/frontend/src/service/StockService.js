@@ -46,6 +46,24 @@ class StockService {
             .then(handleErrors)
     }
 
+    getMissingBooks(sales) {
+        const requestOptions = {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(sales)
+        };
+        return fetch('/api/stock/missing',requestOptions)
+    }
+
+    sellBooks(sales) {
+        const requestOptions = {
+            method: "PATCH",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(sales)
+        };
+        return fetch('/api/stock', requestOptions)
+    }
+
 
 }
 

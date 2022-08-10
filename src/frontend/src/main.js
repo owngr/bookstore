@@ -18,6 +18,7 @@ import Dialog from "primevue/dialog"
 import AutoComplete from "primevue/autocomplete"
 import FileUpload from 'primevue/fileupload'
 import DataView from 'primevue/dataview'
+import SelectButton from 'primevue/selectbutton';
 // import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
 
 import "primevue/resources/themes/saga-blue/theme.css"
@@ -43,4 +44,5 @@ app.component('Dialog', Dialog)
 app.component('AutoComplete', AutoComplete)
 app.component('FileUpload', FileUpload)
 app.component('DataView', DataView)
+app.component('SelectButton', SelectButton)
 app.mount('#app')
