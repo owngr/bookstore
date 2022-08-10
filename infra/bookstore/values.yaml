@@ -51,7 +51,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: bookstore.wngr.ch
+    - host: stock.art-aimer.ch
       paths:
       - path: /
 #        backend:
@@ -60,7 +60,7 @@ ingress:
   tls:
     - secretName: bookstore-tls
       hosts:
-        - bookstore.wngr.ch
+        - stock.art-aimer.ch
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -80,9 +80,9 @@ tolerations: []
 affinity: {}
 
 postgresql:
-  postgresqlUsername: moodle
-  postgresqlPassword: "m@0dl3ing"
-  postgresqlDatabase: moodle
+  postgresqlUsername: bookstore
+  postgresqlPassword: braveNewWorld
+  postgresqlDatabase: bookstore
   service:
     port: 5432
   enabled: true
