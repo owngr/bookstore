@@ -8,7 +8,7 @@
       minlength="10"
       maxlength="13"
       :disabled="disabled"
-      @input="searchIsbn"
+      @keyup.enter="searchIsbn"
   />
 </template>
 

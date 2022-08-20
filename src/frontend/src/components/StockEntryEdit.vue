@@ -3,6 +3,7 @@
     <form
         id="app"
         @submit.prevent="processForm"
+        @keydown.enter="$event.preventDefault()"
     >
 
       <Message v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{ msg.content }}
