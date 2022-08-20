@@ -173,6 +173,7 @@ const changeEditor = (editorName) => {
   if (editor && editor.defaultDistributor !== "null") {
     bookCopy.value.distributor = editor.defaultDistributor
   }
+  bookCopy.value.editor = editorName
 }
 if (bookCopy.value.editor && bookCopy.value.editor.length > 0) {
   changeEditor(bookCopy.value.editor)
