@@ -22,7 +22,12 @@ class GoogleScraperService : ScraperService {
                 params = mapOf("q" to "isbn:$isbn")
             )
             val obj: JSONObject = response.jsonObject
-            val volumeInfo: JSONObject = (obj["items"] as JSONArray).getJSONObject(0)["volumeInfo"] as JSONObject
+            var volumeInfo = JSONObject()
+            try {
+                volumeInfo = (obj["items"] as JSONArray).getJSONObject(0)["volumeInfo"] as JSONObject
+            } catch (e: JSONException) {
+                println("book not found")
+            }
             var coverUrl = ""
             try {
                 coverUrl = (volumeInfo["imageLinks"] as JSONObject)["thumbnail"] as String
