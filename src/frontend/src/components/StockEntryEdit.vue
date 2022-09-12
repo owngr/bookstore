@@ -101,17 +101,16 @@
           </td>
         </tr>
 
-        <tr v-if="editMode">
+        <tr>
           <td>
             <label class="form-label" for="amount">Quantité</label>
           </td>
           <td>
-            <InputText
+            <InputNumber
                 id="amount"
                 v-model="bookCopy.amount"
-                class="form-control"
-                type="number"
                 name="amount"
+                :show-buttons="false"
             />
           </td>
 

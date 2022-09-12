@@ -9,5 +9,6 @@ data class ScraperBook(
     var description: String = "",
     var price: Float?,
     var coverUrl: String = "",
+    val amount: Int = 0,
 )
 

@@ -57,11 +57,11 @@ class StockServiceImpl @Autowired constructor(
                 distributor = distributor,
                 price = book.price,
                 hasCover = hasCover,
-                amount = 1,
+                amount = book.amount,
             )
             bookRepository.save(newBook)
         } else {
-            existingBook.amount = existingBook.amount + 1
+            existingBook.amount += book.amount
             bookRepository.save(existingBook)
         }
     }

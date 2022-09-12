@@ -29,6 +29,7 @@ export default {
         description: null,
         price: null,
         coverUrl: null,
+        amount: 1,
       },
       messages: []
     }
@@ -46,6 +47,7 @@ export default {
         description: book.description,
         price: book.price,
         coverUrl: book.coverUrl,
+        amount: book.amount,
       }
       this.reloadCount++
       this.messages.push({severity: 'success', content: `Le stock a été modifié`})
