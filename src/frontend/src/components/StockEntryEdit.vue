@@ -3,7 +3,7 @@
     <form
         id="app"
         @submit.prevent="processForm"
-        @keydown.enter="$event.preventDefault()"
+        @keydown.enter="processForm"
     >
 
       <Message v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{ msg.content }}
@@ -21,6 +21,7 @@
                 :init-isbn="book.isbn"
                 @book="fillData"
                 @message="messages.push($event)"
+                @preventSubmit="enableSubmit"
             />
           </td>
           <td rowspan="6">
@@ -180,6 +181,8 @@ if (bookCopy.value.editor && bookCopy.value.editor.length > 0) {
 
 let formData = ref(null)
 
+let preventSubmit = ref(false)
+
 const emit = defineEmits(['close-dialog'])
 
 const fillData = (data) => {
@@ -200,6 +203,10 @@ const fillData = (data) => {
   console.debug("data filled")
 }
 
+const enableSubmit = (enable) => {
+  preventSubmit.value = enable
+}
+
 const addAuthor = () => {
   bookCopy.value.authors.push({value: ''})
 }
@@ -210,6 +217,9 @@ const deleteAuthor = (index) => {
 
 // needed because primevue doesn't understand that it can take the value itself
 const processForm = () => {
+  if (preventSubmit.value) {
+    return
+  }
   props.processFormFunction(bookCopy.value)
       .then((data) => {
         bookCopy = data

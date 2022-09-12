@@ -10,6 +10,8 @@
       maxlength="13"
       :disabled="disabled"
       @keyup.enter="searchIsbn"
+      @focusin="emitPreventSubmit(true)"
+      @focusout="emitPreventSubmit(false)"
   />
 </template>
 
@@ -17,7 +19,7 @@
 import {ref, defineProps, defineEmits, onMounted} from "vue"
 
 
-const emit = defineEmits(['book'])
+const emit = defineEmits(['book', 'preventSubmit'])
 
 const props = defineProps({
   disabled: {
@@ -40,6 +42,7 @@ const props = defineProps({
 console.log(props.initIsbn)
 const isbnsearchRef = ref(null)
 const isbn = ref(props.initIsbn)
+const preventSubmit = ref(false)
 
 // we set the focus on isbn if no isbn is present
 onMounted(() => {
@@ -52,7 +55,10 @@ onMounted(() => {
 const searchIsbn = () => {
   console.debug("fetching data")
   console.log(isbn.value)
-  if (isbn.value.length === 13) {
+  if (!preventSubmit.value) {
+    return
+  }
+  if (isbn.value && isbn.value.length === 13) {
     fetch(props.apiPath + isbn.value)
         .then((response) => response.text())
         .then((data) => {
@@ -63,6 +69,11 @@ const searchIsbn = () => {
         })
         .catch((e) => this.$emit('message', {severity: 'warn', content: `Le livre n'a pas pu être trouvé {}` + e}))
   }
+}
+
+const emitPreventSubmit = (prevent) => {
+  preventSubmit.value = prevent
+  emit('preventSubmit', prevent)
 }
 
 </script>
