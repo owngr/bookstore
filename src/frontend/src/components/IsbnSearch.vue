@@ -1,6 +1,7 @@
 <template>
   <InputText
       id="isbn"
+      ref="isbnsearchRef"
       v-model="isbn"
       class="form-control"
       type="number"
@@ -13,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from "vue"
+import {ref, defineProps, defineEmits, onMounted} from "vue"
 
 
 const emit = defineEmits(['book'])
@@ -37,7 +38,16 @@ const props = defineProps({
   },
 })
 console.log(props.initIsbn)
+const isbnsearchRef = ref(null)
 const isbn = ref(props.initIsbn)
+
+// we set the focus on isbn if no isbn is present
+onMounted(() => {
+  if (!isbn.value) {
+    isbnsearchRef.value.$el.focus()
+  }
+})
+
 
 const searchIsbn = () => {
   console.debug("fetching data")
