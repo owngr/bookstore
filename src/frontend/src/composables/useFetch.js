@@ -1,6 +1,7 @@
 import {ref} from "vue"
 import EditorService from "@/service/EditorService"
 import DistributorService from "@/service/DistributorService"
+import SaleService from "@/service/SaleService";
 
 export function useFetchEditors() {
     const editors = ref([])
@@ -27,4 +28,20 @@ export function useFetchDistributors() {
         })
         .catch(() => messages.value.push({severity: 'error', content: `Les distributeurs n'ont pas pu être chargés`}))
     return {distributors, messages}
+}
+
+export function useFetchInvoices(startTime, endTime) {
+    const invoices = ref([])
+    const messages = ref([])
+    SaleService.getSales(startTime, endTime)
+        .then((response) => response.json())
+        .then((data) => {
+            invoices.value = data
+            console.debug(data)
+        })
+        .catch((e) => {
+            messages.value.push({severity: 'error', content: `Les factures n'ont pas pu être chargés`})
+            console.debug(e)
+        })
+    return {invoices, messages}
 }

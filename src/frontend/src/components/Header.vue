@@ -22,6 +22,10 @@ const items = [
   {
     label: "Vendre des livres",
     to: '/book/sell',
+  },
+  {
+    label: "Ventes",
+    to: '/sales',
   }
 ]
 </script>

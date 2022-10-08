@@ -4,6 +4,7 @@ import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Invoice
 import ch.wngr.bookstore.entities.Sale
 import ch.wngr.bookstore.enums.PaymentMethod
+import ch.wngr.bookstore.models.InvoiceRow
 import ch.wngr.bookstore.models.SaleList
 import ch.wngr.bookstore.repositories.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +13,7 @@ import ch.wngr.bookstore.repositories.InvoiceRepository
 import ch.wngr.bookstore.repositories.SaleRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import java.time.LocalDateTime
 
 @Service
 class SaleServiceImpl @Autowired constructor(
@@ -53,5 +55,9 @@ class SaleServiceImpl @Autowired constructor(
             saleRepository.save(sale)
         }
         return ResponseEntity(saleList, HttpStatus.OK)
+    }
+
+    override fun getInvoicesRow(startTime: LocalDateTime, endtime: LocalDateTime): ResponseEntity<List<InvoiceRow>> {
+        return ResponseEntity(invoiceRepository.getInvoiceByTimeCreatedBetween(startTime, endtime), HttpStatus.OK)
     }
 }

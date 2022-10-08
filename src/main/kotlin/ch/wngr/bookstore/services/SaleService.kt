@@ -1,9 +1,12 @@
 package ch.wngr.bookstore.services
 
+import ch.wngr.bookstore.models.InvoiceRow
 import ch.wngr.bookstore.models.SaleList
 import org.springframework.http.ResponseEntity
+import java.time.LocalDateTime
 
 interface SaleService {
 
     fun sellBooks(saleList: SaleList): ResponseEntity<SaleList>
+    fun getInvoicesRow(startTime: LocalDateTime, endtime: LocalDateTime): ResponseEntity<List<InvoiceRow>>
 }
