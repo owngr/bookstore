@@ -17,6 +17,10 @@ class Sale (
     var invoice: Invoice? = null,
 
     var price: Float? = null,
-    var fullPrice: Boolean = true,
+    var fullPrice: Float? = null,
+
+    var description: String = "",
+
+    var secondHand: Boolean = false,
 
     )

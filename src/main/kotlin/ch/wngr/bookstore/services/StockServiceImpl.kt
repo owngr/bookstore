@@ -151,6 +151,10 @@ class StockServiceImpl @Autowired constructor(
     override fun getMissingBooks(saleDTOS: List<SaleDTO>): ArrayList<StockEntry> {
         val reducedSales = HashMap<String, Int>()
         for (sale in saleDTOS) {
+            // fanzines aren't in stock
+            if (sale.isbn.isNullOrEmpty()) {
+                continue
+            }
             if (reducedSales[sale.isbn] == null) {
                 reducedSales[sale.isbn] = sale.quantity!!.or(0)
             } else {
@@ -171,13 +175,16 @@ class StockServiceImpl @Autowired constructor(
 
     override fun removeBooks(saleDTOS: List<SaleDTO>) {
         for (sale in saleDTOS) {
-            val book = bookRepository.findByIsbn(sale.isbn)
-            if (book != null) {
-                book.amount -= sale.quantity!!.or(0)
-                bookRepository.save(book)
-            } else {
-                throw NotFoundException(String.format("The book with isbn %s could not be found in stock", sale.isbn))
+            if (!sale.isbn.isNullOrEmpty()) {
+                val book = bookRepository.findByIsbn(sale.isbn)
+                if (book != null) {
+                    book.amount -= sale.quantity!!.or(0)
+                    bookRepository.save(book)
+                } else {
+                    throw NotFoundException(String.format("The book with isbn %s could not be found in stock", sale.isbn))
+                }
             }
+
         }
     }
 

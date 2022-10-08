@@ -13,9 +13,14 @@ class Invoice (
     @OneToMany(mappedBy = "invoice")
     var sales: Set<Sale>? = HashSet(),
 
+    val priceWithoutDiscount: Float = -1f,
+
+    val priceWithDiscount: Float = -1f,
+
     @Enumerated(EnumType.STRING)
     var paymentMethod: PaymentMethod = PaymentMethod.CASH,
 
     val timeCreated: LocalDateTime = LocalDateTime.now(),
 
+    val priceDiscountPercent: Int = 0,
     )

@@ -1,9 +1,9 @@
 package ch.wngr.bookstore.services
 
+import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Invoice
 import ch.wngr.bookstore.entities.Sale
 import ch.wngr.bookstore.enums.PaymentMethod
-import ch.wngr.bookstore.models.SaleDTO
 import ch.wngr.bookstore.models.SaleList
 import ch.wngr.bookstore.repositories.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,21 +26,28 @@ class SaleServiceImpl @Autowired constructor(
             return ResponseEntity(null, HttpStatus.CONFLICT)
         }
         stockService.removeBooks(saleList.sales)
-        var sales: MutableSet<Sale> = HashSet()
-        var invoice = Invoice(paymentMethod = PaymentMethod.valueOf(saleList.paymentMethod.toString()))
+        val sales: MutableSet<Sale> = HashSet()
+        var invoice =
+            Invoice(
+                paymentMethod = PaymentMethod.valueOf(saleList.paymentMethod.toString()),
+                priceWithDiscount = saleList.priceWithDiscount,
+                priceWithoutDiscount = saleList.priceWithoutDiscount,
+                priceDiscountPercent = saleList.priceDiscountPercent
+            )
         invoice = invoiceRepository.save(invoice)
         for (saleDTO in saleList.sales) {
-            val book = bookRepository.findByIsbn(saleDTO.isbn)
-            // if book has no price we set fullprice on false
-            var fullPrice = false
-            if (book != null && book.price != null) {
-                fullPrice = (book.price == saleDTO.price)
+            var book: Book? = null
+            if (saleDTO.isbn != null) {
+                book = bookRepository.findByIsbn(saleDTO.isbn)
             }
+            // if book has no price we set fullprice on false
             val sale = Sale(
                 book = book,
                 price = saleDTO.price,
-                fullPrice = fullPrice,
+                fullPrice = saleDTO.fullPrice,
                 invoice = invoice,
+                description = saleDTO.title,
+                secondHand = !saleDTO.new,
             )
             sales.add(sale)
             saleRepository.save(sale)

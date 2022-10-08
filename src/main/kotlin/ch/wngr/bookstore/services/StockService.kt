@@ -17,5 +17,5 @@ interface StockService {
     fun getStockEntry(isbn: String): StockEntry
     fun checkMissingBooks(saleDTOS: List<SaleDTO>): ResponseEntity<List<StockEntry>>
     fun getMissingBooks(saleDTOS: List<SaleDTO>): ArrayList<StockEntry>
-    fun removeBooks(saleDTO: List<SaleDTO>)
+    fun removeBooks(saleDTOs: List<SaleDTO>)
 }
