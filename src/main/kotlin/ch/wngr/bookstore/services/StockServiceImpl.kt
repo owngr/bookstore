@@ -78,7 +78,7 @@ class StockServiceImpl @Autowired constructor(
     }
 
     override fun getEditors(): List<Editor> {
-        return publisherRepository.findAll().toList().map(Publisher::toEditor)
+        return publisherRepository.findByOrderByName().map(Publisher::toEditor)
     }
 
     override fun getBookInfo(isbn: String): ScraperBook {
