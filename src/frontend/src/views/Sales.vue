@@ -12,6 +12,7 @@
     <column field="timeCreated" header="Date" :sortable="true"></column>
     <column field="id" header="ID"></column>
     <column field="quantity" header="Quantité"></column>
+    <column field="paymentOption" header="Moyen de paiement" :sortable="true"></column>
     <column field="price" header="Montant"></column>
   </DataTable>
 </template>

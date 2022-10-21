@@ -6,11 +6,7 @@
   <SelectButton v-model="selectedPaymentOption" :option="['test','aa']"/>
   <Dialog v-model:visible="displayPaymentDialog" :draggable="false" header="Choix du système de payement"
           :style="{width: '50vw'}">
-    <div style="text-align: center">
-      <Button aria-labelledby="Cash" class="p-button-lg" @click="sellBooks('CASH')">Cash</Button>
-      <Button aria-labelledby="Card" class="p-button-lg" @click="sellBooks('CARD')">Carte</Button>
-      <Button aria-labelledby="Twint" class="p-button-lg" @click="sellBooks('TWINT')">Twint</Button>
-    </div>
+    <Payment :price="priceSum()" @sell="sellBooks"/>
   </Dialog>
   <IsbnSearch
       :reset-on-found="true"
@@ -87,6 +83,7 @@
 <script setup>
 import {ref, defineProps, computed} from "vue";
 import IsbnSearch from "@/components/IsbnSearch";
+import Payment from "@/components/Payment";
 import StockService from "@/service/StockService";
 
 defineProps({
@@ -207,12 +204,12 @@ function processForm() {
 }
 
 
-function sellBooks(paymentOption) {
+function sellBooks(paymentOptions) {
   // computed copy cannot be serialized
   const sumCopy = priceSum()
   return StockService.sellBooks({
     "sales": sales.value,
-    "paymentMethod": paymentOption,
+    "paymentMethod": paymentOptions,
     "priceWithDiscount": sumCopy,
     "priceDiscountPercent": priceDiscount.value,
     "priceWithoutDiscount": priceSumWithoutDiscount()

@@ -158,7 +158,7 @@ class StockServiceImpl @Autowired constructor(
             if (reducedSales[sale.isbn] == null) {
                 reducedSales[sale.isbn] = sale.quantity!!.or(0)
             } else {
-                reducedSales.replace(sale.isbn, reducedSales.get(sale.isbn)!! + sale.quantity!!.or(0))
+                reducedSales.replace(sale.isbn, reducedSales[sale.isbn]!! + sale.quantity!!.or(0))
             }
         }
         val missingBooks = ArrayList<StockEntry>()
@@ -181,7 +181,12 @@ class StockServiceImpl @Autowired constructor(
                     book.amount -= sale.quantity!!.or(0)
                     bookRepository.save(book)
                 } else {
-                    throw NotFoundException(String.format("The book with isbn %s could not be found in stock", sale.isbn))
+                    throw NotFoundException(
+                        String.format(
+                            "The book with isbn %s could not be found in stock",
+                            sale.isbn
+                        )
+                    )
                 }
             }
 

@@ -2,6 +2,7 @@ package ch.wngr.bookstore.services
 
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Invoice
+import ch.wngr.bookstore.entities.Payment
 import ch.wngr.bookstore.entities.Sale
 import ch.wngr.bookstore.enums.PaymentMethod
 import ch.wngr.bookstore.models.InvoiceRow
@@ -10,6 +11,7 @@ import ch.wngr.bookstore.repositories.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import ch.wngr.bookstore.repositories.InvoiceRepository
+import ch.wngr.bookstore.repositories.PaymentRepository
 import ch.wngr.bookstore.repositories.SaleRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,6 +23,7 @@ class SaleServiceImpl @Autowired constructor(
     val saleRepository: SaleRepository,
     val stockService: StockService,
     val bookRepository: BookRepository,
+    val paymentRepository: PaymentRepository,
 ) : SaleService {
 
     override fun sellBooks(saleList: SaleList): ResponseEntity<SaleList> {
@@ -31,7 +34,6 @@ class SaleServiceImpl @Autowired constructor(
         val sales: MutableSet<Sale> = HashSet()
         var invoice =
             Invoice(
-                paymentMethod = PaymentMethod.valueOf(saleList.paymentMethod.toString()),
                 priceWithDiscount = saleList.priceWithDiscount,
                 priceWithoutDiscount = saleList.priceWithoutDiscount,
                 priceDiscountPercent = saleList.priceDiscountPercent
@@ -54,10 +56,19 @@ class SaleServiceImpl @Autowired constructor(
             sales.add(sale)
             saleRepository.save(sale)
         }
+        for (paymentDTO in saleList.paymentMethod!!) {
+            val payment = Payment(
+                invoice = invoice,
+                price = paymentDTO.price,
+                paymentMethod = PaymentMethod.valueOf(paymentDTO.value)
+
+            )
+            paymentRepository.save(payment)
+        }
         return ResponseEntity(saleList, HttpStatus.OK)
     }
 
     override fun getInvoicesRow(startTime: LocalDateTime, endtime: LocalDateTime): ResponseEntity<List<InvoiceRow>> {
-        return ResponseEntity(invoiceRepository.getInvoiceByTimeCreatedBetween(startTime, endtime), HttpStatus.OK)
+        return ResponseEntity(paymentRepository.getInvoiceByTimeCreatedBetween(startTime, endtime), HttpStatus.OK)
     }
 }

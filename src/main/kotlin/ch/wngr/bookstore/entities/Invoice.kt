@@ -1,12 +1,11 @@
 package ch.wngr.bookstore.entities
 
-import ch.wngr.bookstore.enums.PaymentMethod
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "invoice")
-class Invoice (
+class Invoice(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int = -1,
@@ -17,10 +16,10 @@ class Invoice (
 
     val priceWithDiscount: Float = -1f,
 
-    @Enumerated(EnumType.STRING)
-    var paymentMethod: PaymentMethod = PaymentMethod.CASH,
+    @OneToMany(mappedBy = "invoice")
+    var payments: Set<Payment> = HashSet(),
 
     val timeCreated: LocalDateTime = LocalDateTime.now(),
 
     val priceDiscountPercent: Int = 0,
-    )
+)
