@@ -53,6 +53,7 @@
                 v-model="bookCopy.editor"
                 :editable="true"
                 :options="editors"
+                :filter="true"
                 option-label="name"
                 placeholder="Sélectionner"
                 @change="onEditorChange"
