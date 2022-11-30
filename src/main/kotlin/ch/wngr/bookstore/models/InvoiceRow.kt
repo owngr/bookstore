@@ -17,6 +17,6 @@ data class InvoiceRow(
         quantity,
         price,
         paymentOption.toString(),
-        timeCreated.format(DateTimeFormatter.ofPattern("dd-MM-YYYY HH:MM"))
+        timeCreated.format(DateTimeFormatter.ofPattern("dd-MM-YYYY HH:mm"))
     )
 }
