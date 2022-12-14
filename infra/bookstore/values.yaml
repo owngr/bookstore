@@ -46,8 +46,9 @@ ingress:
   enabled: true
   annotations:
     cert-manager.io/cluster-issuer: 'letsencrypt-prod'
-    traefik.ingress.kubernetes.io/router.middlewares: bookstore-basic-auth-middleware@kubernetescrd
-    # kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth-bookstore
+    nginx.ingress.kubernetes.io/auth-type: basic
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: stock.art-aimer.ch

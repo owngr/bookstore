@@ -1,0 +1,22 @@
+apiVersion: databases.digitalocean.com/v1alpha1
+kind: DatabaseCluster
+metadata:
+  name: postgresql-db
+spec:
+  engine: pg
+  name: postgresql-db
+  version: '14'
+  numNodes: 1
+  size: db-s-1vcpu-1gb
+  region: fra1
+---
+apiVersion: databases.digitalocean.com/v1alpha1
+kind: DatabaseUser
+metadata:
+  name: postgresql-db-user
+spec:
+  databaseCluster:
+    apiGroup: databases.digitalocean.com
+    kind: DatabaseCluster
+    name: postgresql-db
+  username: bookstore
