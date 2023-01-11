@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup
+spec:
+  schedule: '0 2 * * *'
+  startingDeadlineSeconds: 50
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: filedir
+              persistentVolumeClaim:
+                claimName: bookstore-covers-pvc
+          containers:
+            - name: backup-cronjob
+              args:
+                - '--host={{ .Release.Name }}
+              image: {{.Values.backup.image}}:{{.Values.backup.tag}}
+              imagePullPolicy: Always
+              volumeMounts:
+                - mountPath: /home/cnb
+                  name: filedir
+              envFrom:
+                - secretRef:
+                    name: restic-backup
+              env:
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      key: username
+                      name: db-connection
+                      optional: false
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: db-connection
+                      optional: false
+                - name: PGHOST
+                  valueFrom:
+                    secretKeyRef:
+                      key: host
+                      name: db-connection
+                      optional: false
+                - name: PGDATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: database
+                      name: db-connection
+                      optional: false
+                - name: DATAROOT
+                  value: {{ .Values.backup.dataroot }}
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                runAsNonRoot: true
+                runAsUser: 10000000
+                seccompProfile:
+                  type: RuntimeDefault
+          restartPolicy: Never

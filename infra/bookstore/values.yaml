@@ -87,4 +87,18 @@ postgresql:
     port: 5432
   enabled: true
 
+backup:
+  image: ghcr.io/owngr/restic-postgres
+  tag: '14'
+  DATAROOT: '/home/cnb'
+  RESTIC_PASSWORD: ''
+  RESTIC_USERNAME: ''
+  OS_AUTH_URL: ''
+  OS_PASSWORD: ''
+  OS_REGION_NAME: ''
+  OS_USER_DOMAIN_NAME: ''
+  OS_PROJECT_DOMAIN_NAME: ''
+  DAILY_RETENTION: 7
+  WEEKLY_RETENTION: 4
+  MONTHLY_RETENTION: 3
 

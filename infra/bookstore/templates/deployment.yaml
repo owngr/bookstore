@@ -51,14 +51,22 @@ spec:
           - name: JDBC_DATABASE_URL
             value: jdbc:postgresql://{{ .Release.Name }}-postgresql:{{ .Values.postgresql.service.port}}/
           - name: JDBC_DATABASE_USERNAME
-            value: {{ .Values.postgresql.postgresqlUsername }}
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: db-connection
+                optional: false
           - name: JDBC_DATABASE_PASSWORD
-            value: {{ .Values.postgresql.postgresqlPassword }}
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: db-connection
+                optional: false
           volumeMounts:
-            - mountPath: /home/cnb/covers
-              name: covers
+            - mountPath: /home/cnb/
+              name: filedir
       volumes:
-        - name: covers
+        - name: filedir
           persistentVolumeClaim:
             claimName: bookstore-covers-pvc
       {{- with .Values.affinity }}

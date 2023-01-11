@@ -14,7 +14,7 @@ jobs:
           exec: |
             helm repo add bitnami https://charts.bitnami.com/bitnami &&
             helm dependency build infra/bookstore &&
-            helm upgrade bookstore infra/bookstore --install --wait --atomic --namespace=bookstore --values=infra/bookstore/values.yaml
+            helm upgrade bookstore infra/bookstore --install --wait --atomic --namespace=bookstore --values=infra/bookstore/values.yaml --set postgresql.postgresqlPassword=${{ secrets.POSTGRESQL_PASSWORD }}
           kubeconfig: '${{ secrets.KUBECONFIG }}'
 
       - name: Scale down

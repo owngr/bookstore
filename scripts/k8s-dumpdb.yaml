@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: psql-client
+  namespace: bookstore
+spec:
+  containers:
+    - env:
+        - name: PGHOST
+          valueFrom:
+            secretKeyRef:
+              key: endpoint
+              name: db-connection
+              optional: false
+        - name: PGPORT
+          value: '5432'
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: db-connection
+              optional: false
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: db-connection
+              optional: false
+        - name: PGDATABASE
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: db-connection
+              optional: false
+      image: docker.io/library/postgres:14
+      command: ['/bin/sleep']
+      args: ['infinity']
+      imagePullPolicy: Always
+      name: psql
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        runAsNonRoot: true
+        runAsUser: 10000000
+        seccompProfile:
+          type: RuntimeDefault
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
