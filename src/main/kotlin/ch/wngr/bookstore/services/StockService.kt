@@ -1,6 +1,8 @@
 package ch.wngr.bookstore.services
 
+import ch.wngr.bookstore.filters.TableSearchFilter
 import ch.wngr.bookstore.models.*
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Service
 interface StockService {
 
     fun addBook(book: ScraperBook)
-    fun getStock(): List<StockEntry>
+    fun getStock(page: TableSearchFilter): Page<StockEntry>
     fun getEditors(): List<Editor>
     fun getBookInfo(isbn: String): ScraperBook
     fun updateStock(stockEntry: StockEntry): StockEntry

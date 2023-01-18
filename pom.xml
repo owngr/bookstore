@@ -21,10 +21,11 @@
   <properties>
     <java.version>11</java.version>
     <node.version>v14.17.3</node.version>
-    <kotlin.version>1.5.20</kotlin.version>
+    <kotlin.version>1.6.10</kotlin.version>
     <npm.version>6.14.13</npm.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <gitlab.pat>secret</gitlab.pat>
+    <serialization.version>1.4.1</serialization.version>
   </properties>
   <dependencies>
     <dependency>
@@ -100,6 +101,11 @@
       <artifactId>thumbnailator</artifactId>
       <version>0.4.15</version>
     </dependency>
+    <dependency>
+    <groupId>org.jetbrains.kotlinx</groupId>
+    <artifactId>kotlinx-serialization-json</artifactId>
+    <version>${serialization.version}</version>
+  </dependency>
   </dependencies>
 
   <build>
@@ -127,20 +133,55 @@
               </resources>
             </configuration>
           </execution>
+          <execution>
+            <id>Copy Vue frontend into Spring Boot target static folder</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/classes/static</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/frontend/dist</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+              <nonFilteredFileExtensions>
+                <nonFilteredFileExtension>eot</nonFilteredFileExtension>
+                <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                <nonFilteredFileExtension>swf</nonFilteredFileExtension>
+              </nonFilteredFileExtensions>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
         <artifactId>kotlin-maven-plugin</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
         <version>${kotlin.version}</version>
-
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
+          <args>
+            <arg>-Xjsr305=strict</arg>
+          </args>
           <compilerPlugins>
             <!-- Or "jpa" for JPA support -->
             <plugin>all-open</plugin>
             <plugin>spring</plugin>
             <plugin>no-arg</plugin>
             <plugin>jpa</plugin>
+            <plugin>kotlinx-serialization</plugin>
           </compilerPlugins>
         </configuration>
 
@@ -153,6 +194,11 @@
           <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-noarg</artifactId>
+            <version>${kotlin.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-serialization</artifactId>
             <version>${kotlin.version}</version>
           </dependency>
         </dependencies>
@@ -201,58 +247,6 @@
           <nodeVersion>${node.version}</nodeVersion>
           <workingDirectory>src/frontend</workingDirectory>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>Copy Vue frontend into Spring Boot target static folder</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>target/classes/static</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/frontend/dist</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-              <nonFilteredFileExtensions>
-                <nonFilteredFileExtension>eot</nonFilteredFileExtension>
-                <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-                <nonFilteredFileExtension>woff</nonFilteredFileExtension>
-                <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-                <nonFilteredFileExtension>swf</nonFilteredFileExtension>
-              </nonFilteredFileExtensions>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-maven-plugin</artifactId>
-        <configuration>
-          <args>
-            <arg>-Xjsr305=strict</arg>
-          </args>
-          <compilerPlugins>
-            <plugin>spring</plugin>
-          </compilerPlugins>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-maven-allopen</artifactId>
-            <version>${kotlin.version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>

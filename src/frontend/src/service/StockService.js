@@ -2,8 +2,11 @@ import handleErrors from "@/helpers/httpHelper";
 
 class StockService {
 
-    getStock() {
-        return fetch("/api/stock")
+    getStock(params) {
+        console.debug("lazy params")
+        console.debug(params)
+        const queryParams = params ? Object.keys(params).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k])).join('&') : '';
+        return fetch("/api/stock?" + queryParams)
             .then(handleErrors)
             .then(res => res.json());
     }

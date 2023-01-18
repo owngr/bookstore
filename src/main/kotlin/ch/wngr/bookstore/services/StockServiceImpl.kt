@@ -6,11 +6,15 @@ import ch.wngr.bookstore.converters.toStockEntry
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Publisher
+import ch.wngr.bookstore.filters.TableSearchFilter
 import ch.wngr.bookstore.models.*
 import ch.wngr.bookstore.repositories.BookRepository
 import ch.wngr.bookstore.repositories.PublisherRepository
 import javassist.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -66,15 +70,14 @@ class StockServiceImpl @Autowired constructor(
         }
     }
 
-    override fun getStock(): List<StockEntry> {
-        val stockEntryList: MutableList<StockEntry> = ArrayList()
-        var stockEntry: StockEntry
-        val books: List<Book> = bookRepository.findByAmountGreaterThan(0)
-        for (stockEnt: Book in books) {
-            stockEntry = stockEnt.toStockEntry()
-            stockEntryList.add(stockEntry)
+    override fun getStock(page: TableSearchFilter): Page<StockEntry> {
+        val pageable = PageRequest.of(page.first, page.rows, Sort.by(page.getSortDirection(), page.sortField))
+        val books: Page<StockEntry> = if (page.filters.global.value == null) {
+            bookRepository.findByAmountGreaterThan(0, pageable).map(Book::toStockEntry)
+        } else {
+            bookRepository.findByAmountGreatherThanAndSearchFilter(0, "%${page.filters.global.value.uppercase()}%", pageable).map(Book::toStockEntry)
         }
-        return stockEntryList
+        return books
     }
 
     override fun getEditors(): List<Editor> {
