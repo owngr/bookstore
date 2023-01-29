@@ -80,9 +80,11 @@ tolerations: []
 affinity: {}
 
 postgresql:
-  postgresqlUsername: bookstore
-  postgresqlPassword: braveNewWorld
-  postgresqlDatabase: bookstore
+  auth:
+    postgresPassword: ''
+    username: bookstore
+    password: braveNewWorld
+    database: bookstore
   service:
     port: 5432
   enabled: true

@@ -17,7 +17,7 @@ spec:
           containers:
             - name: backup-cronjob
               args:
-                - '--host={{ .Release.Name }}
+                - '--host={{ .Release.Name }}'
               image: {{.Values.backup.image}}:{{.Values.backup.tag}}
               imagePullPolicy: Always
               volumeMounts:
