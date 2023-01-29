@@ -9,7 +9,7 @@ spec:
         - name: PGHOST
           valueFrom:
             secretKeyRef:
-              key: endpoint
+              key: host
               name: db-connection
               optional: false
         - name: PGPORT
