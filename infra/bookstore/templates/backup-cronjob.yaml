@@ -25,7 +25,7 @@ spec:
                   name: filedir
               envFrom:
                 - secretRef:
-                    name: restic-backup
+                    name: restic-secret
               env:
                 - name: PGUSER
                   valueFrom:
@@ -52,14 +52,15 @@ spec:
                       name: db-connection
                       optional: false
                 - name: DATAROOT
-                  value: {{ .Values.backup.dataroot }}
+                  value: {{ .Values.backup.DATAROOT }}
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:
                   drop:
                     - ALL
                 runAsNonRoot: true
-                runAsUser: 10000000
+                runAsUser: 1000
+                runAsGroup: 1000
                 seccompProfile:
                   type: RuntimeDefault
           restartPolicy: Never
