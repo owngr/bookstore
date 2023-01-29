@@ -10,11 +10,20 @@ jobs:
 
       - name: Deploy helm chart
         uses: WyriHaximus/github-action-helm3@v2
+        env:
+          POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
+          RESTIC_PASSWORD: ${{ secrets.RESTIC_PASSWORD }}
+          RESTIC_USERNAME: ${{ secrets.RESTIC_USERNAME }}
+          RESTIC_OS_AUTH_URL: ${{ secrets.RESTIC_OS_AUTH_URL }}
+          RESTIC_OS_PASSWORD: ${{ secrets.RESTIC_OS_PASSWORD }}
+          RESTIC_OS_REGION_NAME: ${{ secrets.RESTIC_OS_REGION_NAME }}
+          RESTIC_OS_USER_DOMAIN_NAME: ${{ secrets.RESTIC_OS_USER_DOMAIN_NAME }}
+          RESTIC_OS_PROJECT_DOMAIN_NAME: ${{ secrets.RESTIC_OS_PROJECT_DOMAIN_NAME }}
         with:
           exec: |
             helm repo add bitnami https://charts.bitnami.com/bitnami &&
             helm dependency build infra/bookstore &&
-            helm upgrade bookstore infra/bookstore --install --wait --atomic --namespace=bookstore --values=infra/bookstore/values.yaml --set postgresql.postgresqlPassword=${{ secrets.POSTGRESQL_PASSWORD }}
+            helm upgrade bookstore infra/bookstore --install --wait --atomic --namespace=bookstore --values=infra/bookstore/values.yaml --set postgresql.postgresqlPassword=$POSTGRESQL_PASSWORD --set backup.RESTIC_PASSWORD=$RESTIC_PASSWORD --set backup.RESTIC_USERNAME=$RESTIC_USERNAME --set backup.OS_AUTH_URL=$RESTIC_OS_AUTH_URL --set backup.OS_PASSWORD=$RESTIC_OS_PASSWORD --set backup.OS_REGION_NAME=$RESTIC_OS_REGION_NAME --set backup.OS_USER_DOMAIN_NAME=$RESTIC_OS_USER_DOMAIN_NAME --set backup.OS_PROJECT_DOMAIN_NAME=$RESTIC_OS_PROJECT_DOMAIN_NAME
           kubeconfig: '${{ secrets.KUBECONFIG }}'
 
       - name: Scale down
