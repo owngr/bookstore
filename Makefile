@@ -7,5 +7,5 @@ import-db: ## Import db from kubernetes and restore it
 	kubectl delete -f scripts/k8s-dumpdb.yaml
 	docker-compose exec -T postgres psql -U bookstore -d postgres -c "drop database bookstore with (force);"
 	docker-compose exec -T postgres createdb -U bookstore bookstore
-	gunzip -c $(OUTFILE) | docker-compose exec -T postgrespsql -U bookstore -d bookstore
+	gunzip -c $(OUTFILE) | docker-compose exec -T postgres psql -U bookstore -d bookstore
 	docker-compose restart flyway
