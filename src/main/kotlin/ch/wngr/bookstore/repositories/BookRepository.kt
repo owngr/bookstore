@@ -17,7 +17,7 @@ interface BookRepository : PagingAndSortingRepository<Book, Int> {
     fun findByHasCover(hasCover: Boolean): List<Book>
     fun findByAmountGreaterThan(amount: Int, pageable: Pageable): Page<Book>
 
-    @Query("select b from Book b join b.authors a " +
+    @Query("select distinct b from Book b left join b.authors a " +
             "where b.amount > :amount " +
             "and (b.isbn like :searchFilter or upper(b.title) like :searchFilter or upper(a.name) like :searchFilter or upper(b.publisher.name) like :searchFilter)")
     fun findByAmountGreatherThanAndSearchFilter(amount: Int, searchFilter: String, pageable: Pageable): Page<Book>
