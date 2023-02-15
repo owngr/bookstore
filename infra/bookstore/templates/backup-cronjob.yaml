@@ -51,6 +51,12 @@ spec:
                       key: database
                       name: db-connection
                       optional: false
+                - name: DAILY_RETENTION
+                  value: {{ .Values.backup.DAILY_RETENTION | quote }}
+                - name: WEEKLY_RETENTION
+                  value: {{ .Values.backup.WEEKLY_RETENTION | quote }}
+                - name: MONTHLY_RETENTION
+                  value: {{ .Values.backup.MONTHLY_RETENTION | quote }}
                 - name: DATAROOT
                   value: {{ .Values.backup.DATAROOT }}
               securityContext:
