@@ -21,6 +21,10 @@ import DataView from 'primevue/dataview'
 import SelectButton from 'primevue/selectbutton';
 // import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
 
+
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+
 import "primevue/resources/themes/saga-blue/theme.css"
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
@@ -45,4 +49,5 @@ app.component('AutoComplete', AutoComplete)
 app.component('FileUpload', FileUpload)
 app.component('DataView', DataView)
 app.component('SelectButton', SelectButton)
+app.component('VueDatePicker', VueDatePicker);
 app.mount('#app')
