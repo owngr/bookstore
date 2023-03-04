@@ -13,7 +13,7 @@
       <table>
         <tr>
           <td>
-            <label class="form-label" for="isbn">ISBN</label>
+            <label class="form-label" for="isbn">{{ $t('isbn') }}</label>
           </td>
           <td>
             <IsbnSearch
@@ -47,7 +47,7 @@
           </td>
         </tr>
         <tr>
-          <td><label class="form-label" for="editor">Maison d'édition</label></td>
+          <td><label class="form-label" for="editor">{{ $t('editor') }}</label></td>
           <td>
             <DropDown
                 id="editor"
@@ -56,7 +56,7 @@
                 :options="editors"
                 :filter="true"
                 option-label="name"
-                placeholder="Sélectionner"
+                :placeholder="$t('select')"
                 @change="onEditorChange"
             />
           </td>
@@ -65,7 +65,7 @@
 
         <tr>
           <td style="vertical-align: top">
-            <label class="form-label" for="authors">Auteur·ices</label>
+            <label class="form-label" for="authors">{{ $t('authors') }}</label>
           </td>
           <td>
             <AuthorForm
@@ -78,14 +78,14 @@
 
         <tr>
           <td>
-            <label class="form-label" for="distributor">Distributeur</label>
+            <label class="form-label" for="distributor">{{ $t('distributor') }}</label>
           </td>
           <td>
             <DropDown
                 id="distributor" v-model="bookCopy.distributor"
                 :filter="true" :options="distributors"
                 :editable="true"
-                placeholder="Sélectionner"/>
+                :placeholder="$t('select')"/>
           </td>
 
         </tr>
@@ -97,7 +97,7 @@
         </tr>
         <tr>
           <td>
-            <label class="form-label" for="price">Prix</label>
+            <label class="form-label" for="price">{{ $t('price') }}</label>
           </td>
           <td>
             <InputNumber v-model="bookCopy.price" mode="currency" currency="CHF"/>
@@ -106,7 +106,7 @@
 
         <tr>
           <td>
-            <label class="form-label" for="amount">Quantité</label>
+            <label class="form-label" for="amount">{{ $t('quantity') }}</label>
           </td>
           <td>
             <InputNumber
@@ -143,6 +143,8 @@ import StockService from "@/service/StockService"
 import IsbnSearch from "@/components/IsbnSearch"
 import {defineEmits, defineProps, ref,} from "vue"
 import {useFetchDistributors, useFetchEditors} from "@/composables/useFetch"
+import i18n from "@/i18n";
+
 
 const props = defineProps({
   book: {},
@@ -154,7 +156,7 @@ const props = defineProps({
   initMessages: [],
   submitButtonText: {
     type: String,
-    default: "Ajouter le livre",
+    default: i18n.global.t('addBook'),
   },
   processFormFunction: {}
 })
@@ -229,7 +231,7 @@ const processForm = () => {
         // this.messages.push({severity: 'success', content: `Le stock a été modifié`})
         emit('close-dialog')
       })
-      .catch(() => messages.value.push({severity: 'error', content: `le stock n'a pas pu être modifié`}))
+      .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('stockNotUpdatableMessage')}))
 }
 
 
@@ -243,8 +245,8 @@ const fileUpload = (event) => {
   formData.value = new FormData()
   formData.value.append("file", event.files[0])
   StockService.addCover(formData, bookCopy.value.isbn)
-      .then(() => messages.value.push({severity: 'success', content: `L'image a pu être uploadé`}))
-      .catch(() => messages.value.push({severity: 'error', content: `L'image n'a pas pu être uploadé`}))
+      .then(() => messages.value.push({severity: 'success', content: i18n.global.t('imageUploadedMessage')}))
+      .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('coulntUploadPictureMessage')}))
 }
 
 

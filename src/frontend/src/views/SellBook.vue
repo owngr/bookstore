@@ -6,7 +6,7 @@
   <SelectButton v-model="selectedPaymentOption" :option="['test','aa']"/>
   <PDialog
       v-model:visible="displayPaymentDialog" :draggable="false" :style="{width: '50vw'}"
-      header="Choix du système de payement">
+      :header="$t('choosePaymentOption')">
     <Payment :price="priceSum()" @sell="sellBooks"/>
   </PDialog>
   <IsbnSearch
@@ -16,7 +16,7 @@
       @message="messages.push($event)"
   />
   <PButton
-      label="Ajout d'un fanzine"
+      :label="$t('addFanzine')"
       @click="addFanzine()"
   />
   <form
@@ -28,16 +28,16 @@
         edit-mode="cell"
         @cell-edit-complete="onCellEditComplete"
     >
-      <PColumn field="isbn" header="ISBN"></PColumn>
-      <PColumn field="title" header="Titre">
+      <PColumn field="isbn" :header="$t('isbn')"></PColumn>
+      <PColumn field="title" :header="$t('title')">
         <template #body="slotProps">
           <div :class="titleClass(slotProps.data)">
             {{ slotProps.data.title }}
           </div>
         </template>
       </PColumn>
-      <PColumn field="quantity" header="Quantité"></PColumn>
-      <PColumn key="price" field="fullPrice" header="Prix">
+      <PColumn field="quantity" :header="$t('quantity')"></PColumn>
+      <PColumn key="price" field="fullPrice" :header="$t('price')">
         <template #editor="{ data, field }">
           <InputText v-model="data[field]" autofocus/>
         </template>
@@ -55,7 +55,7 @@
 
       <ColumnGroup type="footer">
         <PRow>
-          <PColumn :colspan="3" footer="Réduction"/>
+          <PColumn :colspan="3" :footer="$t('discount')"/>
           <PColumn :colspan="1">
             <template #footer>
               <InputNumber
@@ -69,7 +69,7 @@
           </PColumn>
         </PRow>
         <PRow>
-          <PColumn :colspan="3" footer="Total:"/>
+          <PColumn :colspan="3" :footer="$t('total') + ':'"/>
           <PColumn :footer="sum.toFixed(2) + ' CHF'"/>
         </PRow>
       </ColumnGroup>
@@ -87,11 +87,13 @@ import {computed, defineProps, ref} from "vue";
 import IsbnSearch from "@/components/IsbnSearch";
 import Payment from "@/components/PaymentDialog";
 import StockService from "@/service/StockService";
+import i18n from "@/i18n";
+
 
 defineProps({
   submitButtonText: {
     type: String,
-    default: "Vendre",
+    default: i18n.global.t('sell'),
   },
 })
 
@@ -195,7 +197,7 @@ function processForm() {
           res.forEach(stockEntry => {
             messages.value.push({
               severity: 'error',
-              content: `Le livre ${stockEntry.title} n'a que ${stockEntry.amount} exemplaire(s) en stock`
+              content: i18n.global.t('bookHasOnlyNEntryInStockMessage', {title: stockEntry.title, amount: stockEntry.amount})
             })
           })
         }
@@ -221,7 +223,7 @@ function sellBooks(paymentOptions) {
           displayPaymentDialog.value = false
           messages.value.push({
             severity: 'success',
-            content: 'La vente a été effectuée avec succès'
+            content: i18n.global.t('saleDoneWithSuccessMessage')
           })
           sales.value = []
         }

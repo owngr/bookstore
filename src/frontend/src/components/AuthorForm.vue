@@ -3,7 +3,7 @@
     <InputText v-model="author.value"/>
     <PButton v-if="index !== 0" label="X" @click="deleteAuthorFunction(index)" />
   </div>
-  <PButton label="nouve̛l·le auteur·rice" @click="addAuthorFunction"/>
+  <PButton :label="$t('newAuthor')" @click="addAuthorFunction"/>
 </template>
 <script setup>
 import {defineProps} from "vue"

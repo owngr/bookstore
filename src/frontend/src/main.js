@@ -28,7 +28,8 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import "primevue/resources/themes/saga-blue/theme.css"
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
-const app = createApp(App)
+import i18n from './i18n'
+const app = createApp(App).use(i18n)
 
 app.use(PrimeVue)
 app.use(router)

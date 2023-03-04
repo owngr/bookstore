@@ -1,12 +1,12 @@
 <template>
   <h1>Stock</h1>
   <div>
-    <PDialog v-model:visible="displayEditDialog" :style="{width: '50vw'}" header="Mise à jour entrée stock">
+    <PDialog v-model:visible="displayEditDialog" :style="{width: '50vw'}" :header="$t('updateStockEntry')">
       <StockEntryEdit
           v-model:book="book"
           :edit-mode="true"
           :process-form-function="updateStock"
-          submit-button-text="Mettre à jour le livre"
+          :submit-button-text="$t('updateBook')"
           @close-dialog="closeEditDialog"
       />
     </PDialog>
@@ -33,36 +33,39 @@
           <span class="p-input-icon-left">
                                 <i class="pi pi-search"/>
                                 <InputText
-                                    v-model="filters['global'].value" placeholder="Keyword Search"
+                                    v-model="filters['global'].value" :placeholder="$t('search')"
                                     @keydown.enter="onFilter()"/>
                             </span>
         </div>
       </template>
       <PColumn field="isbn" header="ISBN"></PColumn>
-      <PColumn :sortable="true" field="title" header="Titre">
+      <PColumn :sortable="true" field="title" :header="$t('title')">
         <template #body="slotProps">
           <a @click="openEditDialog(slotProps.data)">{{ slotProps.data.title }}</a>
         </template>
       </PColumn>
-      <PColumn field="authors" header="Auteur·rices">
+      <PColumn field="authors" :header="$t('authors')">
         <template #body="slotProps">
           <li v-for="author in slotProps.data.authors" :key="author">
             {{ author }}
           </li>
         </template>
       </PColumn>
-      <PColumn field="editor" header="Maison d'édition"></PColumn>
-      <PColumn :hidden="true" field="description" header="Résumé"></PColumn>
-      <PColumn :exportable="false" field="amount" header="Quantité"></PColumn>
-      <PColumn :exportable="false" :sortable="true" field="hasCover" header="Couverture"></PColumn>
+      <PColumn field="editor" :header="$t('editor')"></PColumn>
+      <PColumn :hidden="true" field="description" :header="$t('summary')"></PColumn>
+      <PColumn :exportable="false" field="amount" :header="$t('quantity')"></PColumn>
+      <PColumn :exportable="false" :sortable="true" field="hasCover" :header="$t('cover')">
+        <template #body="slotProps">
+          {{ $t(slotProps.data.hasCover.toString()) }}
+        </template>
+      </PColumn>
       <template #footer>
         <div class="flex justify-content-center flex-wrap ">
-          <label class="form-label m-2" for="paginatorDropdown">Affichage de {{ offset }} à {{ offset + pageSize }} sur
-            {{ totalRecords }}</label>
+          <label class="form-label m-2" for="paginatorDropdown">{{ $t('showingFromToOn', {start: offset, end: offset+pageSize, total: totalRecords})}}</label>
           <DropDown
               id="paginatorDropdown" v-model="currentPage" :options="pages" class="m-2" placeholder=1
               @change="onPageChange($event)"/>
-          <label class="form-label m-2" for="rowDropdown">Nombre d'éléments par page</label>
+          <label class="form-label m-2" for="rowDropdown">{{ $t('numberOfItemsPerPage') }}</label>
           <DropDown
               id="rowDropdown" v-model="lazyParams.rows" :options="[50,100,200]" class="m-2" placeholder=50
               @change="onRowsPerPage()"/>

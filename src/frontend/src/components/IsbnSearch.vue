@@ -17,6 +17,7 @@
 
 <script setup>
 import {ref, defineProps, defineEmits, onMounted} from "vue"
+import i18n from "@/i18n";
 
 
 const emit = defineEmits(['book', 'preventSubmit', 'message'])
@@ -67,7 +68,7 @@ const searchIsbn = () => {
           }
           emit('book', JSON.parse(data))
         })
-        .catch((e) => this.$emit('message', {severity: 'warn', content: `Le livre n'a pas pu être trouvé {}` + e}))
+        .catch((e) => this.$emit('message', {severity: 'warn', content: i18n.global.t('bookNotFoundMessage', {error: e})}))
   }
 }
 

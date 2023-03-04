@@ -1,10 +1,10 @@
 <template>
-  <h1>Inventaire</h1>
+  <h1>{{ $t('inventory') }}</h1>
   <PMessage v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{msg.content}}</PMessage>
   <table>
     <tr>
       <td>
-        <label class="form-label" for="bookAmount">Nombre de livres</label>
+        <label class="form-label" for="bookAmount">{{ $t('bookAmount') }}</label>
       </td>
       <td>
         <InputText
@@ -15,7 +15,7 @@
         />
       </td>
       <td>
-        <label class="form-label" for="moneySum">Somme d'argent</label>
+        <label class="form-label" for="moneySum">{{ $t('moneySum') }}</label>
       </td>
       <td>
         <InputText
@@ -27,13 +27,14 @@
       </td>
     </tr>
   </table>
-  <PButton label="Supprimer le stock" @click="deleteStock"/>
+  <PButton :label="$t('deleteStock')" @click="deleteStock"/>
 
 </template>
 
 <script>
 import InventoryService from "../service/InventoryService";
 import StockService from "../service/StockService";
+import i18n from "@/i18n";
 
 export default {
   name: "StockInventory",
@@ -58,7 +59,7 @@ export default {
     },
     deleteStock() {
       StockService.deleteStock().then(() => {
-        this.messages.push({severity: 'success', content: `Le stock a été supprimé`})
+        this.messages.push({severity: 'success', content: i18n.global.t('stockHasBeenDeletedMessage')})
       })
     }
   }

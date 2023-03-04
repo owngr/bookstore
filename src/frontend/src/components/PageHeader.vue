@@ -2,29 +2,32 @@
   <MenuBar :model="items"/>
 </template>
 <script setup>
+
+import i18n from "@/i18n";
+
 const items = [
   {
-    label: 'Home',
+    label: i18n.global.t('home'),
     to: '/',
   },
   {
-    label: 'Stock',
+    label: i18n.global.t('stock'),
     to: '/stock',
   },
   {
-    label: 'Ajout de livres',
+    label: i18n.global.t('addBooks'),
     to: '/book/add',
   },
   {
-    label: 'Inventaire',
+    label: i18n.global.t('inventory'),
     to: '/inventory',
   },
   {
-    label: "Vendre des livres",
+    label: i18n.global.t('sellBooks'),
     to: '/book/sell',
   },
   {
-    label: "Ventes",
+    label: i18n.global.t('sales'),
     to: '/sales',
   }
 ]

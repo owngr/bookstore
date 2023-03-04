@@ -12,6 +12,7 @@
 <script>
 import StockEntryEdit from "@/components/StockEntryEdit";
 import StockService from "@/service/StockService";
+import i18n from "@/i18n";
 
 export default {
   el: '#addbook',
@@ -50,7 +51,7 @@ export default {
         amount: book.amount,
       }
       this.reloadCount++
-      this.messages.push({severity: 'success', content: `Le stock a été modifié`})
+      this.messages.push({severity: 'success', content: i18n.global.t('stockHasBeenModifiedMessage')})
       return StockService.addBook(body)
     },
   }

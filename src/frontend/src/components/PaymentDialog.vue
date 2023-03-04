@@ -4,7 +4,7 @@
       <tr v-for="paymentOption in paymentOptions" :key="paymentOption.name">
         <td>
           <PButton aria-labelledby="Cash" class="p-button-lg" @click="sellWithSinglePaymentOption(paymentOption.value)">
-            {{ paymentOption.name }}
+            {{ $t(paymentOption.value) }}
           </PButton>
         </td>
         <td>
@@ -37,22 +37,18 @@ const props = defineProps({
 
 const paymentOptions = ref([
   {
-    name: "Cash",
     value: "CASH",
     price: 0,
   },
   {
-    name: "Carte",
     value: "CARD",
     price: 0,
   },
   {
-    name: "Twint",
     value: "TWINT",
     price: 0,
   },
   {
-    name: "Bon",
     value: "VOUCHER",
     price: 0,
   },

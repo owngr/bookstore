@@ -1,8 +1,8 @@
 <template>
-  <h1>Ventes</h1>
+  <h1>{{ $t('sales') }}</h1>
   <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
   </PMessage>
-  <PDialog v-model:visible="displayViewDialog" :style="{width: '50w'}" header="Aperçu facture">
+  <PDialog v-model:visible="displayViewDialog" :style="{width: '50w'}" :header="$t('previewInvoice')">
 
 
   </PDialog>
@@ -24,21 +24,25 @@
   >
     <template #header>
       <div class="p-d-flex p-jc-between p-ai-center">
-        <button label="Export" @click="exportCSV($event)">Exporter</button>
+        <button label="Export" @click="exportCSV($event)">{{ $t('export') }}</button>
       </div>
     </template>
     <PColumn :sortable="true" field="timeCreated" header="Date"></PColumn>
     <PColumn field="id" header="ID"></PColumn>
-    <PColumn field="quantity" header="Quantité"></PColumn>
-    <PColumn :sortable="true" field="paymentOption" header="Moyen de paiement"></PColumn>
-    <PColumn field="price" header="Montant"></PColumn>
+    <PColumn field="quantity" :header="$t('quantity')"></PColumn>
+    <PColumn :sortable="true" field="paymentOption" :header="$t('paymentOption')">
+      <template #body="slotProps">
+        {{ $t(slotProps.data.paymentOption) }}
+      </template>
+    </PColumn>
+    <PColumn field="price" :header="$t('price')" ></PColumn>
     <ColumnGroup type="footer">
       <PRow v-for="[key, value] in total" :key="key">
-        <PColumn :colspan="4" :footer="key" style="font-weight: lighter"/>
+        <PColumn :colspan="4" :footer="$t(key)" style="font-weight: lighter"/>
         <PColumn :colspan="1" :footer="value"/>
       </PRow>
       <PRow>
-        <PColumn :colspan="4" footer="Total"/>
+        <PColumn :colspan="4" :footer="$t('total')"/>
         <PColumn :colspan="1" :footer="totalSum"/>
       </PRow>
     </ColumnGroup>
@@ -50,6 +54,8 @@ import {computed, ref} from "vue";
 import {useFetchInvoices} from "@/composables/useFetch";
 import {endOfDay, endOfMonth, endOfYear, startOfDay, startOfMonth, startOfYear} from 'date-fns';
 import SaleService from "@/service/SaleService";
+import i18n from "@/i18n";
+
 
 const now = new Date()
 const startDate = startOfDay(now)
@@ -62,9 +68,9 @@ const startTime = ref([
 );
 
 const presetRanges = ref([
-  {label: 'Aujourd\'hui', range: [startOfDay(now), endOfDay(now)]},
-  {label: 'Ce mois', range: [startOfMonth(now), endOfMonth(now)]},
-  {label: 'Cette année', range: [startOfYear(now), endOfYear(now)]},
+  {label: i18n.global.t('today'), range: [startOfDay(now), endOfDay(now)]},
+  {label: i18n.global.t('thisMonth'), range: [startOfMonth(now), endOfMonth(now)]},
+  {label: i18n.global.t('thisYear'), range: [startOfYear(now), endOfYear(now)]},
 ]);
 
 
@@ -82,7 +88,7 @@ const handleDate = (modelData) => {
         invoices.value = data
       })
       .catch(() => {
-        messages.value.push({severity: 'error', content: `Les factures n'ont pas pu être chargés`})
+        messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
       })
 }
 

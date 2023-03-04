@@ -2,6 +2,7 @@ import {ref} from "vue"
 import EditorService from "@/service/EditorService"
 import DistributorService from "@/service/DistributorService"
 import SaleService from "@/service/SaleService";
+import i18n from "@/i18n";
 
 export function useFetchEditors() {
     const editors = ref([])
@@ -13,7 +14,7 @@ export function useFetchEditors() {
             // needded because Drodpown doesn't work with simple list
             editors.value = data
         })
-        .catch(() => messages.value.push({severity: 'error', content: `Les éditeurs n'ont pas pu être chargés`}))
+        .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadEditorsMessage')}))
     return {editors, messages }
 }
 
@@ -26,7 +27,7 @@ export function useFetchDistributors() {
             distributors.value = data
             console.log(data)
         })
-        .catch(() => messages.value.push({severity: 'error', content: `Les distributeurs n'ont pas pu être chargés`}))
+        .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadDistributorsMessage')}))
     return {distributors, messages}
 }
 
@@ -40,7 +41,7 @@ export function useFetchInvoices(startTime, endTime) {
             console.debug(data)
         })
         .catch((e) => {
-            messages.value.push({severity: 'error', content: `Les factures n'ont pas pu être chargés`})
+            messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
             console.debug(e)
         })
     return {invoices, messages}
