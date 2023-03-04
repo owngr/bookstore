@@ -1,20 +1,21 @@
 <template>
   <h1>Vendre un livre</h1>
-  <Message v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{ msg.content }}
-  </Message>
+  <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
+  </PMessage>
 
   <SelectButton v-model="selectedPaymentOption" :option="['test','aa']"/>
-  <Dialog v-model:visible="displayPaymentDialog" :draggable="false" header="Choix du système de payement"
-          :style="{width: '50vw'}">
+  <PDialog
+      v-model:visible="displayPaymentDialog" :draggable="false" :style="{width: '50vw'}"
+      header="Choix du système de payement">
     <Payment :price="priceSum()" @sell="sellBooks"/>
-  </Dialog>
+  </PDialog>
   <IsbnSearch
       :reset-on-found="true"
       api-path="/api/stock/"
       @book="createSaleEntry"
       @message="messages.push($event)"
   />
-  <Button
+  <PButton
       label="Ajout d'un fanzine"
       @click="addFanzine()"
   />
@@ -27,34 +28,35 @@
         edit-mode="cell"
         @cell-edit-complete="onCellEditComplete"
     >
-      <Column field="isbn" header="ISBN"></Column>
-      <Column field="title" header="Titre">
+      <PColumn field="isbn" header="ISBN"></PColumn>
+      <PColumn field="title" header="Titre">
         <template #body="slotProps">
           <div :class="titleClass(slotProps.data)">
             {{ slotProps.data.title }}
           </div>
         </template>
-      </Column>
-      <Column field="quantity" header="Quantité"></Column>
-      <Column key="price" field="fullPrice" header="Prix">
+      </PColumn>
+      <PColumn field="quantity" header="Quantité"></PColumn>
+      <PColumn key="price" field="fullPrice" header="Prix">
         <template #editor="{ data, field }">
           <InputText v-model="data[field]" autofocus/>
         </template>
-      </Column>
-      <Column field="delete">
+      </PColumn>
+      <PColumn field="delete">
         <template #body="slotProps">
-          <Button icon="pi pi-times" class="p-button-rounded p-button-danger" aria-label="Cancel"
-                  @click="deleteRow(slotProps)"/>
+          <PButton
+              aria-label="Cancel" class="p-button-rounded p-button-danger" icon="pi pi-times"
+              @click="deleteRow(slotProps)"/>
         </template>
-      </Column>
+      </PColumn>
 
 
-      <!--      <Column :row-editor="true" style="width:10%; min-width:8rem" body-style="text-align:center"/>-->
+      <!--      <PColumn :PRow-editor="true" style="width:10%; min-width:8rem" body-style="text-align:center"/>-->
 
       <ColumnGroup type="footer">
-        <Row>
-          <Column footer="Réduction" :colspan="3"/>
-          <Column :colspan="1">
+        <PRow>
+          <PColumn :colspan="3" footer="Réduction"/>
+          <PColumn :colspan="1">
             <template #footer>
               <InputNumber
                   id="priceReductionPercentage"
@@ -64,16 +66,16 @@
                   suffix="%"
               />
             </template>
-          </Column>
-        </Row>
-        <Row>
-          <Column footer="Total:" :colspan="3"/>
-          <Column :footer="sum.toFixed(2) + ' CHF'"/>
-        </Row>
+          </PColumn>
+        </PRow>
+        <PRow>
+          <PColumn :colspan="3" footer="Total:"/>
+          <PColumn :footer="sum.toFixed(2) + ' CHF'"/>
+        </PRow>
       </ColumnGroup>
     </DataTable>
 
-    <Button
+    <PButton
         :label="submitButtonText"
         type="submit"
         value="submit"
@@ -81,9 +83,9 @@
   </form>
 </template>
 <script setup>
-import {ref, defineProps, computed} from "vue";
+import {computed, defineProps, ref} from "vue";
 import IsbnSearch from "@/components/IsbnSearch";
-import Payment from "@/components/Payment";
+import Payment from "@/components/PaymentDialog";
 import StockService from "@/service/StockService";
 
 defineProps({

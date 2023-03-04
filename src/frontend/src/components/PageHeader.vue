@@ -1,5 +1,5 @@
 <template>
-  <Menubar :model="items"/>
+  <MenuBar :model="items"/>
 </template>
 <script setup>
 const items = [

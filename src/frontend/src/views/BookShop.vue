@@ -6,7 +6,7 @@
         <div class="col-12 md:col-4">
           <div class="product-grid-item card">
             <div class="product-grid-item-content">
-              <img v-bind:src="'/api/shop/' + slotProps.data.isbn" :alt="slotProps.data.title"/>
+              <img :src="'/api/shop/' + slotProps.data.isbn" :alt="slotProps.data.title"/>
               <div class="product-name">{{slotProps.data.title}}</div>
             </div>
             <div class="product-grid-item-bottom">
@@ -26,11 +26,15 @@
 <script>
 import ShopService from "@/service/ShopService";
 export default {
-  name: "Shop",
+  name: "BookShop",
   data() {
     return {
       books: []
     }
+  },
+
+  mounted() {
+    this.fetchStock();
   },
   methods: {
     fetchStock: function () {
@@ -43,10 +47,6 @@ export default {
     getPicture: async function (isbn) {
       return await ShopService.getPicture(isbn)
     }
-  },
-
-  mounted() {
-    this.fetchStock();
   }
 }
 </script>
@@ -112,7 +112,7 @@ export default {
 
   .product-list-action {
     display: flex;
-    flex-direction: column;
+    flex-direction: PColumn;
   }
 
   .p-button {

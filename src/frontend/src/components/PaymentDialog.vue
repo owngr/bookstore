@@ -3,9 +3,9 @@
     <table>
       <tr v-for="paymentOption in paymentOptions" :key="paymentOption.name">
         <td>
-          <Button aria-labelledby="Cash" class="p-button-lg" @click="sellWithSinglePaymentOption(paymentOption.value)">
+          <PButton aria-labelledby="Cash" class="p-button-lg" @click="sellWithSinglePaymentOption(paymentOption.value)">
             {{ paymentOption.name }}
-          </Button>
+          </PButton>
         </td>
         <td>
           <InputNumber v-model="paymentOption.price" mode="currency" currency="CHF"/>
@@ -20,7 +20,7 @@
         </td>
       </tr>
     </table>
-    <Button :disabled="remainingMoney !== 0" @click="sellWithManyPaymentOptions">Valider</Button>
+    <PButton :disabled="remainingMoney !== 0" @click="sellWithManyPaymentOptions">Valider</PButton>
   </div>
 </template>
 

@@ -1,10 +1,10 @@
 <template>
   <h1>Add book</h1>
   <StockEntryEdit
-      v-model:book="initBook"
-      :process-form-function="addBook"
-      v-model:initMessages="messages"
       :key="reloadCount"
+      v-model:book="initBook"
+      v-model:initMessages="messages"
+      :process-form-function="addBook"
   />
 
 </template>
@@ -14,9 +14,9 @@ import StockEntryEdit from "@/components/StockEntryEdit";
 import StockService from "@/service/StockService";
 
 export default {
+  el: '#addbook',
   name: "AddBook",
   components: {StockEntryEdit},
-  el: '#addbook',
   data() {
     return {
       reloadCount: 0,

@@ -6,8 +6,8 @@
         @keydown.enter="processForm"
     >
 
-      <Message v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{ msg.content }}
-      </Message>
+      <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
+      </PMessage>
 
 
       <table>
@@ -21,13 +21,14 @@
                 :init-isbn="book.isbn"
                 @book="fillData"
                 @message="messages.push($event)"
-                @preventSubmit="enableSubmit"
+                @prevent-submit="enableSubmit"
             />
           </td>
           <td rowspan="6">
             <img v-if="!editMode" :src="bookCopy.coverUrl" alt="" style="width: 200px; height: auto">
-            <img v-if="editMode && bookCopy.hasCover" :src="'/api/shop/'+bookCopy.isbn" alt=""
-                 style="width: 200px; height: auto">
+            <img
+                v-if="editMode && bookCopy.hasCover" :src="'/api/shop/'+bookCopy.isbn" alt=""
+                style="width: 200px; height: auto">
           </td>
 
         </tr>
@@ -48,7 +49,7 @@
         <tr>
           <td><label class="form-label" for="editor">Maison d'édition</label></td>
           <td>
-            <Dropdown
+            <DropDown
                 id="editor"
                 v-model="bookCopy.editor"
                 :editable="true"
@@ -80,7 +81,7 @@
             <label class="form-label" for="distributor">Distributeur</label>
           </td>
           <td>
-            <Dropdown
+            <DropDown
                 id="distributor" v-model="bookCopy.distributor"
                 :filter="true" :options="distributors"
                 :editable="true"
@@ -90,7 +91,7 @@
         </tr>
         <tr>
           <td colspan="2">
-            <Textarea v-model="bookCopy.description" rows="10" style="width: 100%"></Textarea>
+            <TextArea v-model="bookCopy.description" rows="10" style="width: 100%"></TextArea>
           </td>
 
         </tr>
@@ -124,7 +125,7 @@
         </tr>
       </table>
       <p>
-        <Button
+        <PButton
             :label="submitButtonText"
             type="submit"
             value="submit"
@@ -140,7 +141,7 @@
 import AuthorForm from "@/components/AuthorForm"
 import StockService from "@/service/StockService"
 import IsbnSearch from "@/components/IsbnSearch"
-import {defineProps, ref, defineEmits,} from "vue"
+import {defineEmits, defineProps, ref,} from "vue"
 import {useFetchDistributors, useFetchEditors} from "@/composables/useFetch"
 
 const props = defineProps({
@@ -223,7 +224,7 @@ const processForm = () => {
   }
   props.processFormFunction(bookCopy.value)
       .then((data) => {
-        bookCopy = data
+        bookCopy.value = data
         // done in parent
         // this.messages.push({severity: 'success', content: `Le stock a été modifié`})
         emit('close-dialog')
@@ -239,7 +240,7 @@ const onEditorChange = (event) => {
 }
 
 const fileUpload = (event) => {
-  formData = new FormData()
+  formData.value = new FormData()
   formData.value.append("file", event.files[0])
   StockService.addCover(formData, bookCopy.value.isbn)
       .then(() => messages.value.push({severity: 'success', content: `L'image a pu être uploadé`}))

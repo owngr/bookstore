@@ -1,7 +1,7 @@
 <template>
   <h1>Stock</h1>
   <div>
-    <Dialog v-model:visible="displayEditDialog" :style="{width: '50vw'}" header="Mise à jour entrée stock">
+    <PDialog v-model:visible="displayEditDialog" :style="{width: '50vw'}" header="Mise à jour entrée stock">
       <StockEntryEdit
           v-model:book="book"
           :edit-mode="true"
@@ -9,7 +9,7 @@
           submit-button-text="Mettre à jour le livre"
           @close-dialog="closeEditDialog"
       />
-    </Dialog>
+    </PDialog>
     <DataTable
         ref="dt"
         :global-filter-fields="['isbn','title','authors','editor']" :lasy="true"
@@ -32,37 +32,40 @@
 
           <span class="p-input-icon-left">
                                 <i class="pi pi-search"/>
-                                <InputText v-model="filters['global'].value" placeholder="Keyword Search"
-                                           @keydown.enter="onFilter()"/>
+                                <InputText
+                                    v-model="filters['global'].value" placeholder="Keyword Search"
+                                    @keydown.enter="onFilter()"/>
                             </span>
         </div>
       </template>
-      <Column field="isbn" header="ISBN"></Column>
-      <Column :sortable="true" field="title" header="Titre">
+      <PColumn field="isbn" header="ISBN"></PColumn>
+      <PColumn :sortable="true" field="title" header="Titre">
         <template #body="slotProps">
           <a @click="openEditDialog(slotProps.data)">{{ slotProps.data.title }}</a>
         </template>
-      </Column>
-      <Column field="authors" header="Auteur·rices">
+      </PColumn>
+      <PColumn field="authors" header="Auteur·rices">
         <template #body="slotProps">
-          <li v-for="author in slotProps.data.authors" v-bind:key="author">
+          <li v-for="author in slotProps.data.authors" :key="author">
             {{ author }}
           </li>
         </template>
-      </Column>
-      <Column field="editor" header="Maison d'édition"></Column>
-      <Column :hidden="true" field="description" header="Résumé"></Column>
-      <Column :exportable="false" field="amount" header="Quantité"></Column>
-      <Column :exportable="false" :sortable="true" field="hasCover" header="Couverture"></Column>
+      </PColumn>
+      <PColumn field="editor" header="Maison d'édition"></PColumn>
+      <PColumn :hidden="true" field="description" header="Résumé"></PColumn>
+      <PColumn :exportable="false" field="amount" header="Quantité"></PColumn>
+      <PColumn :exportable="false" :sortable="true" field="hasCover" header="Couverture"></PColumn>
       <template #footer>
         <div class="flex justify-content-center flex-wrap ">
           <label class="form-label m-2" for="paginatorDropdown">Affichage de {{ offset }} à {{ offset + pageSize }} sur
             {{ totalRecords }}</label>
-          <Dropdown id="paginatorDropdown" v-model="currentPage" :options="pages" placeholder=1 class="m-2"
-                    @change="onPageChange($event)"/>
+          <DropDown
+              id="paginatorDropdown" v-model="currentPage" :options="pages" class="m-2" placeholder=1
+              @change="onPageChange($event)"/>
           <label class="form-label m-2" for="rowDropdown">Nombre d'éléments par page</label>
-          <Dropdown id="rowDropdown" v-model="lazyParams.rows" :options="[50,100,200]" class="m-2" placeholder=50
-                    @change="onRowsPerPage()"/>
+          <DropDown
+              id="rowDropdown" v-model="lazyParams.rows" :options="[50,100,200]" class="m-2" placeholder=50
+              @change="onRowsPerPage()"/>
         </div>
       </template>
     </DataTable>
@@ -77,7 +80,7 @@ import StockEntryEdit from "@/components/StockEntryEdit";
 
 export default {
   el: '#app',
-  name: "Stock",
+  name: "BookStock",
   components: {
     StockEntryEdit
   },

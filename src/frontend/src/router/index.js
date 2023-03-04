@@ -1,11 +1,11 @@
 import { createWebHashHistory, createRouter } from "vue-router"
-import Home from "@/views/Home.vue"
+import Home from "@/views/HomePage.vue"
 import AddBook from "@/views/AddBook"
-import Stock from "@/views/Stock"
-import Inventory from "@/views/Inventory"
-import Shop from "@/views/Shop"
+import BookStock from "@/views/BookStock"
+import StockInventory from "@/views/StockInventory"
+import BookShop from "@/views/BookShop"
 import SellBook from "@/views/SellBook"
-import Sales from "@/views/Sales"
+import Sales from "@/views/BookSales"
 
 const routes = [
     {
@@ -16,7 +16,7 @@ const routes = [
     {
         path: "/stock",
         name: "Stock",
-        component: Stock,
+        component: BookStock,
     },
     {
         path: "/book/add",
@@ -26,12 +26,12 @@ const routes = [
     {
         path: "/inventory",
         name: "Inventory",
-        component: Inventory,
+        component: StockInventory,
     },
     {
         path: "/shop",
         name: "Shop",
-        component: Shop,
+        component: BookShop,
     },
     {
         path: "/book/sell",

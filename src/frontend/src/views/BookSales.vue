@@ -1,14 +1,15 @@
 <template>
   <h1>Ventes</h1>
-  <Message v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{ msg.content }}
-  </Message>
-  <Dialog v-model:visible="displayViewDialog" header="Aperçu facture" :style="{width: '50w'}">
+  <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
+  </PMessage>
+  <PDialog v-model:visible="displayViewDialog" :style="{width: '50w'}" header="Aperçu facture">
 
 
-  </Dialog>
+  </PDialog>
   <div style="width: 30%">
-    <VueDatePicker v-model="date" :enable-time-picker="false" :preset-ranges="presetRanges" :start-time="startTime"
-                   range @update:model-value="handleDate">
+    <VueDatePicker
+        v-model="date" :enable-time-picker="false" :preset-ranges="presetRanges" :start-time="startTime"
+        range @update:model-value="handleDate">
       <template #yearly="{ label, range, presetDateRange }">
         <span @click="presetDateRange(range)">{{ label }}</span>
       </template>
@@ -26,20 +27,20 @@
         <button label="Export" @click="exportCSV($event)">Exporter</button>
       </div>
     </template>
-    <column field="timeCreated" header="Date" :sortable="true"></column>
-    <column field="id" header="ID"></column>
-    <column field="quantity" header="Quantité"></column>
-    <column field="paymentOption" header="Moyen de paiement" :sortable="true"></column>
-    <column field="price" header="Montant"></column>
+    <PColumn :sortable="true" field="timeCreated" header="Date"></PColumn>
+    <PColumn field="id" header="ID"></PColumn>
+    <PColumn field="quantity" header="Quantité"></PColumn>
+    <PColumn :sortable="true" field="paymentOption" header="Moyen de paiement"></PColumn>
+    <PColumn field="price" header="Montant"></PColumn>
     <ColumnGroup type="footer">
-      <Row v-for="[key, value] in total" :key="key">
-        <Column :colspan="4" :footer="key" style="font-weight: lighter"/>
-        <Column :colspan="1" :footer="value"/>
-      </Row>
-      <Row>
-        <Column :colspan="4" footer="Total"/>
-        <Column :colspan="1" :footer="totalSum"/>
-      </Row>
+      <PRow v-for="[key, value] in total" :key="key">
+        <PColumn :colspan="4" :footer="key" style="font-weight: lighter"/>
+        <PColumn :colspan="1" :footer="value"/>
+      </PRow>
+      <PRow>
+        <PColumn :colspan="4" footer="Total"/>
+        <PColumn :colspan="1" :footer="totalSum"/>
+      </PRow>
     </ColumnGroup>
   </DataTable>
 </template>

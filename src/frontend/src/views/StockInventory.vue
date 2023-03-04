@@ -1,6 +1,6 @@
 <template>
   <h1>Inventaire</h1>
-  <Message v-for="msg of messages" :sticky="false" :severity="msg.severity" :key="msg.content">{{msg.content}}</Message>
+  <PMessage v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{msg.content}}</PMessage>
   <table>
     <tr>
       <td>
@@ -27,7 +27,7 @@
       </td>
     </tr>
   </table>
-  <Button @click="deleteStock" label="Supprimer le stock"/>
+  <PButton label="Supprimer le stock" @click="deleteStock"/>
 
 </template>
 
@@ -36,7 +36,7 @@ import InventoryService from "../service/InventoryService";
 import StockService from "../service/StockService";
 
 export default {
-  name: "Inventory",
+  name: "StockInventory",
   data() {
     return {
       inventory: {

@@ -19,7 +19,7 @@
 import {ref, defineProps, defineEmits, onMounted} from "vue"
 
 
-const emit = defineEmits(['book', 'preventSubmit'])
+const emit = defineEmits(['book', 'preventSubmit', 'message'])
 
 const props = defineProps({
   disabled: {
