@@ -40,3 +40,6 @@ covers/
 
 ### Helm ###
 **/charts/*.tgz
+
+### Node ###
+**/src/frontend/node/
