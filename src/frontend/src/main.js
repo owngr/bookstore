@@ -19,6 +19,8 @@ import AutoComplete from "primevue/autocomplete"
 import FileUpload from 'primevue/fileupload'
 import DataView from 'primevue/dataview'
 import SelectButton from 'primevue/selectbutton';
+import InlineMessage from 'primevue/inlinemessage';
+
 // import 'primevue/resources/themes/bootstrap4-light-blue/theme.css';
 
 
@@ -51,4 +53,5 @@ app.component('FileUpload', FileUpload)
 app.component('DataView', DataView)
 app.component('SelectButton', SelectButton)
 app.component('VueDatePicker', VueDatePicker);
+app.component('InlineMessage', InlineMessage)
 app.mount('#app')

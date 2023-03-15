@@ -1,12 +1,19 @@
 <template>
   <h1>Vendre un livre</h1>
+
   <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
   </PMessage>
 
   <SelectButton v-model="selectedPaymentOption" :option="['test','aa']"/>
   <PDialog
-      v-model:visible="displayPaymentDialog" :draggable="false" :style="{width: '50vw'}"
-      :header="$t('choosePaymentOption')">
+      v-model:visible="displayMissingBookDialog" :draggable="false" :header="$t('missingBooks')"
+      :style="{width: '50vw'}">
+    <MissingBooks :missing-books="missingBooks" :sales="sales" @canceled="displayMissingBookDialog = false"
+                  @added-books="processForm"/>
+  </PDialog>
+  <PDialog
+      v-model:visible="displayPaymentDialog" :draggable="false" :header="$t('choosePaymentOption')"
+      :style="{width: '50vw'}">
     <Payment :price="priceSum()" @sell="sellBooks"/>
   </PDialog>
   <IsbnSearch
@@ -28,16 +35,16 @@
         edit-mode="cell"
         @cell-edit-complete="onCellEditComplete"
     >
-      <PColumn field="isbn" :header="$t('isbn')"></PColumn>
-      <PColumn field="title" :header="$t('title')">
+      <PColumn :header="$t('isbn')" field="isbn"></PColumn>
+      <PColumn :header="$t('title')" field="title">
         <template #body="slotProps">
           <div :class="titleClass(slotProps.data)">
             {{ slotProps.data.title }}
           </div>
         </template>
       </PColumn>
-      <PColumn field="quantity" :header="$t('quantity')"></PColumn>
-      <PColumn key="price" field="fullPrice" :header="$t('price')">
+      <PColumn :header="$t('quantity')" field="quantity"></PColumn>
+      <PColumn key="price" :header="$t('price')" field="fullPrice">
         <template #editor="{ data, field }">
           <InputText v-model="data[field]" autofocus/>
         </template>
@@ -61,8 +68,8 @@
               <InputNumber
                   id="priceReductionPercentage"
                   v-model="priceDiscount"
-                  name="priceReductionPercentage"
                   :show-buttons="false"
+                  name="priceReductionPercentage"
                   suffix="%"
               />
             </template>
@@ -88,6 +95,7 @@ import IsbnSearch from "@/components/IsbnSearch";
 import Payment from "@/components/PaymentDialog";
 import StockService from "@/service/StockService";
 import i18n from "@/i18n";
+import MissingBooks from "@/components/MissingBooks";
 
 
 defineProps({
@@ -100,7 +108,9 @@ defineProps({
 const messages = ref([])
 const sales = ref([])
 let displayPaymentDialog = ref(false)
+const displayMissingBookDialog = ref(false)
 const selectedPaymentOption = ref(null)
+let missingBooks = ref([])
 let priceDiscount = ref(0)
 let sum = computed(() => priceSum())
 
@@ -136,6 +146,7 @@ function createSaleEntry(book) {
     fullPrice: parseFloat(book.price ?? 0),
     price: parseFloat(book.price ?? 0),
     new: true,
+    originalBook: book
   })
 }
 
@@ -183,6 +194,8 @@ function onCellEditComplete(event) {
 }
 
 function processForm() {
+  // As we might just have the missing books dialog we make sure that it's closed first
+  displayMissingBookDialog.value = false
   return StockService.getMissingBooks({"sales": sales.value})
       .then(res => {
         if (!res.ok) {
@@ -193,13 +206,10 @@ function processForm() {
       .then(res => {
         if (res === true) {
           displayPaymentDialog.value = true
+          // Some books are missing and we allow the user to add them before selling them
         } else if (res.length !== 0) {
-          res.forEach(stockEntry => {
-            messages.value.push({
-              severity: 'error',
-              content: i18n.global.t('bookHasOnlyNEntryInStockMessage', {title: stockEntry.title, amount: stockEntry.amount})
-            })
-          })
+          missingBooks.value = res
+          displayMissingBookDialog.value = true
         }
       })
       .catch(e => {
@@ -238,7 +248,7 @@ function sellBooks(paymentOptions) {
 
 </script>
 
-<style scoped lang="css">
+<style lang="css" scoped>
 .p-button {
   margin: .2rem;
 }
