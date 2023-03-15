@@ -142,8 +142,8 @@ class StockServiceImpl @Autowired constructor(
         throw NotFoundException("The book could not be found in stock")
     }
 
-    override fun checkMissingBooks(saleDTOS: List<SaleDTO>): ResponseEntity<List<StockEntry>> {
-        val missingBooks = getMissingBooks(saleDTOS)
+    override fun checkMissingBooks(saleDTOs: List<SaleDTO>): ResponseEntity<List<StockEntry>> {
+        val missingBooks = getMissingBooks(saleDTOs)
         if (missingBooks.isEmpty()) {
             return ResponseEntity(null, HttpStatus.OK)
         }
@@ -151,9 +151,9 @@ class StockServiceImpl @Autowired constructor(
     }
 
 
-    override fun getMissingBooks(saleDTOS: List<SaleDTO>): ArrayList<StockEntry> {
+    override fun getMissingBooks(saleDTOs: List<SaleDTO>): ArrayList<StockEntry> {
         val reducedSales = HashMap<String, Int>()
-        for (sale in saleDTOS) {
+        for (sale in saleDTOs) {
             // fanzines aren't in stock
             if (sale.isbn.isNullOrEmpty()) {
                 continue
@@ -176,8 +176,8 @@ class StockServiceImpl @Autowired constructor(
         return missingBooks
     }
 
-    override fun removeBooks(saleDTOS: List<SaleDTO>) {
-        for (sale in saleDTOS) {
+    override fun removeBooks(saleDTOs: List<SaleDTO>) {
+        for (sale in saleDTOs) {
             if (!sale.isbn.isNullOrEmpty()) {
                 val book = bookRepository.findByIsbn(sale.isbn)
                 if (book != null) {
