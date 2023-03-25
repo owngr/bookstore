@@ -10,7 +10,7 @@ class Invoice(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int = -1,
     @OneToMany(mappedBy = "invoice")
-    var sales: Set<Sale>? = HashSet(),
+    var sales: Set<Sale> = HashSet(),
 
     val priceWithoutDiscount: Float = -1f,
 

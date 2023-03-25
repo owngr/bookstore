@@ -9,6 +9,11 @@ class SaleService {
             .then(handleErrors)
     }
 
+    getInvoice(invoiceId) {
+        return fetch("api/invoices/" + invoiceId.toString())
+            .then(handleErrors)
+    }
+
 }
 
 export default new SaleService()

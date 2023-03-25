@@ -1,5 +1,6 @@
 package ch.wngr.bookstore.services
 
+import ch.wngr.bookstore.converters.toSaleList
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Invoice
 import ch.wngr.bookstore.entities.Payment
@@ -8,13 +9,13 @@ import ch.wngr.bookstore.enums.PaymentMethod
 import ch.wngr.bookstore.models.InvoiceRow
 import ch.wngr.bookstore.models.SaleList
 import ch.wngr.bookstore.repositories.BookRepository
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
 import ch.wngr.bookstore.repositories.InvoiceRepository
 import ch.wngr.bookstore.repositories.PaymentRepository
 import ch.wngr.bookstore.repositories.SaleRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
@@ -70,5 +71,9 @@ class SaleServiceImpl @Autowired constructor(
 
     override fun getInvoicesRow(startTime: LocalDateTime, endtime: LocalDateTime): ResponseEntity<List<InvoiceRow>> {
         return ResponseEntity(paymentRepository.getInvoiceByTimeCreatedBetween(startTime, endtime), HttpStatus.OK)
+    }
+
+    override fun getInvoice(invoiceID: Int): ResponseEntity<SaleList> {
+        return ResponseEntity(invoiceRepository.findById(invoiceID).get().toSaleList(), HttpStatus.OK)
     }
 }

@@ -9,4 +9,5 @@ interface SaleService {
 
     fun sellBooks(saleList: SaleList): ResponseEntity<SaleList>
     fun getInvoicesRow(startTime: LocalDateTime, endtime: LocalDateTime): ResponseEntity<List<InvoiceRow>>
+    fun getInvoice(invoiceID: Int): ResponseEntity<SaleList>
 }

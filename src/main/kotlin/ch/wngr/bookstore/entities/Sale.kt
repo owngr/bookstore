@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "sale")
-class Sale (
+class Sale(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int = -1,
@@ -16,8 +16,8 @@ class Sale (
     @JoinColumn(name = "invoice_id")
     var invoice: Invoice? = null,
 
-    var price: Float? = null,
-    var fullPrice: Float? = null,
+    var price: Float = 0F,
+    var fullPrice: Float = 0F,
 
     var description: String = "",
 
