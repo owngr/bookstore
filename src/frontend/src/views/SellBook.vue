@@ -16,6 +16,11 @@
       :style="{width: '50vw'}">
     <Payment :price="priceSum()" @sell="sellBooks"/>
   </PDialog>
+  <PDialog
+      v-model:visible="displayFreeSaleDialog" :draggable="false" :header="$t('chooseFreeSaleCategory')"
+      :style="{width: '50vw'}">
+    <FreeSale @add-free-sale="addFreeSale"/>
+  </PDialog>
   <IsbnSearch
       :reset-on-found="true"
       api-path="/api/stock/"
@@ -23,8 +28,8 @@
       @message="messages.push($event)"
   />
   <PButton
-      :label="$t('addFanzine')"
-      @click="addFanzine()"
+      :label="$t('addFreeSale')"
+      @click="onAddFreeSale()"
   />
   <form
       id="app"
@@ -96,6 +101,7 @@ import Payment from "@/components/PaymentDialog";
 import StockService from "@/service/StockService";
 import i18n from "@/i18n";
 import MissingBooks from "@/components/MissingBooks";
+import FreeSale from "@/components/FreeSale";
 
 
 defineProps({
@@ -109,6 +115,7 @@ const messages = ref([])
 const sales = ref([])
 let displayPaymentDialog = ref(false)
 const displayMissingBookDialog = ref(false)
+const displayFreeSaleDialog = ref(false)
 const selectedPaymentOption = ref(null)
 let missingBooks = ref([])
 let priceDiscount = ref(0)
@@ -122,15 +129,9 @@ function titleClass(data) {
   ]
 }
 
-function addFanzine() {
-  sales.value.push({
-    isbn: null,
-    title: "fanzine",
-    quantity: 1,
-    fullPrice: 0,
-    price: 0,
-    new: false,
-  })
+function addFreeSale(sale) {
+  sales.value.push(sale)
+  displayFreeSaleDialog.value = false
 }
 
 function deleteRow(sale) {
@@ -191,6 +192,10 @@ function onCellEditComplete(event) {
   } else {
     event.preventDefault();
   }
+}
+
+function onAddFreeSale() {
+  displayFreeSaleDialog.value = true
 }
 
 function processForm() {
