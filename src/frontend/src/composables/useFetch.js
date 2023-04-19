@@ -3,10 +3,12 @@ import EditorService from "@/service/EditorService"
 import DistributorService from "@/service/DistributorService"
 import SaleService from "@/service/SaleService";
 import i18n from "@/i18n";
+import mitt from "mitt";
+
+const emitter = mitt()
 
 export function useFetchEditors() {
     const editors = ref([])
-    const messages = ref([])
     EditorService.getAll()
         .then((response) => response.json())
         .then((data) => {
@@ -14,26 +16,30 @@ export function useFetchEditors() {
             // needded because Drodpown doesn't work with simple list
             editors.value = data
         })
-        .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadEditorsMessage')}))
-    return {editors, messages }
+        .catch((e) => {
+            emitter.emit('notify',{severity: 'error', content: i18n.global.t('couldntLoadEditorsMessage')})
+            console.error(e)
+        })
+    return editors
 }
 
 export function useFetchDistributors() {
     const distributors = ref([])
-    const messages = ref([])
     DistributorService.getAll()
         .then((response) => response.json())
         .then((data) => {
             distributors.value = data
             console.log(data)
         })
-        .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadDistributorsMessage')}))
-    return {distributors, messages}
+        .catch((e) => {
+            emitter.emit('notify',{severity: 'error', content: i18n.global.t('couldntLoadDistributorsMessage')})
+            console.error(e)
+        })
+    return distributors
 }
 
 export function useFetchInvoices(startTime, endTime) {
     const invoices = ref([])
-    const messages = ref([])
     SaleService.getSales(startTime, endTime)
         .then((response) => response.json())
         .then((data) => {
@@ -41,8 +47,8 @@ export function useFetchInvoices(startTime, endTime) {
             console.debug(data)
         })
         .catch((e) => {
-            messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
-            console.debug(e)
+            emitter.emit('notify',{severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
+            console.error(e)
         })
-    return {invoices, messages}
+    return invoices
 }

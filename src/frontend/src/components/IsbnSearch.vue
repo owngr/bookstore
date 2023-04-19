@@ -16,11 +16,12 @@
 </template>
 
 <script setup>
-import {ref, defineProps, defineEmits, onMounted} from "vue"
+import {ref, defineProps, defineEmits, onMounted, inject} from "vue"
 import i18n from "@/i18n";
 
 
-const emit = defineEmits(['book', 'preventSubmit', 'message'])
+const emit = defineEmits(['book', 'preventSubmit'])
+const emitter = inject('emitter')
 
 const props = defineProps({
   disabled: {
@@ -68,7 +69,7 @@ const searchIsbn = () => {
           }
           emit('book', JSON.parse(data))
         })
-        .catch((e) => this.$emit('message', {severity: 'warn', content: i18n.global.t('bookNotFoundMessage', {error: e})}))
+        .catch((e) => emitter.emit('notify', {severity: 'warn', content: i18n.global.t('bookNotFoundMessage', {error: e})}))
   }
 }
 

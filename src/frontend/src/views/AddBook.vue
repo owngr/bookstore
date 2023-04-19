@@ -3,7 +3,6 @@
   <StockEntryEdit
       :key="reloadCount"
       v-model:book="initBook"
-      v-model:initMessages="messages"
       :process-form-function="addBook"
   />
 
@@ -13,6 +12,7 @@
 import StockEntryEdit from "@/components/StockEntryEdit";
 import StockService from "@/service/StockService";
 import i18n from "@/i18n";
+import {inject} from "vue";
 
 export default {
   el: '#addbook',
@@ -32,7 +32,7 @@ export default {
         coverUrl: null,
         amount: 1,
       },
-      messages: []
+      emitter: inject('emitter')
     }
   },
   methods: {
@@ -51,7 +51,7 @@ export default {
         amount: book.amount,
       }
       this.reloadCount++
-      this.messages.push({severity: 'success', content: i18n.global.t('stockHasBeenModifiedMessage')})
+      this.emitter.emit('notify',{severity: 'success', content: i18n.global.t('stockHasBeenModifiedMessage')})
       return StockService.addBook(body)
     },
   }

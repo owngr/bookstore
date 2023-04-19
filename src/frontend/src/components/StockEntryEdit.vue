@@ -6,9 +6,6 @@
         @keydown.enter="processForm"
     >
 
-      <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
-      </PMessage>
-
 
       <table>
         <tr>
@@ -20,7 +17,6 @@
                 :disabled="editMode"
                 :init-isbn="book.isbn"
                 @book="fillData"
-                @message="messages.push($event)"
                 @prevent-submit="enableSubmit"
             />
           </td>
@@ -141,7 +137,7 @@
 import AuthorForm from "@/components/AuthorForm"
 import StockService from "@/service/StockService"
 import IsbnSearch from "@/components/IsbnSearch"
-import {defineEmits, defineProps, ref,} from "vue"
+import {defineEmits, defineProps, inject, ref,} from "vue"
 import {useFetchDistributors, useFetchEditors} from "@/composables/useFetch"
 import i18n from "@/i18n";
 
@@ -152,8 +148,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  // used after reload
-  initMessages: [],
   submitButtonText: {
     type: String,
     default: i18n.global.t('addBook'),
@@ -164,11 +158,10 @@ let bookCopy = ref(JSON.parse(JSON.stringify(props.book)))
 bookCopy.value.authors = bookCopy.value.authors.map(a => {
   return {value: a}
 })
-let messages = ref(props.initMessages)
-let editors
-({editors, messages} = useFetchEditors())
-let distributors
-({distributors, messages} = useFetchDistributors())
+let editors = useFetchEditors()
+let distributors = useFetchDistributors()
+
+const emitter = inject('emitter')
 
 
 const changeEditor = (editorName) => {
@@ -231,7 +224,7 @@ const processForm = () => {
         // this.messages.push({severity: 'success', content: `Le stock a été modifié`})
         emit('close-dialog')
       })
-      .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('stockNotUpdatableMessage')}))
+      .catch(() => emitter.emit('notify',{severity: 'error', content: i18n.global.t('stockNotUpdatableMessage')}))
 }
 
 
@@ -245,8 +238,8 @@ const fileUpload = (event) => {
   formData.value = new FormData()
   formData.value.append("file", event.files[0])
   StockService.addCover(formData, bookCopy.value.isbn)
-      .then(() => messages.value.push({severity: 'success', content: i18n.global.t('imageUploadedMessage')}))
-      .catch(() => messages.value.push({severity: 'error', content: i18n.global.t('coulntUploadPictureMessage')}))
+      .then(() => emitter.emit('notify',{severity: 'success', content: i18n.global.t('imageUploadedMessage')}))
+      .catch(() => emitter.emit('notify', {severity: 'error', content: i18n.global.t('coulntUploadPictureMessage')}))
 }
 
 

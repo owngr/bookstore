@@ -1,9 +1,6 @@
 <template>
   <h1>Vendre un livre</h1>
 
-  <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
-  </PMessage>
-
   <SelectButton v-model="selectedPaymentOption" :option="['test','aa']"/>
   <PDialog
       v-model:visible="displayMissingBookDialog" :draggable="false" :header="$t('missingBooks')"
@@ -25,7 +22,6 @@
       :reset-on-found="true"
       api-path="/api/stock/"
       @book="createSaleEntry"
-      @message="messages.push($event)"
   />
   <PButton
       :label="$t('addFreeSale')"
@@ -95,7 +91,7 @@
   </form>
 </template>
 <script setup>
-import {computed, defineProps, ref} from "vue";
+import {computed, defineProps, inject, ref} from "vue";
 import IsbnSearch from "@/components/IsbnSearch";
 import Payment from "@/components/PaymentDialog";
 import StockService from "@/service/StockService";
@@ -111,7 +107,6 @@ defineProps({
   },
 })
 
-const messages = ref([])
 const sales = ref([])
 let displayPaymentDialog = ref(false)
 const displayMissingBookDialog = ref(false)
@@ -120,6 +115,7 @@ const selectedPaymentOption = ref(null)
 let missingBooks = ref([])
 let priceDiscount = ref(0)
 let sum = computed(() => priceSum())
+const emitter = inject('emitter')
 
 function titleClass(data) {
   return [
@@ -236,7 +232,7 @@ function sellBooks(paymentOptions) {
       .then(res => {
         if (res.ok) {
           displayPaymentDialog.value = false
-          messages.value.push({
+          emitter.emit('notify',{
             severity: 'success',
             content: i18n.global.t('saleDoneWithSuccessMessage')
           })
@@ -244,7 +240,7 @@ function sellBooks(paymentOptions) {
         }
       })
       .catch(e => {
-        messages.value.push({
+        emitter.emit('notify',{
           severity: 'error',
           content: e
         })

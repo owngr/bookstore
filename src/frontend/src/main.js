@@ -31,7 +31,11 @@ import "primevue/resources/themes/saga-blue/theme.css"
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
 import i18n from './i18n'
+import mitt from "mitt";
 const app = createApp(App).use(i18n)
+
+const emitter = mitt()
+app.provide('emitter', emitter)
 
 app.use(PrimeVue)
 app.use(router)

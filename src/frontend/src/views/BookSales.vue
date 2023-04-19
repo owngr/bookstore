@@ -1,7 +1,5 @@
 <template>
   <h1>{{ $t('sales') }}</h1>
-  <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
-  </PMessage>
   <PDialog v-model:visible="displayViewDialog" :header="$t('previewInvoice')" :style="{width: '50w'}">
     <InvoiceDetail :sale-list="invoiceDetail" :style="{width: '50w', height: '50w'}"/>
 
@@ -52,7 +50,7 @@
 </template>
 
 <script setup>
-import {computed, ref} from "vue";
+import {computed, inject, ref} from "vue";
 import {useFetchInvoices} from "@/composables/useFetch";
 import {endOfDay, endOfMonth, endOfYear, startOfDay, startOfMonth, startOfYear} from 'date-fns';
 import SaleService from "@/service/SaleService";
@@ -77,12 +75,14 @@ const presetRanges = ref([
 ]);
 
 
-const {invoices, messages} = useFetchInvoices(startDate, endDate)
+const invoices = useFetchInvoices(startDate, endDate)
 
 // ref to the datatable
 const dt = ref()
 
 let invoiceDetail = ref()
+
+const emitter = inject('emitter')
 
 
 const handleDate = (modelData) => {
@@ -93,7 +93,7 @@ const handleDate = (modelData) => {
         invoices.value = data
       })
       .catch(() => {
-        messages.value.push({severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
+        emitter.emit('notify',{severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
       })
 }
 

@@ -1,6 +1,5 @@
 <template>
   <h1>{{ $t('inventory') }}</h1>
-  <PMessage v-for="msg of messages" :key="msg.content" :sticky="false" :severity="msg.severity">{{msg.content}}</PMessage>
   <table>
     <tr>
       <td>
@@ -35,6 +34,7 @@
 import InventoryService from "../service/InventoryService";
 import StockService from "../service/StockService";
 import i18n from "@/i18n";
+import {inject} from "vue";
 
 export default {
   name: "StockInventory",
@@ -44,7 +44,7 @@ export default {
         bookAmount: 0,
         moneySum: 0,
       },
-      messages: []
+      emitter: inject('emitter')
     }
   },
 
@@ -59,7 +59,7 @@ export default {
     },
     deleteStock() {
       StockService.deleteStock().then(() => {
-        this.messages.push({severity: 'success', content: i18n.global.t('stockHasBeenDeletedMessage')})
+        this.emitter.emit('notify',{severity: 'success', content: i18n.global.t('stockHasBeenDeletedMessage')})
       })
     }
   }
