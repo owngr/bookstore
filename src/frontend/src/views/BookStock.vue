@@ -176,7 +176,7 @@ export default {
       }
       this.closeEditDialog();
       return StockService.updateStock(body)
-          .then(this.fetchStock)
+          .then(this.àfetchStock(this.lazyParams))
     },
     onPageChange(event) {
       console.debug("on page")
