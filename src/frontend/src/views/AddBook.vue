@@ -1,5 +1,5 @@
 <template>
-  <h1>Add book</h1>
+  <h1>{{ $t('addBook') }}</h1>
   <StockEntryEdit
       :key="reloadCount"
       v-model:book="initBook"

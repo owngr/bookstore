@@ -1,5 +1,5 @@
 <template>
-  <h1>Shop</h1>
+  <h1>{{ $t('shop') }}</h1>
   <div class="card">
     <DataView :value="books" layout="grid">
       <template #grid="slotProps">

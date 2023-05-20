@@ -1,5 +1,5 @@
 <template>
-  <h1>Vendre un livre</h1>
+  <h1>{{ $t('sellBooks') }}</h1>
 
   <SelectButton v-model="selectedPaymentOption" :option="['test','aa']"/>
   <PDialog

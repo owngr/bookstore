@@ -7,7 +7,7 @@ import i18n from "@/i18n";
 
 const items = [
   {
-    label: i18n.global.t('home'),
+    label: i18n.global.t('homePage'),
     to: '/',
   },
   {
@@ -19,17 +19,22 @@ const items = [
     to: '/book/add',
   },
   {
-    label: i18n.global.t('inventory'),
-    to: '/inventory',
-  },
-  {
     label: i18n.global.t('sellBooks'),
     to: '/book/sell',
   },
   {
     label: i18n.global.t('sales'),
     to: '/sales',
-  }
+  },
+  {
+    label: i18n.global.t('more'),
+    items: [
+      {
+        label: i18n.global.t('inventory'),
+        to: '/inventory',
+      },
+    ]
+  },
 ]
 </script>
 

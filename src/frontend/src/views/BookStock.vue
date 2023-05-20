@@ -1,5 +1,5 @@
 <template>
-  <h1>Stock</h1>
+  <h1>{{ $t('stock')}}</h1>
   <div>
     <PDialog v-model:visible="displayEditDialog" :style="{width: '50vw'}" :header="$t('updateStockEntry')">
       <StockEntryEdit
