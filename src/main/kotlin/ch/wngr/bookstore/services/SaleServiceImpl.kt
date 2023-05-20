@@ -25,6 +25,7 @@ class SaleServiceImpl @Autowired constructor(
     val stockService: StockService,
     val bookRepository: BookRepository,
     val paymentRepository: PaymentRepository,
+    val basketService: BasketService,
 ) : SaleService {
 
     override fun sellBooks(saleList: SaleList): ResponseEntity<SaleList> {
@@ -32,6 +33,7 @@ class SaleServiceImpl @Autowired constructor(
             return ResponseEntity(null, HttpStatus.CONFLICT)
         }
         stockService.removeBooks(saleList.sales)
+        basketService.addBooksToBasket(saleList.sales)
         val sales: MutableSet<Sale> = HashSet()
         var invoice =
             Invoice(

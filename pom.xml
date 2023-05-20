@@ -183,6 +183,9 @@
             <plugin>jpa</plugin>
             <plugin>kotlinx-serialization</plugin>
           </compilerPlugins>
+          <pluginOptions>
+            <option>no-arg:annotation=ch.wngr.bookstore.annotations.EmptyConstructor</option>
+          </pluginOptions>
         </configuration>
 
         <dependencies>
