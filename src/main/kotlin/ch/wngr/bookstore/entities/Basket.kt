@@ -12,7 +12,12 @@ class Basket(
 
     @OneToMany(mappedBy = "basketId")
     var basketBooks: MutableSet<BasketBook> = HashSet(),
-    var timeClosed: LocalDateTime? = null
+
+    var timeClosed: LocalDateTime? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "distributor_id")
+    var distributor: Distributor? = Distributor(),
 )
 
 

@@ -1,6 +1,7 @@
 CREATE TABLE basket
 (
     id serial PRIMARY KEY,
+    distributor_id integer REFERENCES distributor(id),
     time_closed timestamp with time zone null
 );
 
@@ -11,6 +12,3 @@ CREATE TABLE basket_book
     quantity integer,
     primary key (basket_id, book_id)
 );
-
-insert into basket
-default values;

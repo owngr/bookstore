@@ -11,6 +11,7 @@
   "addSecondHandBook": "Ajout d'un livre d'occasion",
   "addVoucher": "Ajout d'un bon",
   "authors": "Auteur·ice·s",
+  "basket": "Panier",
   "bookAmount": "Nombre de livres",
   "bookHasOnlyNEntryInStockMessage": "Le livre {title} n'a que {amount} exemplaire(s) en stock",
   "bookNotFoundMessage": "Le livre n'a pas pu être trouvé {error}",

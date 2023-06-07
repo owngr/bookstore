@@ -1,11 +1,18 @@
 package ch.wngr.bookstore.services
 
+import ch.wngr.bookstore.converters.ToBasketDto
+import ch.wngr.bookstore.entities.Basket
 import ch.wngr.bookstore.entities.BasketBook
+import ch.wngr.bookstore.entities.Distributor
+import ch.wngr.bookstore.models.BasketDto
+import ch.wngr.bookstore.models.BasketRow
 import ch.wngr.bookstore.models.SaleDTO
 import ch.wngr.bookstore.repositories.BasketBookRepository
 import ch.wngr.bookstore.repositories.BasketRepository
 import ch.wngr.bookstore.repositories.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,11 +22,11 @@ class BasketServiceImpl @Autowired constructor(
     val bookRepository: BookRepository,
 ) : BasketService {
     override fun addBooksToBasket(saleDTOs: List<SaleDTO>) {
-        val basket = basketRepository.findFirstByTimeClosedIsNull()
         for (sale in saleDTOs) {
             if (!sale.isbn.isNullOrEmpty()) {
                 val book = bookRepository.findByIsbn(sale.isbn)
                 if (book != null) {
+                    val basket = getOrCreateBasket(book.distributor!!)
                     var basketBook: BasketBook
                     try {
                         basketBook = basket.basketBooks.first { bb -> bb.bookId == book.id }
@@ -34,5 +41,33 @@ class BasketServiceImpl @Autowired constructor(
             }
         }
 
+    }
+
+    override fun getBaskets(open: Boolean): ResponseEntity<List<BasketDto>> {
+        val baskets: List<Basket> = if (open) {
+            basketRepository.findAllByTimeClosedIsNull()
+        } else {
+            basketRepository.findAllByTimeClosedIsNotNull()
+        }
+        var basketRows: List<BasketRow>
+        var basketDto: BasketDto
+        val basketDtos = mutableListOf<BasketDto>()
+        for (basket in baskets) {
+            basketRows = basketBookRepository.findBasketDtoByBasket(basket.id)
+            basketDto = basket.ToBasketDto()
+            basketDto.books = basketRows
+            basketDtos.add(basketDto)
+        }
+//        var basketRow = BasketRow(isbn = "", title = "", quantity = 1)
+        return ResponseEntity(basketDtos, HttpStatus.OK)
+    }
+
+    private fun getOrCreateBasket(distributor: Distributor): Basket {
+        var basket = basketRepository.findFirstByTimeClosedIsNullAndDistributorEquals(distributor)
+        if (basket == null) {
+            basket = Basket(distributor = distributor)
+            basket = basketRepository.save(basket)
+        }
+        return basket
     }
 }
