@@ -165,7 +165,7 @@ function adaptBooksPrice(reducedSum) {
 function priceSum() {
   let reducedSum = sales.value.filter(sale => sale.new).reduce((sum, sale) => sum + sale.fullPrice, 0)
   // round it up
-  reducedSum = Math.ceil((reducedSum - (reducedSum * priceDiscount.value / 100)) * 20) / 20
+  reducedSum = Math.round((reducedSum - (reducedSum * priceDiscount.value / 100)) * 20) / 20
   let fullpriceSum = sales.value.filter(sale => !sale.new).reduce((sum, sale) => sum + sale.fullPrice, 0)
   let sum = reducedSum + fullpriceSum
   adaptBooksPrice(reducedSum)
