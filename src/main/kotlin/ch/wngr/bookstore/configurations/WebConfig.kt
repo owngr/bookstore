@@ -16,8 +16,6 @@ class WebConfig : WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/")
             .addResourceLocations("classpath:/static/index.html")
-            .setCacheControl(CacheControl.maxAge(0, TimeUnit.SECONDS).mustRevalidate())
-            .setCacheControl(CacheControl.noCache())
             .setCacheControl(CacheControl.noStore())
             .resourceChain(true)
             .addResolver(PathResourceResolver())
