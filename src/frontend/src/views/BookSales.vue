@@ -27,7 +27,7 @@
       </div>
     </template>
 
-    <PColumn :sortable="true" field="timeCreated" header="Date"></PColumn>
+    <PColumn :header="$t('date')" :sortable="true" field="timeCreated"></PColumn>
     <PColumn field="id" header="ID"></PColumn>
     <PColumn :header="$t('quantity')" field="quantity"></PColumn>
     <PColumn :header="$t('paymentOption')" :sortable="true" field="paymentOption">
@@ -93,7 +93,7 @@ const handleDate = (modelData) => {
         invoices.value = data
       })
       .catch(() => {
-        emitter.emit('notify',{severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
+        emitter.emit('notify', {severity: 'error', content: i18n.global.t('couldntLoadInvoicesMessage')})
       })
 }
 

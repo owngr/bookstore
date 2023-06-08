@@ -2,8 +2,8 @@ import handleErrors from '@/helpers/httpHelper';
 
 class BasketService {
 
-    getOpenBaskets() {
-        return fetch("/api/basket?" + new URLSearchParams({open: true}))
+    getBaskets(open) {
+        return fetch("/api/basket?" + new URLSearchParams({open: open}))
             .then(handleErrors)
             .then(res => res.json())
     }
