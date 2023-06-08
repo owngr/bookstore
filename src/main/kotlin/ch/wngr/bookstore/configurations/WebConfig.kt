@@ -1,26 +1,25 @@
 package ch.wngr.bookstore.configurations
 
-import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationContextAware
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.springframework.http.CacheControl
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.servlet.resource.PathResourceResolver
+import java.util.concurrent.TimeUnit
+
 
 @Configuration
-@EnableWebMvc
-class WebConfig : WebMvcConfigurer, ApplicationContextAware {
+class WebConfig : WebMvcConfigurer {
 
-    private var applicationContext: ApplicationContext? = null
-    override fun setApplicationContext(applicationContext: ApplicationContext) {
-        this.applicationContext = applicationContext
-    }
 
     // We want to disable cache for index.html as we want to be sure that the clients have the last versions of the frontend
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/")
-            .addResourceLocations("classpath:static/index.html")
-            .setCachePeriod(0)
-        super.addResourceHandlers(registry)
+            .addResourceLocations("classpath:/static/index.html")
+            .setCacheControl(CacheControl.maxAge(0, TimeUnit.SECONDS).mustRevalidate())
+            .setCacheControl(CacheControl.noCache())
+            .setCacheControl(CacheControl.noStore())
+            .resourceChain(true)
+            .addResolver(PathResourceResolver())
     }
 }
