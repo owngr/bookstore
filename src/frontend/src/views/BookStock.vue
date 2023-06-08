@@ -1,7 +1,7 @@
 <template>
-  <h1>{{ $t('stock')}}</h1>
+  <h1>{{ $t('stock') }}</h1>
   <div>
-    <PDialog v-model:visible="displayEditDialog" :style="{width: '50vw'}" :header="$t('updateStockEntry')">
+    <PDialog v-model:visible="displayEditDialog" :header="$t('updateStockEntry')" :style="{width: '50vw'}">
       <StockEntryEdit
           v-model:book="book"
           :edit-mode="true"
@@ -39,29 +39,35 @@
         </div>
       </template>
       <PColumn field="isbn" header="ISBN"></PColumn>
-      <PColumn :sortable="true" field="title" :header="$t('title')">
+      <PColumn :header="$t('title')" :sortable="true" field="title">
         <template #body="slotProps">
           <a @click="openEditDialog(slotProps.data)">{{ slotProps.data.title }}</a>
         </template>
       </PColumn>
-      <PColumn field="authors" :header="$t('authors')">
+      <PColumn :header="$t('authors')" field="authors">
         <template #body="slotProps">
           <li v-for="author in slotProps.data.authors" :key="author">
             {{ author }}
           </li>
         </template>
       </PColumn>
-      <PColumn field="editor" :header="$t('editor')"></PColumn>
-      <PColumn :hidden="true" field="description" :header="$t('summary')"></PColumn>
-      <PColumn :exportable="false" field="amount" :header="$t('quantity')"></PColumn>
-      <PColumn :exportable="false" :sortable="true" field="hasCover" :header="$t('cover')">
+      <PColumn :header="$t('editor')" field="editor"></PColumn>
+      <PColumn :header="$t('summary')" :hidden="true" field="description"></PColumn>
+      <PColumn :exportable="false" :header="$t('quantity')" field="amount"></PColumn>
+      <PColumn :exportable="false" :header="$t('cover')" :sortable="true" field="hasCover">
         <template #body="slotProps">
           {{ $t(slotProps.data.hasCover.toString()) }}
         </template>
       </PColumn>
       <template #footer>
         <div class="flex justify-content-center flex-wrap ">
-          <label class="form-label m-2" for="paginatorDropdown">{{ $t('showingFromToOn', {start: offset, end: offset+pageSize, total: totalRecords})}}</label>
+          <label class="form-label m-2" for="paginatorDropdown">{{
+              $t('showingFromToOn', {
+                start: offset,
+                end: offset + pageSize,
+                total: totalRecords
+              })
+            }}</label>
           <DropDown
               id="paginatorDropdown" v-model="currentPage" :options="pages" class="m-2" placeholder=1
               @change="onPageChange($event)"/>
@@ -176,7 +182,7 @@ export default {
       }
       this.closeEditDialog();
       return StockService.updateStock(body)
-          .then(this.àfetchStock(this.lazyParams))
+          .then(this.fetchStock(this.lazyParams))
     },
     onPageChange(event) {
       console.debug("on page")

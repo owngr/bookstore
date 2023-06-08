@@ -6,10 +6,11 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface BasketRepository: CrudRepository<Basket, Int> {
+interface BasketRepository : CrudRepository<Basket, Int> {
     fun findFirstByTimeClosedIsNullAndDistributorEquals(distributor: Distributor): Basket?
 
     fun findAllByTimeClosedIsNull(): List<Basket>
 
-    fun findAllByTimeClosedIsNotNull(): List<Basket>
+    fun findAllByTimeClosedIsNotNullOrderByTimeClosedDesc(): List<Basket>
+
 }

@@ -1,22 +1,26 @@
 <template>
   <h1>{{ $t('basket') }}</h1>
-  <label for="displayOpenBaskets">{{ $t('displayOpenBaskets') }}</label>
-  <InputSwitch v-model="displayOpenBaskets" input-id="displayOpenBaskets" @input="loadBaskets()"/>
+  <div class="flex flex-wrap gap-3 p-3">
+    <label class="ml-2" for="displayOpenBaskets">{{ $t('displayOpenBaskets') }}</label>
+    <InputSwitch v-model="displayOpenBaskets" input-id="displayOpenBaskets" @input="loadBaskets()"/>
+  </div>
   <PAccordion :activeIndex="0">
     <AccordionTab v-for="basket in baskets" :key="basket.distributor" :header="basket.title">
-      <basket-accordion :basket="basket"/>
+      <basket-accordion :basket="basket" @close-basket="closeBasket"/>
     </AccordionTab>
   </PAccordion>
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {inject, ref} from 'vue';
 import basketService from "@/service/BasketService";
 import BasketAccordion from "@/components/BasketAccordion.vue";
 import i18n from "@/i18n";
 
 const baskets = ref([])
 const displayOpenBaskets = ref(true)
+
+const emitter = inject('emitter')
 loadBaskets()
 
 function defineHeaders() {
@@ -37,6 +41,22 @@ function loadBaskets() {
         baskets.value = data
         defineHeaders()
       })
+      .catch((e) => emitter.emit('notify', {
+        severity: 'error',
+        content: i18n.global.t('couldNotLoadBasketsMessage', {error: e})
+      }))
+}
+
+function closeBasket(basketId) {
+  basketService.closeBasket(basketId)
+      .then(() => {
+        emitter.emit('notify', {severity: 'success', content: i18n.global.t('basketClosedMessage')})
+        loadBaskets()
+      })
+      .catch((e) => emitter.emit('notify', {
+        severity: 'error',
+        content: i18n.global.t('couldNotCloseBasketMessage', {error: e})
+      }))
 }
 
 </script>

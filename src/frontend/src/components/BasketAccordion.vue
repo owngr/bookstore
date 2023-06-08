@@ -1,5 +1,8 @@
 <template>
-  <PButton @click="exportCSV">{{ $t('export') }}</PButton>
+  <div class="card flex flex-wrap gap-2 p-1">
+    <PButton @click="exportCSV">{{ $t('export') }}</PButton>
+    <PButton v-if="displayCloseButton" class="p-button-danger" @click="closeBasket">{{ $t('closeBasket') }}</PButton>
+  </div>
 
   <table>
     <tr>
@@ -17,7 +20,7 @@
 </template>
 
 <script setup>
-import {defineProps, ref} from 'vue';
+import {defineEmits, defineProps, ref} from 'vue';
 
 const props = defineProps({
   basket: {
@@ -27,8 +30,12 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['close-basket'])
+
 
 const books = ref(props.basket.books)
+
+const displayCloseButton = props.basket.dateClosed === ""
 
 
 function exportCSV() {
@@ -41,6 +48,10 @@ function exportCSV() {
   anchor.target = '_blank';
   anchor.download = props.basket.title + '.csv';
   anchor.click()
+}
+
+function closeBasket() {
+  emit('close-basket', props.basket.id)
 }
 </script>
 

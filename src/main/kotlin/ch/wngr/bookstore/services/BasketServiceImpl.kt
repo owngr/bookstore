@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class BasketServiceImpl @Autowired constructor(
@@ -30,9 +31,9 @@ class BasketServiceImpl @Autowired constructor(
                     var basketBook: BasketBook
                     try {
                         basketBook = basket.basketBooks.first { bb -> bb.bookId == book.id }
-                        basketBook.quantity += sale.quantity ?:1
+                        basketBook.quantity += sale.quantity ?: 1
                     } catch (e: NoSuchElementException) {
-                        basketBook = BasketBook(basket.id, book.id,  sale.quantity ?: 1)
+                        basketBook = BasketBook(basket.id, book.id, sale.quantity ?: 1)
                         basket.basketBooks.add(basketBook)
                     }
                     basketBookRepository.save(basketBook)
@@ -47,7 +48,7 @@ class BasketServiceImpl @Autowired constructor(
         val baskets: List<Basket> = if (open) {
             basketRepository.findAllByTimeClosedIsNull()
         } else {
-            basketRepository.findAllByTimeClosedIsNotNull()
+            basketRepository.findAllByTimeClosedIsNotNullOrderByTimeClosedDesc()
         }
         var basketRows: List<BasketRow>
         var basketDto: BasketDto
@@ -60,6 +61,14 @@ class BasketServiceImpl @Autowired constructor(
         }
 //        var basketRow = BasketRow(isbn = "", title = "", quantity = 1)
         return ResponseEntity(basketDtos, HttpStatus.OK)
+    }
+
+    override fun closeBasket(basketID: Int): ResponseEntity<BasketDto> {
+        val basket =
+            basketRepository.findById(basketID).orElse(null) ?: return ResponseEntity(null, HttpStatus.NOT_FOUND)
+        basket.timeClosed = LocalDateTime.now()
+        basketRepository.save(basket)
+        return ResponseEntity(basket.ToBasketDto(), HttpStatus.OK)
     }
 
     private fun getOrCreateBasket(distributor: Distributor): Basket {
