@@ -28,12 +28,16 @@ class SaleServiceImpl @Autowired constructor(
     val basketService: BasketService,
 ) : SaleService {
 
-    override fun sellBooks(saleList: SaleList): ResponseEntity<SaleList> {
+    override fun sellBooks(saleList: SaleList): ResponseEntity<out Any> {
         if (stockService.getMissingBooks(saleList.sales).isNotEmpty()) {
             return ResponseEntity(null, HttpStatus.CONFLICT)
         }
         stockService.removeBooks(saleList.sales)
-        basketService.addBooksToBasket(saleList.sales)
+        try {
+            basketService.addBooksToBasket(saleList.sales)
+        } catch (e : Exception) {
+            return ResponseEntity(e, HttpStatus.CONFLICT)
+        }
         val sales: MutableSet<Sale> = HashSet()
         var invoice =
             Invoice(

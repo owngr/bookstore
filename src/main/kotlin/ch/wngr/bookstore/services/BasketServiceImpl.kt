@@ -4,6 +4,7 @@ import ch.wngr.bookstore.converters.ToBasketDto
 import ch.wngr.bookstore.entities.Basket
 import ch.wngr.bookstore.entities.BasketBook
 import ch.wngr.bookstore.entities.Distributor
+import ch.wngr.bookstore.exceptions.DistributorNotFoundException
 import ch.wngr.bookstore.models.BasketDto
 import ch.wngr.bookstore.models.BasketRow
 import ch.wngr.bookstore.models.SaleDTO
@@ -27,6 +28,9 @@ class BasketServiceImpl @Autowired constructor(
             if (!sale.isbn.isNullOrEmpty()) {
                 val book = bookRepository.findByIsbn(sale.isbn)
                 if (book != null) {
+                    if (book.distributor == null) {
+                        throw DistributorNotFoundException("Could not find distributor for book with isbn: ${book.isbn}")
+                    }
                     val basket = getOrCreateBasket(book.distributor!!)
                     var basketBook: BasketBook
                     try {

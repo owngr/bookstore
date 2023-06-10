@@ -49,7 +49,7 @@ internal class StockController @Autowired constructor(
     }
 
     @PatchMapping()
-    fun sellBooks(@RequestBody sales: SaleList): ResponseEntity<SaleList> {
+    fun sellBooks(@RequestBody sales: SaleList): ResponseEntity<out Any> {
         return saleService.sellBooks(sales)
     }
 

@@ -65,6 +65,7 @@ class StockService {
             body: JSON.stringify(sales)
         };
         return fetch('/api/stock', requestOptions)
+            .then(handleErrors)
     }
 
 

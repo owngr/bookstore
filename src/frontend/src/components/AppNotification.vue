@@ -1,5 +1,5 @@
 <template>
-  <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="false">{{ msg.content }}
+  <PMessage v-for="msg of messages" :key="msg.content" :severity="msg.severity" :sticky="msg.severity === 'error'">{{ msg.content }}
   </PMessage>
 </template>
 

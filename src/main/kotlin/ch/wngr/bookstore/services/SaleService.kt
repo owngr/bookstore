@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 interface SaleService {
 
-    fun sellBooks(saleList: SaleList): ResponseEntity<SaleList>
+    fun sellBooks(saleList: SaleList): ResponseEntity<out Any>
     fun getInvoicesRow(startTime: LocalDateTime, endtime: LocalDateTime): ResponseEntity<List<InvoiceRow>>
     fun getInvoice(invoiceID: Int): ResponseEntity<SaleList>
 }

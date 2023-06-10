@@ -1,6 +1,13 @@
 function handleErrors(response) {
     if (!response.ok) {
-        throw Error(response.statusText);
+        return response.json()
+         .then((res) => {
+             if (res.localizedMessage) {
+                 throw res.localizedMessage
+             } else {
+                 throw response.statusText
+             }
+         })
     }
     return response;
 }
