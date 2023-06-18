@@ -14,10 +14,15 @@ class WebConfig : WebMvcConfigurer {
 
     // We want to disable cache for index.html as we want to be sure that the clients have the last versions of the frontend
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/")
-            .addResourceLocations("classpath:/static/index.html")
+        registry.addResourceHandler("/index.html")
+            .addResourceLocations("classpath:static/index.html")
             .setCacheControl(CacheControl.noStore())
-            .resourceChain(true)
-            .addResolver(PathResourceResolver())
+        registry.addResourceHandler("js/**")
+            .addResourceLocations("classpath:static/js/")
+            .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        registry.addResourceHandler("css/**")
+            .addResourceLocations("classpath:static/css/")
+            .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+
     }
 }
