@@ -7,6 +7,7 @@ import BookShop from "@/views/BookShop"
 import SellBook from "@/views/SellBook"
 import Sales from "@/views/BookSales"
 import BasketPage from "@/views/BasketPage";
+import TagPage from "@/views/TagPage.vue";
 
 const routes = [
     {
@@ -48,7 +49,12 @@ const routes = [
         path: "/basket",
         names: "basket",
         component: BasketPage,
-    }
+    },
+    {
+        path: "/tag",
+        name: "tags",
+        component: TagPage,
+    },
 ];
 
 const router = createRouter({

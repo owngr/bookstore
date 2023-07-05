@@ -35,4 +35,11 @@ class Book(
     var price: Float? = null,
     var hasCover: Boolean = false,
     var amount: Int = 0,
+    @ManyToMany
+    @JoinTable(
+        name = "book_tag",
+        joinColumns = [JoinColumn(name = "book_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+    )
+    var tags: Set<Tag> = HashSet(),
 )

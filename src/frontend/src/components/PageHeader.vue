@@ -36,6 +36,10 @@ const items = [
       {
         label: i18n.global.t('basket'),
         to: '/basket',
+      },
+      {
+        label: i18n.global.t('tags'),
+        to: '/tag',
       }
     ]
   },
