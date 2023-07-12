@@ -4,7 +4,9 @@ import ch.wngr.bookstore.models.TagDto
 import ch.wngr.bookstore.services.TagService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,5 +31,10 @@ class TagController @Autowired constructor(
     @PostMapping("")
     fun addTag(@RequestBody tag: TagDto): TagDto {
         return tagService.createTag(tag)
+    }
+
+    @DeleteMapping("{tagID}")
+    fun deleteTag(@PathVariable tagID: Int): ResponseEntity<TagDto> {
+        return tagService.deleteTag(tagID)
     }
 }

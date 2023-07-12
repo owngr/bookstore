@@ -30,10 +30,11 @@
           </td>
         </tr>
       </table>
-      <p>
+      <div class="card flex flex-wrap gap-2 p-1">
         <PButton :label="submitButtonText" type="submit" value="submit" />
-      </p>
-      
+        <PButton v-if="editMode" :label="$t('delete')" class="p-button-danger" @click="deleteTag"/>
+      </div>
+
     </form>
   </div>
 </template>
@@ -41,6 +42,8 @@
 <script setup>
 import { defineEmits, defineProps, inject, ref } from "vue";
 import i18n from "@/i18n";
+import tagService from "@/service/TagService";
+
 
 const props = defineProps({
   tag: {},
@@ -79,6 +82,15 @@ function processForm() {
         content: i18n.global.t("tagNotUpdatableMessage", { error: e }),
       })
     );
+}
+
+function deleteTag() {
+  tagService.deleteTag(tagCopy.value.id)
+      .then(() => {
+        emitter.emit('notify', {severity: 'success', content: i18n.global.t('tagDeletedMessage')})
+        emit("close-dialog")
+      })
+      .catch(() => emitter.emit('notify', {severity: 'error', content: i18n.global.t('couldntDeleteTagMessage')}))
 }
 </script>
 

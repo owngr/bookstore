@@ -26,8 +26,12 @@
       @close-dialog="closeEditDialog"/>
   </PDialog>
   <DataTable ref="dt" :value="tags" responsive-layout="scroll">
-    <PColumn field="name" header="name" />
-    <PColumn field="main" header="primaryTag" />
+    <PColumn field="name" :header="$t('name')" />
+    <PColumn field="main" :header="$t('primaryTag')">
+      <template #body="slotProps">
+        {{ $t(slotProps.data.main.toString()) }}
+      </template>
+    </PColumn>
     <PColumn>
       <template #body="slotProps">
         <PButton @click="openEditDialog(slotProps.data)"
@@ -74,9 +78,14 @@ function openEditDialog(rowTag) {
 }
 
 function updateTag(tag) {
-  closeEditDialog()
   return tagService.updateTag(tag)
-      .then(loadTags)
+      .then(() => {
+        emitter.emit("notify", {
+          severity: "success",
+          content: i18n.global.t('tagUpdatedMessage')
+        })
+        closeEditDialog()
+      })
 }
 
 function addTag(tag) {
@@ -87,6 +96,7 @@ function addTag(tag) {
 
 function closeEditDialog() {
   displayEditDialog.value = false
+  loadTags()
 }
 
 function openAddDialog() {

@@ -28,6 +28,16 @@ class TagService {
       .then(handleErrors)
       .then((res) => res.json());
   }
+
+  deleteTag(id) {
+    const requestOptions = {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    };
+    return fetch("/api/tag/" + id.toString(), requestOptions)
+        .then(handleErrors)
+        .then((res) => res.json())
+  }
 }
 
 export default new TagService();

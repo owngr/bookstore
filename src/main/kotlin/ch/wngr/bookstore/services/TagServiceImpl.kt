@@ -17,7 +17,7 @@ class TagServiceImpl @Autowired constructor(
 ) : TagService {
 
     override fun getTags(): ResponseEntity<List<TagDto>> {
-        val tagList = tagRepository.findByOrderByMainAscNameAsc()
+        val tagList = tagRepository.findByOrderByMainDescNameAsc()
         val tagDtoList = tagList.map { tag: Tag -> tag.toTagDTO() }
         return ResponseEntity(tagDtoList, HttpStatus.OK)
     }
@@ -38,6 +38,17 @@ class TagServiceImpl @Autowired constructor(
     override fun createTag(tagDto: TagDto): TagDto {
         val tag = Tag(name = tagDto.name, main = tagDto.main)
         return tagRepository.save(tag).toTagDTO()
+    }
+
+    override fun deleteTag(tagID: Int): ResponseEntity<TagDto> {
+        val tag = tagRepository.findById(tagID).orElse(null)
+        if (tag != null) {
+            tagRepository.delete(tag)
+            return ResponseEntity(tag.toTagDTO(), HttpStatus.OK)
+        } else {
+            println("Thetag could not be found")
+            throw javassist.NotFoundException("The tag could not be found")
+        }
     }
 
 }

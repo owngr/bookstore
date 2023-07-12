@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TagRepository : CrudRepository<Tag, Int> {
 
-    fun findByOrderByMainAscNameAsc(): List<Tag>
+    fun findByOrderByMainDescNameAsc(): List<Tag>
 
 
 }

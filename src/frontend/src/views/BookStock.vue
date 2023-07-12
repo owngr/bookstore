@@ -129,7 +129,7 @@ export default {
       console.debug(lazyParams)
       delete lazyParams.filteredValue
       return StockService.getStock({lazyEvent: JSON.stringify(lazyParams)}).then(data => {
-        if (loadIntoTable) {
+            if (loadIntoTable) {
           this.stockEntries = data.content
           this.totalRecords = data.totalElements
           this.offset = data.pageable.offset
