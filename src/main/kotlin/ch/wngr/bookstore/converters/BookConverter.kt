@@ -2,6 +2,7 @@ package ch.wngr.bookstore.converters
 
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
+import ch.wngr.bookstore.entities.Tag
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.models.ShopEntry
 import ch.wngr.bookstore.models.StockEntry
@@ -14,6 +15,7 @@ fun Book.toScrapperBook() = ScraperBook(
     distributor = "",
     description = description,
     price = price,
+    tags = tags.map(Tag::toTagDTO)
 )
 
 fun Book.toStockEntry() = StockEntry(

@@ -70,6 +70,7 @@ class GoogleScraperService : ScraperService {
                 description = description,
                 price = null,
                 coverUrl = coverUrl,
+                tags = ArrayList(),
             )
         } catch (e: Exception) {
             println(e)

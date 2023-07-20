@@ -3,6 +3,7 @@ package ch.wngr.bookstore.services
 import ch.wngr.bookstore.converters.toEditor
 import ch.wngr.bookstore.converters.toScrapperBook
 import ch.wngr.bookstore.converters.toStockEntry
+import ch.wngr.bookstore.converters.toTag
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Publisher
@@ -62,9 +63,12 @@ class StockServiceImpl @Autowired constructor(
                 price = book.price,
                 hasCover = hasCover,
                 amount = book.amount,
+                tags = book.tags.map(TagDto::toTag).toMutableSet()
             )
             bookRepository.save(newBook)
         } else {
+            existingBook.title = book.title
+            existingBook.tags.addAll(book.tags.map(TagDto::toTag).toSet())
             existingBook.amount += book.amount
             bookRepository.save(existingBook)
         }

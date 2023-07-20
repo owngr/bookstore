@@ -49,6 +49,7 @@ export default {
         price: book.price,
         coverUrl: book.coverUrl,
         amount: book.amount,
+        tags: book.tags,
       }
       this.reloadCount++
       this.emitter.emit('notify',{severity: 'success', content: i18n.global.t('stockHasBeenModifiedMessage')})

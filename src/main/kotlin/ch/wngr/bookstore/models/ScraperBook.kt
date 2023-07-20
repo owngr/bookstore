@@ -10,5 +10,6 @@ data class ScraperBook(
     var price: Float?,
     var coverUrl: String = "",
     val amount: Int = 0,
+    val tags: List<TagDto>,
 )
 

@@ -8,3 +8,7 @@ fun Tag.toTagDTO() = TagDto(
     name = name,
     main = main,
 )
+
+fun TagDto.toTag() = Tag(
+    id, name, main
+)

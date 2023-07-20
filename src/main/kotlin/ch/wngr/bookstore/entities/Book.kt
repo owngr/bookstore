@@ -1,5 +1,7 @@
 package ch.wngr.bookstore.entities
 
+import org.hibernate.engine.internal.Cascade
+import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -12,7 +14,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "book")
-class Book(
+data class Book(
     var isbn: String = "",
     var title: String = "",
     @Id
@@ -35,11 +37,14 @@ class Book(
     var price: Float? = null,
     var hasCover: Boolean = false,
     var amount: Int = 0,
-    @ManyToMany
+    @ManyToMany(
+        cascade = [CascadeType.ALL],
+    )
     @JoinTable(
         name = "book_tag",
         joinColumns = [JoinColumn(name = "book_id")],
-        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+        inverseJoinColumns = [JoinColumn(name = "tag_id")],
+
     )
-    var tags: Set<Tag> = HashSet(),
+    var tags: MutableSet<Tag> = mutableSetOf(),
 )
