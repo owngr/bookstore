@@ -81,137 +81,133 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import StockService from '../service/StockService';
 import {FilterMatchMode} from 'primevue/api';
 import StockEntryEdit from "@/components/StockEntryEdit";
+import { ref } from "vue";
 
 
-export default {
-  el: '#app',
-  name: "BookStock",
-  components: {
-    StockEntryEdit
-  },
-  data() {
-    return {
-      stockEntries: null,
-      filters: {
-        'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
-      },
-      displayEditDialog: false,
-      book: {},
-      totalRecords: 0,
-      pages: [1],
-      currentPage: 1,
-      offset: 0,
-      pageSize: 50,
-      lazyParams: {
-        first: 0,
-        rows: 50,
-        sortField: "amount",
-        sortOrder: null,
-        filters: null,
-      },
-      exportContent: null
+const stockEntries = ref(null)
+const filters = ref({
+  'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
+})
+const displayEditDialog = ref(false);
+const book = ref({})
+let totalRecords = ref(0)
+const pages = ref([1])
+let currentPage = ref(1)
+let offset = ref(0)
+let pageSize = ref(50)
+const lazyParams = ref({
+  first: 0,
+  rows: 50,
+  sortField: "amount",
+  sortOrder: null,
+  filters: filters,
+})
+let exportContent = ref(null)
+// ref to the datatable
+const dt = ref()
+
+// lazyParams.value.rows = dt.value.rows
+fetchStock(lazyParams)
+
+
+function fetchStock(lazyParams, loadIntoTable = true) {
+  delete lazyParams.value.filteredValue
+  return StockService.getStock({lazyEvent: JSON.stringify(lazyParams.value)}).then(data => {
+    if (loadIntoTable) {
+      stockEntries.value = data.content
+      totalRecords.value = data.totalElements
+      offset.value = data.pageable.offset
+      pageSize.value = data.numberOfElements
+      createPageRange(data.totalPages)
+    } else {
+      return data.content
     }
-  },
-
-  mounted() {
-    console.debug("mounted")
-    this.lazyParams.rows = this.$refs.dt.rows;
-    this.lazyParams.filters = this.filters;
-    this.fetchStock(this.lazyParams);
-  },
-  methods: {
-    fetchStock(lazyParams, loadIntoTable = true) {
-      console.debug("filtered values")
-      console.debug(lazyParams)
-      delete lazyParams.filteredValue
-      return StockService.getStock({lazyEvent: JSON.stringify(lazyParams)}).then(data => {
-            if (loadIntoTable) {
-          this.stockEntries = data.content
-          this.totalRecords = data.totalElements
-          this.offset = data.pageable.offset
-          this.pageSize = data.numberOfElements
-          this.createPageRange(data.totalPages)
-        } else {
-          return data.content
-        }
-      });
-    },
-    createPageRange(totalPages) {
-      console.debug("total pages")
-      console.debug(totalPages)
-      // create a range from [1.. totalPages]
-      this.pages = Array.from({length: totalPages}, (v, k) => k + 1)
-      console.debug(this.pages)
-    },
-    exportCSV() {
-      const oldRowCount = this.lazyParams.rows
-      const oldFirst = this.lazyParams.first
-      this.lazyParams.rows = 10000
-      this.lazyParams.first = 0
-      this.fetchStock(this.lazyParams, false).then(data => {
-        console.debug("in fetchstock")
-        console.debug(data)
-        this.$refs.dt.exportCSV(null, data);
-        this.lazyParams.rows = oldRowCount
-        this.lazyParams.first = oldFirst
-      })
-      console.debug("export content")
-      console.log(this.exportContent)
-    },
-    openEditDialog(book) {
-      this.book = book
-      this.displayEditDialog = true;
-    },
-    closeEditDialog() {
-      this.displayEditDialog = false;
-    },
-    updateStock(book) {
-      const body = {
-        isbn: book.isbn,
-        title: book.title,
-        authors: book.authors.map(a => a.value),
-        editor: book.editor,
-        distributor: book.distributor,
-        description: book.description,
-        price: book.price,
-        amount: book.amount,
-        tags: book.tags,
-      }
-      this.closeEditDialog();
-      return StockService.updateStock(body)
-          .then(this.fetchStock(this.lazyParams))
-    },
-    onPageChange(event) {
-      console.debug("on page")
-      console.debug(event)
-      this.lazyParams.first = event.value - 1
-      this.fetchStock(this.lazyParams);
-    },
-    onRowsPerPage() {
-      this.currentPage = 1
-      this.lazyParams.first = this.currentPage - 1
-      this.fetchStock(this.lazyParams)
-    },
-    onSort(event) {
-      console.debug("on sort")
-      console.debug(event)
-      this.currentPage = 1
-      this.lazyParams.first = this.currentPage - 1
-      this.lazyParams.sortField = event.sortField;
-      this.lazyParams.sortOrder = event.sortOrder;
-      this.fetchStock(this.lazyParams);
-    },
-    onFilter() {
-      this.currentPage = 1
-      this.lazyParams.first = this.currentPage - 1
-      this.fetchStock(this.lazyParams)
-    }
-  }
+  });
 }
+
+function createPageRange(totalPages) {
+  console.debug("total pages")
+  console.debug(totalPages)
+  // create a range from [1.. totalPages]
+  pages.value = Array.from({length: totalPages}, (v, k) => k + 1)
+  console.debug(pages)
+}
+
+function exportCSV() {
+  const oldRowCount = lazyParams.value.rows
+  const oldFirst = lazyParams.value.first
+  lazyParams.value.rows = 10000
+  lazyParams.value.first = 0
+  fetchStock(lazyParams, false).then(data => {
+    console.debug("in fetchstock")
+    console.debug(data)
+    dt.value.exportCSV(null, data);
+    lazyParams.value.rows = oldRowCount
+    lazyParams.value.first = oldFirst
+  })
+  console.debug("export content")
+  console.log(exportContent.value)
+}
+
+function openEditDialog(bookToOpen) {
+  book.value = bookToOpen
+  displayEditDialog.value = true;
+}
+
+function closeEditDialog() {
+  displayEditDialog.value = false;
+}
+
+function updateStock(childBook) {
+  const body = {
+    isbn: childBook.isbn,
+    title: childBook.title,
+    authors: childBook.authors.map(a => a.value),
+    editor: childBook.editor,
+    distributor: childBook.distributor,
+    description: childBook.description,
+    price: childBook.price,
+    amount: childBook.amount,
+    tags: childBook.tags,
+  }
+  closeEditDialog();
+  return StockService.updateStock(body)
+      .then(fetchStock(lazyParams))
+}
+
+function onPageChange(event) {
+  console.debug("on page")
+  console.debug(event)
+  lazyParams.value.first = event.value - 1
+  fetchStock(lazyParams);
+}
+
+function onRowsPerPage() {
+  currentPage.value = 1
+  lazyParams.value.first = currentPage.value - 1
+  fetchStock(lazyParams)
+}
+
+function onSort(event) {
+  console.debug("on sort")
+  console.debug(event)
+  currentPage.value = 1
+  lazyParams.value.first = currentPage.value - 1
+  lazyParams.value.sortField = event.sortField;
+  lazyParams.value.sortOrder = event.sortOrder;
+  fetchStock(lazyParams);
+}
+
+function onFilter() {
+  currentPage.value = 1
+  lazyParams.value.first = currentPage.value - 1
+  fetchStock(lazyParams)
+}
+
 </script>
 <style scoped>
 .p-dropdown {
