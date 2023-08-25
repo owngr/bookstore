@@ -32,6 +32,7 @@ fun Book.toStockEntry() = StockEntry(
     description = description,
     price = price,
     hasCover = hasCover,
+    tags = tags.map(Tag::toTagDTO)
 )
 
 fun Book.toShopEntry() = ShopEntry(

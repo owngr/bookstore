@@ -68,7 +68,7 @@ class StockServiceImpl @Autowired constructor(
             bookRepository.save(newBook)
         } else {
             existingBook.title = book.title
-            existingBook.tags.addAll(book.tags.map(TagDto::toTag).toSet())
+            existingBook.tags = book.tags.map(TagDto::toTag).toMutableSet()
             existingBook.amount += book.amount
             bookRepository.save(existingBook)
         }
@@ -121,6 +121,7 @@ class StockServiceImpl @Autowired constructor(
                 stockEntry.editor?.let { publisherService.getOrCreatePublisher(it, stockEntry.distributor) }
             book.distributor = stockEntry.distributor?.let { distributorService.getOrCreateDistributor(it) }
             book.price = stockEntry.price
+            book.tags = stockEntry.tags.map(TagDto::toTag).toMutableSet()
             bookRepository.save(book)
             return book.toStockEntry()
         } else {

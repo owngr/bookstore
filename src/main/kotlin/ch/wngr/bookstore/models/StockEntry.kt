@@ -10,4 +10,5 @@ data class StockEntry(
     var description: String?,
     var price: Float?,
     var hasCover: Boolean,
+    val tags: List<TagDto>,
 )

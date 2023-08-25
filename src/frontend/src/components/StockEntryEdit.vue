@@ -245,6 +245,7 @@ const fillData = (data) => {
   }
   bookCopy.value.price = data.price;
   bookCopy.value.coverUrl = data.coverUrl;
+  bookCopy.value.tags = data.tags;
   console.debug("data filled");
 };
 
@@ -306,10 +307,18 @@ const fileUpload = (event) => {
     );
 };
 
+const bookContainTag = (tag) => {
+  for (const t of bookCopy.value.tags) {
+    if (t.id === tag.id) {
+      return true
+    }
+  }
+  return false
+}
 const searchTags = (event) => {
   console.debug(event.query);
   tagsSuggestions.value = tags.value.filter((tag) => {
-    return tag.name.toLowerCase().startsWith(event.query.toLowerCase());
+    return tag.name.toLowerCase().startsWith(event.query.toLowerCase()) && !bookContainTag(tag);
   });
 };
 </script>

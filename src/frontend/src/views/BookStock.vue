@@ -179,6 +179,7 @@ export default {
         description: book.description,
         price: book.price,
         amount: book.amount,
+        tags: book.tags,
       }
       this.closeEditDialog();
       return StockService.updateStock(body)
