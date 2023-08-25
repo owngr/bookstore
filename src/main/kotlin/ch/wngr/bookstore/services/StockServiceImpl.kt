@@ -76,10 +76,28 @@ class StockServiceImpl @Autowired constructor(
 
     override fun getStock(page: TableSearchFilter): Page<StockEntry> {
         val pageable = PageRequest.of(page.first, page.rows, Sort.by(page.getSortDirection(), page.sortField))
-        val books: Page<StockEntry> = if (page.filters.global.value == null) {
+        val tagsCount = page.filters.tags.value.size.toLong()
+        val books: Page<StockEntry> = if (page.filters.global.value == null && tagsCount == 0L) {
             bookRepository.findByAmountGreaterThan(0, pageable).map(Book::toStockEntry)
+        } else if (tagsCount == 0L) {
+            bookRepository.findByAmountGreatherThanAndSearchFilter(
+                0,
+                "%${page.filters.global.value?.uppercase()}%",
+                pageable
+            ).map(Book::toStockEntry)
+        } else if (page.filters.global.value == null) {
+            bookRepository.findByAmountGreatherThanAndTagFilter(
+                0, page.filters.tags.value.map(TagDto::toTag),
+                tagsCount, pageable
+            ).map(Book::toStockEntry)
         } else {
-            bookRepository.findByAmountGreatherThanAndSearchFilter(0, "%${page.filters.global.value.uppercase()}%", pageable).map(Book::toStockEntry)
+            bookRepository.findByAmountGreatherThanAndSearchFilterAndTagFilter(
+                0,
+                "%${page.filters.global.value.uppercase()}%",
+                page.filters.tags.value.map(TagDto::toTag),
+                tagsCount,
+                pageable
+            ).map(Book::toStockEntry)
         }
         return books
     }

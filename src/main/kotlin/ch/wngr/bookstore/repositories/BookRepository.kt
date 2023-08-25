@@ -1,6 +1,7 @@
 package ch.wngr.bookstore.repositories
 
 import ch.wngr.bookstore.entities.Book
+import ch.wngr.bookstore.entities.Tag
 import ch.wngr.bookstore.models.Inventory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,10 +18,38 @@ interface BookRepository : PagingAndSortingRepository<Book, Int> {
     fun findByHasCover(hasCover: Boolean): List<Book>
     fun findByAmountGreaterThan(amount: Int, pageable: Pageable): Page<Book>
 
-    @Query("select distinct b from Book b left join b.authors a " +
-            "where b.amount > :amount " +
-            "and (b.isbn like :searchFilter or upper(b.title) like :searchFilter or upper(a.name) like :searchFilter or upper(b.publisher.name) like :searchFilter)")
+    @Query(
+        "select distinct b from Book b left join b.authors a left join b.tags t " +
+                "where b.amount > :amount " +
+                "and (b.isbn like :searchFilter or upper(b.title) like :searchFilter or upper(a.name) like :searchFilter or upper(b.publisher.name) like :searchFilter)" +
+                "and t in :searchTags group by b.id having count(b.id) = :tagsCount "
+    )
+    fun findByAmountGreatherThanAndSearchFilterAndTagFilter(
+        amount: Int,
+        searchFilter: String,
+        searchTags: List<Tag>,
+        tagsCount: Long,
+        pageable: Pageable
+    ): Page<Book>
+
+    @Query(
+        "select distinct b from Book b left join b.authors a " +
+                "where b.amount > :amount " +
+                "and (b.isbn like :searchFilter or upper(b.title) like :searchFilter or upper(a.name) like :searchFilter or upper(b.publisher.name) like :searchFilter)"
+    )
     fun findByAmountGreatherThanAndSearchFilter(amount: Int, searchFilter: String, pageable: Pageable): Page<Book>
+
+    @Query(
+        "select distinct b from Book b left join b.tags t " +
+                "where b.amount > :amount " +
+                "and t in :searchTags group by b.id having count(b.id) = :tagsCount "
+    )
+    fun findByAmountGreatherThanAndTagFilter(
+        amount: Int,
+        searchTags: List<Tag>,
+        tagsCount: Long,
+        pageable: Pageable
+    ): Page<Book>
 
     @Query("select new ch.wngr.bookstore.models.Inventory(sum(b.amount), sum(b.price*b.amount)) from Book b")
     fun getInventory(): Inventory
