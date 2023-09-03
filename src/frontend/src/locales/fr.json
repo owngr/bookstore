@@ -37,6 +37,7 @@
   "deleteStock": "Supprimer le stock",
   "description": "Déscription",
   "discount": "Réduction",
+  "displayEmptyEntries": "Afficher les livres sans exemplaires",
   "displayOpenBaskets": "Afficher les paniers ouverts",
   "distributor": "Distributeur",
   "edit": "Éditer",

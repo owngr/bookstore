@@ -11,9 +11,13 @@ data class TableFilter(val value: String?, val matchMode: String)
 data class TagFilter(val value: List<TagDto>, val matchMode: String)
 
 @Serializable
+data class BooleanFilter(val value: Boolean, val matchMode: String)
+
+@Serializable
 data class StockFilter(
     val global: TableFilter = TableFilter(null, "contains"),
     val tags: TagFilter = TagFilter(ArrayList(), "contains"),
+    val displayEmptyEntries: BooleanFilter = BooleanFilter(false, "contains"),
 )
 
 @Serializable

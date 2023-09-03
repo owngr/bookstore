@@ -55,6 +55,8 @@
             @complete="searchTags"
             @keydown.enter="onFilter()"
           />
+          <label class="ml-2" for="displayEmptyEntries">{{ $t('displayEmptyEntries') }}</label>
+          <InputSwitch v-model="filters['displayEmptyEntries'].value" input-id="displayEmptyEntries" @input="onFilter()"/>
         </div>
       </template>
       <PColumn field="isbn" header="ISBN"></PColumn>
@@ -81,6 +83,7 @@
       <PColumn
         :exportable="false"
         :header="$t('quantity')"
+        :sortable="true"
         field="amount"
       ></PColumn>
       <PColumn
@@ -139,6 +142,7 @@ const stockEntries = ref(null);
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   tags: { value: [], matchMode: FilterMatchMode.CONTAINS },
+  displayEmptyEntries: { value: false, matchMode: FilterMatchMode.CONTAINS },
 });
 const displayEditDialog = ref(false);
 const book = ref({});
@@ -220,7 +224,7 @@ function exportCSV() {
     lazyParams.value.first = oldFirst;
   });
   console.debug("export content");
-  console.log(exportContent.value);
+  console.debug(exportContent.value);
 }
 
 function openEditDialog(bookToOpen) {

@@ -34,11 +34,10 @@ class StockServiceImpl @Autowired constructor(
 
     override fun addBook(book: ScraperBook) {
         // check if book info already exist and add it if not
-        var existingBook: Book?
-        if (!book.isbn.isEmpty()) {
-            existingBook = bookRepository.findByIsbn(book.isbn)
+        val existingBook: Book? = if (book.isbn.isNotEmpty()) {
+            bookRepository.findByIsbn(book.isbn)
         } else {
-            existingBook = bookRepository.findByTitle(book.title)
+            bookRepository.findByTitle(book.title)
         }
         if (existingBook == null) {
             val authors: MutableSet<Author> = HashSet()
@@ -77,22 +76,26 @@ class StockServiceImpl @Autowired constructor(
     override fun getStock(page: TableSearchFilter): Page<StockEntry> {
         val pageable = PageRequest.of(page.first, page.rows, Sort.by(page.getSortDirection(), page.sortField))
         val tagsCount = page.filters.tags.value.size.toLong()
+        var amount = 0
+        if (page.filters.displayEmptyEntries.value) {
+            amount = -1
+        }
         val books: Page<StockEntry> = if (page.filters.global.value == null && tagsCount == 0L) {
-            bookRepository.findByAmountGreaterThan(0, pageable).map(Book::toStockEntry)
+            bookRepository.findByAmountGreaterThan(amount, pageable).map(Book::toStockEntry)
         } else if (tagsCount == 0L) {
             bookRepository.findByAmountGreatherThanAndSearchFilter(
-                0,
+                amount,
                 "%${page.filters.global.value?.uppercase()}%",
                 pageable
             ).map(Book::toStockEntry)
         } else if (page.filters.global.value == null) {
             bookRepository.findByAmountGreatherThanAndTagFilter(
-                0, page.filters.tags.value.map(TagDto::toTag),
+                amount, page.filters.tags.value.map(TagDto::toTag),
                 tagsCount, pageable
             ).map(Book::toStockEntry)
         } else {
             bookRepository.findByAmountGreatherThanAndSearchFilterAndTagFilter(
-                0,
+                amount,
                 "%${page.filters.global.value.uppercase()}%",
                 page.filters.tags.value.map(TagDto::toTag),
                 tagsCount,
