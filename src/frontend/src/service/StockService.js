@@ -35,7 +35,10 @@ class StockService {
     addCover(formData, isbn) {
         const requestOptions = {
             method: "POST",
-            body: formData
+            body: formData,
+            // headers: {
+            //     "Content-Type": "multipart/form-data"
+            // }
         }
         return fetch("/api/book/cover?" + new URLSearchParams({ isbn } ), requestOptions)
             .then(handleErrors)

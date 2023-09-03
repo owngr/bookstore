@@ -10,14 +10,13 @@ import org.springframework.stereotype.Service
 interface StockService {
 
     fun addBook(book: ScraperBook)
-    fun getStock(page: TableSearchFilter): Page<StockEntry>
+    fun getStock(page: TableSearchFilter): Page<ScraperBook>
     fun getEditors(): List<Editor>
-    fun getBookInfo(isbn: String): ScraperBook
-    fun updateStock(stockEntry: StockEntry): StockEntry
+    fun updateStock(stockEntry: ScraperBook): ScraperBook
     fun getInventory(): Inventory
     fun deleteStock()
-    fun getStockEntry(isbn: String): StockEntry
-    fun checkMissingBooks(saleDTOs: List<SaleDTO>): ResponseEntity<List<StockEntry>>
-    fun getMissingBooks(saleDTOs: List<SaleDTO>): ArrayList<StockEntry>
+    fun getStockEntry(isbn: String): ScraperBook
+    fun checkMissingBooks(saleDTOs: List<SaleDTO>): ResponseEntity<List<ScraperBook>>
+    fun getMissingBooks(saleDTOs: List<SaleDTO>): ArrayList<ScraperBook>
     fun removeBooks(saleDTOs: List<SaleDTO>)
 }

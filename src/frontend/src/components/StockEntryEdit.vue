@@ -292,6 +292,7 @@ const onEditorChange = (event) => {
 const fileUpload = (event) => {
   formData.value = new FormData();
   formData.value.append("file", event.files[0]);
+  console.debug(event.files)
   StockService.addCover(formData, bookCopy.value.isbn)
     .then(() =>
       emitter.emit("notify", {

@@ -2,7 +2,7 @@ package ch.wngr.bookstore.controllers
 
 import ch.wngr.bookstore.filters.TableSearchFilter
 import ch.wngr.bookstore.models.SaleList
-import ch.wngr.bookstore.models.StockEntry
+import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.services.SaleService
 import ch.wngr.bookstore.services.StockService
 import kotlinx.serialization.decodeFromString
@@ -23,18 +23,18 @@ internal class StockController @Autowired constructor(
     @GetMapping("")
     fun getStock(
         @RequestParam lazyEvent: String
-    ): Page<StockEntry>? {
+    ): Page<ScraperBook>? {
         val searchFilter = json.decodeFromString<TableSearchFilter>(lazyEvent)
         return stockService.getStock(searchFilter)
     }
 
     @GetMapping("/{isbn}")
-    fun getStockEntry(@PathVariable("isbn") isbn: String): StockEntry {
+    fun getStockEntry(@PathVariable("isbn") isbn: String): ScraperBook {
         return stockService.getStockEntry(isbn)
     }
 
     @PutMapping("")
-    fun updateStock(@RequestBody stockEntry: StockEntry): StockEntry {
+    fun updateStock(@RequestBody stockEntry: ScraperBook): ScraperBook {
         return stockService.updateStock(stockEntry)
     }
 
@@ -44,7 +44,7 @@ internal class StockController @Autowired constructor(
     }
 
     @PutMapping("/missing")
-    fun getMissingBook(@RequestBody sales: SaleList): ResponseEntity<List<StockEntry>> {
+    fun getMissingBook(@RequestBody sales: SaleList): ResponseEntity<List<ScraperBook>> {
         return stockService.checkMissingBooks(sales.sales)
     }
 

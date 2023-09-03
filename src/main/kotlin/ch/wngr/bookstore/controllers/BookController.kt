@@ -11,13 +11,13 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/api/book")
 class BookController @Autowired constructor(
-    private val scraperService: ScraperService,
     private val stockService: StockService,
     private val coverService: CoverService,
+    private val scraperService: ScraperService
 ) {
     @GetMapping("/ISBN")
     fun fetchBookInfo(isbn: String): ScraperBook {
-        return stockService.getBookInfo(isbn)
+        return scraperService.getBookInfo(isbn)
     }
 
     @PostMapping("/stock")

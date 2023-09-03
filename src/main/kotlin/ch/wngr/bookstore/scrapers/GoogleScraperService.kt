@@ -1,4 +1,4 @@
-package ch.wngr.bookstore.services
+package ch.wngr.bookstore.scrapers
 
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.repositories.AuthorRepository
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class GoogleScraperService : ScraperService {
+class GoogleScraperService : ScraperInterface {
     @field:Autowired
     private lateinit var authorRepository: AuthorRepository
     val GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes"
@@ -70,6 +70,7 @@ class GoogleScraperService : ScraperService {
                 description = description,
                 price = null,
                 coverUrl = coverUrl,
+                hasCover = coverUrl != "",
                 tags = ArrayList(),
             )
         } catch (e: Exception) {

@@ -5,7 +5,6 @@ import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Tag
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.models.ShopEntry
-import ch.wngr.bookstore.models.StockEntry
 
 fun Book.toScrapperBook() = ScraperBook(
     isbn = isbn,
@@ -14,26 +13,13 @@ fun Book.toScrapperBook() = ScraperBook(
     editor = publisher.toString(),
     distributor = "",
     description = description,
-    price = price,
-    tags = tags.map(Tag::toTagDTO)
-)
-
-fun Book.toStockEntry() = StockEntry(
-    isbn = isbn,
-    title = title,
-    authors = authors.map(
-        fun(author: Author): String {
-            return author.name
-        }
-    ).toList(),
-    editor = publisher?.name,
-    distributor = distributor?.toString(),
     amount = amount,
-    description = description,
     price = price,
     hasCover = hasCover,
     tags = tags.map(Tag::toTagDTO)
 )
+
+
 
 fun Book.toShopEntry() = ShopEntry(
     isbn = isbn,

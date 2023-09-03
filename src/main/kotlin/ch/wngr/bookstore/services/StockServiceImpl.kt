@@ -2,8 +2,8 @@ package ch.wngr.bookstore.services
 
 import ch.wngr.bookstore.converters.toEditor
 import ch.wngr.bookstore.converters.toScrapperBook
-import ch.wngr.bookstore.converters.toStockEntry
 import ch.wngr.bookstore.converters.toTag
+
 import ch.wngr.bookstore.entities.Author
 import ch.wngr.bookstore.entities.Book
 import ch.wngr.bookstore.entities.Publisher
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service
 @Service
 class StockServiceImpl @Autowired constructor(
     val bookRepository: BookRepository,
-    val scraperService: ScraperService,
     val authorService: AuthorService,
     val publisherRepository: PublisherRepository,
     val distributorService: DistributorService,
@@ -66,33 +65,35 @@ class StockServiceImpl @Autowired constructor(
             )
             bookRepository.save(newBook)
         } else {
-            existingBook.title = book.title
-            existingBook.tags = book.tags.map(TagDto::toTag).toMutableSet()
-            existingBook.amount += book.amount
-            bookRepository.save(existingBook)
+            if (book.coverUrl.isNotEmpty()) {
+                coverService.fetchAndUploadCover(book.coverUrl, book.isbn)
+                book.hasCover = true
+            }
+            book.amount += existingBook.amount
+            updateStock(book)
         }
     }
 
-    override fun getStock(page: TableSearchFilter): Page<StockEntry> {
+    override fun getStock(page: TableSearchFilter): Page<ScraperBook> {
         val pageable = PageRequest.of(page.first, page.rows, Sort.by(page.getSortDirection(), page.sortField))
         val tagsCount = page.filters.tags.value.size.toLong()
         var amount = 0
         if (page.filters.displayEmptyEntries.value) {
             amount = -1
         }
-        val books: Page<StockEntry> = if (page.filters.global.value == null && tagsCount == 0L) {
-            bookRepository.findByAmountGreaterThan(amount, pageable).map(Book::toStockEntry)
+        val books: Page<ScraperBook> = if (page.filters.global.value == null && tagsCount == 0L) {
+            bookRepository.findByAmountGreaterThan(amount, pageable).map(Book::toScrapperBook)
         } else if (tagsCount == 0L) {
             bookRepository.findByAmountGreatherThanAndSearchFilter(
                 amount,
                 "%${page.filters.global.value?.uppercase()}%",
                 pageable
-            ).map(Book::toStockEntry)
+            ).map(Book::toScrapperBook)
         } else if (page.filters.global.value == null) {
             bookRepository.findByAmountGreatherThanAndTagFilter(
                 amount, page.filters.tags.value.map(TagDto::toTag),
                 tagsCount, pageable
-            ).map(Book::toStockEntry)
+            ).map(Book::toScrapperBook)
         } else {
             bookRepository.findByAmountGreatherThanAndSearchFilterAndTagFilter(
                 amount,
@@ -100,7 +101,7 @@ class StockServiceImpl @Autowired constructor(
                 page.filters.tags.value.map(TagDto::toTag),
                 tagsCount,
                 pageable
-            ).map(Book::toStockEntry)
+            ).map(Book::toScrapperBook)
         }
         return books
     }
@@ -109,26 +110,10 @@ class StockServiceImpl @Autowired constructor(
         return publisherRepository.findByOrderByName().map(Publisher::toEditor)
     }
 
-    override fun getBookInfo(isbn: String): ScraperBook {
-        // first check if we have the book already in stock
-        val book: Book?
-        val scraperBook: ScraperBook
-        book = bookRepository.findByIsbn(isbn)
-        if (book != null) {
-            scraperBook = book.toScrapperBook()
-        } else {
-            scraperBook = scraperService.getBookInfo(isbn)
-            // we try to guess the distributor
-            val publisher = scraperBook.editor?.let { publisherRepository.findByName(it) }
-            scraperBook.distributor = publisher?.defaultDistributor?.toString()
-        }
-        return scraperBook
-    }
-
-    override fun updateStock(stockEntry: StockEntry): StockEntry {
+    override fun updateStock(stockEntry: ScraperBook): ScraperBook {
         val book = bookRepository.findByIsbn(stockEntry.isbn)
         if (book != null) {
-            book.amount = stockEntry.amount!!
+            book.amount = stockEntry.amount
             book.isbn = stockEntry.isbn
             val authors: MutableSet<Author> = HashSet()
             for (authorName: String in stockEntry.authors) {
@@ -137,14 +122,18 @@ class StockServiceImpl @Autowired constructor(
             }
             book.authors = authors
             book.title = stockEntry.title
-            book.description = stockEntry.description!!
+            book.description = stockEntry.description
             book.publisher =
                 stockEntry.editor?.let { publisherService.getOrCreatePublisher(it, stockEntry.distributor) }
             book.distributor = stockEntry.distributor?.let { distributorService.getOrCreateDistributor(it) }
             book.price = stockEntry.price
+            // When we update a book the hasCover from vue might be false
+            if (stockEntry.hasCover) {
+                book.hasCover = true
+            }
             book.tags = stockEntry.tags.map(TagDto::toTag).toMutableSet()
             bookRepository.save(book)
-            return book.toStockEntry()
+            return book.toScrapperBook()
         } else {
             println("The book could not be found")
             throw NotFoundException("The book could not be found")
@@ -159,16 +148,16 @@ class StockServiceImpl @Autowired constructor(
         return bookRepository.resetStock()
     }
 
-    override fun getStockEntry(isbn: String): StockEntry {
+    override fun getStockEntry(isbn: String): ScraperBook {
         val book = bookRepository.findByIsbn(isbn)
         if (book != null) {
-            return book.toStockEntry()
+            return book.toScrapperBook()
         }
         println("The book could not be found in stock")
         throw NotFoundException("The book could not be found in stock")
     }
 
-    override fun checkMissingBooks(saleDTOs: List<SaleDTO>): ResponseEntity<List<StockEntry>> {
+    override fun checkMissingBooks(saleDTOs: List<SaleDTO>): ResponseEntity<List<ScraperBook>> {
         val missingBooks = getMissingBooks(saleDTOs)
         if (missingBooks.isEmpty()) {
             return ResponseEntity(null, HttpStatus.OK)
@@ -177,7 +166,7 @@ class StockServiceImpl @Autowired constructor(
     }
 
 
-    override fun getMissingBooks(saleDTOs: List<SaleDTO>): ArrayList<StockEntry> {
+    override fun getMissingBooks(saleDTOs: List<SaleDTO>): ArrayList<ScraperBook> {
         val reducedSales = HashMap<String, Int>()
         for (sale in saleDTOs) {
             // fanzines aren't in stock
@@ -190,13 +179,13 @@ class StockServiceImpl @Autowired constructor(
                 reducedSales.replace(sale.isbn, reducedSales[sale.isbn]!! + sale.quantity!!.or(0))
             }
         }
-        val missingBooks = ArrayList<StockEntry>()
+        val missingBooks = ArrayList<ScraperBook>()
         for (sale in reducedSales) {
             val book = bookRepository.findByIsbn(sale.key)
             if (book == null) {
                 throw NotFoundException(String.format("The book with isbn %s could not be found in stock", sale.key))
             } else if (book.amount < sale.value) {
-                missingBooks.add(book.toStockEntry())
+                missingBooks.add(book.toScrapperBook())
             }
         }
         return missingBooks
