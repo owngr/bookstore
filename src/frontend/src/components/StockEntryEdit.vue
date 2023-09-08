@@ -224,7 +224,7 @@ if (bookCopy.value.editor && bookCopy.value.editor.length > 0) {
   changeEditor(bookCopy.value.editor);
 }
 
-let formData = ref(null);
+// let formData = ref(null);
 
 let preventSubmit = ref(false);
 
@@ -290,9 +290,8 @@ const onEditorChange = (event) => {
 };
 
 const fileUpload = (event) => {
-  formData.value = new FormData();
-  formData.value.append("file", event.files[0]);
-  console.debug(event.files)
+  const formData = new FormData();
+  formData.append("file", event.files[0]);
   StockService.addCover(formData, bookCopy.value.isbn)
     .then(() =>
       emitter.emit("notify", {
