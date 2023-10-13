@@ -33,3 +33,27 @@ services:
     volumes:
       - ./src/main/resources/sqlVersions:/flyway/sql
     command: -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+
+    ### needed for maven tests
+  postgres-test:
+    container_name: postgres-test
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=bookstore
+      - POSTGRES_PASSWORD=BraveNewWorld
+    ports:
+      - "5433:5432"
+
+  flyway-test:
+    container_name: flyway-test
+    depends_on:
+      - postgres-test
+    environment:
+      - FLYWAY_USER=bookstore
+      - FLYWAY_PASSWORD=BraveNewWorld
+      - FLYWAY_URL=jdbc:postgresql://postgres-test:5432/
+    image: flyway/flyway:7
+    volumes:
+      - ./src/main/resources/sqlVersions:/flyway/sql
+      - ./src/main/resources/sqlTestData:/flyway/test
+    command: -locations=filesystem:/flyway/sql,filesystem:/flyway/test -connectRetries=60 migrate
