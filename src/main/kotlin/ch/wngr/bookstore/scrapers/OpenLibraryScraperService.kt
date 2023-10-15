@@ -2,7 +2,13 @@ package ch.wngr.bookstore.scrapers
 
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.repositories.AuthorRepository
-import khttp.responses.Response
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import org.http4k.client.ApacheClient
+import org.http4k.core.HttpHandler
+import org.http4k.core.Method
+import org.http4k.core.Request
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -14,14 +20,16 @@ class OpenLibraryScraperService : ScraperInterface {
     @field:Autowired
     private lateinit var authorRepository: AuthorRepository
     val OPEN_LIBRARY_API_URL = "https://openlibrary.org/api/books"
+    var client: HttpHandler = ApacheClient()
 
     override fun getBookInfo(isbn: String): ScraperBook {
+        val request = Request(Method.GET, OPEN_LIBRARY_API_URL)
+            .query("bibkeys","ISBN:$isbn")
+            .query("jscmd", "details")
+            .query("format", "json")
         try {
-            val response: Response = khttp.get(
-                url = OPEN_LIBRARY_API_URL,
-                params = mapOf("bibkeys" to "ISBN:$isbn", "jscmd" to "details", "format" to "json")
-            )
-            val obj: JSONObject = response.jsonObject
+            val response = client(request)
+            val obj = JSONObject(response.body.toString())
             var volumeInfo = JSONObject()
             try {
                 volumeInfo = (obj["ISBN:$isbn"] as JSONObject)["details"] as JSONObject
@@ -61,7 +69,7 @@ class OpenLibraryScraperService : ScraperInterface {
             try {
                 authors = authorsJsonArrayToStringList(volumeInfo["authors"] as JSONArray)
             } catch (e: JSONException) {
-                println("authors not found")
+                println("openlibrary: authors not found")
             }
             
             return ScraperBook(

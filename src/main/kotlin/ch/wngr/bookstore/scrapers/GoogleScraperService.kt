@@ -2,26 +2,33 @@ package ch.wngr.bookstore.scrapers
 
 import ch.wngr.bookstore.models.ScraperBook
 import ch.wngr.bookstore.repositories.AuthorRepository
-import khttp.responses.Response
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import org.http4k.client.ApacheClient
+import org.http4k.core.HttpHandler
+import org.http4k.core.Method
+import org.http4k.core.Request
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+
 @Service
 class GoogleScraperService : ScraperInterface {
     @field:Autowired
     private lateinit var authorRepository: AuthorRepository
     val GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes"
+    var client: HttpHandler = ApacheClient()
 
     override fun getBookInfo(isbn: String): ScraperBook {
+        val request = Request(Method.GET, GOOGLE_API_URL).query("q", "isbn:$isbn")
         try {
-            val response: Response = khttp.get(
-                url = GOOGLE_API_URL,
-                params = mapOf("q" to "isbn:$isbn")
-            )
-            val obj: JSONObject = response.jsonObject
+
+            val response = client(request)
+            val obj = JSONObject(response.body.toString())
             var volumeInfo = JSONObject()
             try {
                 volumeInfo = (obj["items"] as JSONArray).getJSONObject(0)["volumeInfo"] as JSONObject
