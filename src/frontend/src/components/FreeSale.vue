@@ -18,8 +18,12 @@
           />
         </td>
         <td>
-          <PButton :disabled="freeTextTitle === null" aria-labelledby="Cash" class="p-button-lg"
-                   @click="onAddFreeSale(freeTextTitle)">
+          <PButton
+              :disabled="freeTextTitle === null"
+              aria-labelledby="Cash"
+              class="p-button-lg"
+              @click="onAddFreeSale(freeTextTitle)"
+          >
             {{ $t('addFreeText') }}
           </PButton>
         </td>

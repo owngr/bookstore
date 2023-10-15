@@ -138,7 +138,7 @@
               dropdown
               multiple
               name="tags"
-              optionLabel="name"
+              option-label="name"
               @complete="searchTags"
               @focusin="enableSubmit(true)"
               @focusout="enableSubmit(false)"

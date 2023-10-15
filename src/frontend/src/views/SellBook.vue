@@ -5,7 +5,8 @@
   <PDialog
       v-model:visible="displayMissingBookDialog" :draggable="false" :header="$t('missingBooks')"
       :style="{width: '50vw'}">
-    <MissingBooks :missing-books="missingBooks" :sales="sales" @canceled="displayMissingBookDialog = false"
+    <MissingBooks
+:missing-books="missingBooks" :sales="sales" @canceled="displayMissingBookDialog = false"
                   @added-books="processForm"/>
   </PDialog>
   <PDialog

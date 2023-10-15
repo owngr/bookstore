@@ -51,7 +51,7 @@
             dropdown
             multiple
             name="tags"
-            optionLabel="name"
+            option-label="name"
             @complete="searchTags"
             @keydown.enter="onFilter()"
           />

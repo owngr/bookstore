@@ -4,7 +4,7 @@
     <label class="ml-2" for="displayOpenBaskets">{{ $t('displayOpenBaskets') }}</label>
     <InputSwitch v-model="displayOpenBaskets" input-id="displayOpenBaskets" @input="loadBaskets()"/>
   </div>
-  <PAccordion :activeIndex="0">
+  <PAccordion :active-index="0">
     <AccordionTab v-for="basket in baskets" :key="basket.distributor" :header="basket.title">
       <basket-accordion :basket="basket" @close-basket="closeBasket"/>
     </AccordionTab>
