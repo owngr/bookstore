@@ -1,5 +1,8 @@
 package ch.wngr.bookstore.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ScraperBook(
     var isbn: String,
     var title: String = "",
