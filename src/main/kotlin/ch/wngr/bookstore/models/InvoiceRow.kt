@@ -12,9 +12,9 @@ data class InvoiceRow(
     var paymentOption: String,
     var timeCreated: String,
 ) {
-    constructor(id: Int, quantity: Int, price: Float, paymentOption: PaymentMethod, timeCreated: LocalDateTime) : this(
+    constructor(id: Int, quantity: Long, price: Float, paymentOption: PaymentMethod, timeCreated: LocalDateTime) : this(
         id,
-        quantity,
+        quantity.toInt(),
         price,
         paymentOption.toString(),
         timeCreated.format(DateTimeFormatter.ofPattern("dd-MM-YYYY HH:mm"))

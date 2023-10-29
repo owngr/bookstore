@@ -12,10 +12,12 @@ import java.time.LocalDateTime
 interface PaymentRepository : CrudRepository<Payment, Int> {
 
     @Query(
-        "select new ch.wngr.bookstore.models.InvoiceRow(i.id, i.sales.size, p.price, p.paymentMethod, i.timeCreated) " +
-                "from Payment p " +
-                "join Invoice i on p.invoice = i " +
-                "where i.timeCreated between :startTime and :endTime"
+        "select new ch.wngr.bookstore.models.InvoiceRow(i.id, count(s), p.price, p.paymentMethod, i.timeCreated) " +
+                "from Sale s " +
+                "join Invoice i on s.invoice = i " +
+                "join Payment p on p.invoice = i " +
+                "where i.timeCreated between :startTime and :endTime " +
+                "group by i.id, p.price, p.paymentMethod, i.timeCreated"
     )
     fun getInvoiceByTimeCreatedBetween(
         @Param("startTime") startTime: LocalDateTime,
