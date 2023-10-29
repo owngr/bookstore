@@ -31,7 +31,7 @@ class TagServiceImpl @Autowired constructor(
             return tag.toTagDTO()
         } else {
             println("The tag could not be found")
-            throw javassist.NotFoundException("The tag could not be found")
+            throw Exception("The tag could not be found")
         }
     }
 
@@ -47,7 +47,7 @@ class TagServiceImpl @Autowired constructor(
             return ResponseEntity(tag.toTagDTO(), HttpStatus.OK)
         } else {
             println("Thetag could not be found")
-            throw javassist.NotFoundException("The tag could not be found")
+            throw Exception("The tag could not be found")
         }
     }
 

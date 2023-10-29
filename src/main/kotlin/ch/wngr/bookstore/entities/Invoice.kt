@@ -1,7 +1,7 @@
 package ch.wngr.bookstore.entities
 
 import java.time.LocalDateTime
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "invoice")

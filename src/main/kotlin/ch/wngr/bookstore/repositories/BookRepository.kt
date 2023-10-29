@@ -7,12 +7,13 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-interface BookRepository : PagingAndSortingRepository<Book, Int> {
+interface BookRepository : PagingAndSortingRepository<Book, Int>, CrudRepository<Book, Int> {
     fun findByIsbn(isbn: String): Book?
     fun findByTitle(title: String): Book?
     fun findByHasCover(hasCover: Boolean): List<Book>

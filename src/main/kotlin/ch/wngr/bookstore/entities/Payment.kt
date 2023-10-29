@@ -1,7 +1,7 @@
 package ch.wngr.bookstore.entities
 
 import ch.wngr.bookstore.enums.PaymentMethod
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "payment")

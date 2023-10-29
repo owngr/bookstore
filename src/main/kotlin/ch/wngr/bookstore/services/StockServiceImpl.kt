@@ -11,7 +11,6 @@ import ch.wngr.bookstore.filters.TableSearchFilter
 import ch.wngr.bookstore.models.*
 import ch.wngr.bookstore.repositories.BookRepository
 import ch.wngr.bookstore.repositories.PublisherRepository
-import javassist.NotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -136,7 +135,7 @@ class StockServiceImpl @Autowired constructor(
             return book.toScrapperBook()
         } else {
             println("The book could not be found")
-            throw NotFoundException("The book could not be found")
+            throw Exception("The book could not be found")
         }
     }
 
@@ -154,7 +153,7 @@ class StockServiceImpl @Autowired constructor(
             return book.toScrapperBook()
         }
         println("The book could not be found in stock")
-        throw NotFoundException("The book could not be found in stock")
+        throw Exception("The book could not be found in stock")
     }
 
     override fun checkMissingBooks(saleDTOs: List<SaleDTO>): ResponseEntity<List<ScraperBook>> {
@@ -183,7 +182,7 @@ class StockServiceImpl @Autowired constructor(
         for (sale in reducedSales) {
             val book = bookRepository.findByIsbn(sale.key)
             if (book == null) {
-                throw NotFoundException(String.format("The book with isbn %s could not be found in stock", sale.key))
+                throw Exception(String.format("The book with isbn %s could not be found in stock", sale.key))
             } else if (book.amount < sale.value) {
                 missingBooks.add(book.toScrapperBook())
             }
@@ -199,7 +198,7 @@ class StockServiceImpl @Autowired constructor(
                     book.amount -= sale.quantity!!.or(0)
                     bookRepository.save(book)
                 } else {
-                    throw NotFoundException(
+                    throw Exception(
                         String.format(
                             "The book with isbn %s could not be found in stock",
                             sale.isbn

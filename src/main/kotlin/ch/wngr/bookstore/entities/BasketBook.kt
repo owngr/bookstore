@@ -2,7 +2,7 @@ package ch.wngr.bookstore.entities
 
 import ch.wngr.bookstore.annotations.EmptyConstructor
 import java.io.Serializable
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "basket_book")
