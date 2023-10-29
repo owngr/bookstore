@@ -4,6 +4,7 @@
       :key="reloadCount"
       v-model:book="initBook"
       :process-form-function="addBook"
+      class="w-64rem"
   />
 
 </template>
@@ -48,6 +49,7 @@ export default {
         description: book.description,
         price: book.price,
         coverUrl: book.coverUrl,
+        hasCover: book.hasCover,
         amount: book.amount,
         tags: book.tags,
       }

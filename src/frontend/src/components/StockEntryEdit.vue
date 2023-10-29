@@ -1,17 +1,18 @@
 <template>
   <div class="card">
     <form id="app" @submit.prevent="processForm" @keydown.enter="processForm">
-      <table>
+      <table class="w-full">
         <tr>
-          <td>
+          <td class="w-2">
             <label class="form-label" for="isbn">{{ $t("isbn") }}</label>
           </td>
-          <td>
+          <td class="w-6">
             <IsbnSearch
               :disabled="editMode"
               :init-isbn="book.isbn"
               @book="fillData"
               @prevent-submit="enableSubmit"
+              class="w-full"
             />
           </td>
           <td rowspan="6">
@@ -40,6 +41,7 @@
               v-model="bookCopy.title"
               name="title"
               type="text"
+              class="w-full"
             />
           </td>
         </tr>
@@ -57,6 +59,7 @@
               :placeholder="$t('select')"
               option-label="name"
               @change="onEditorChange"
+              class="w-full"
             />
           </td>
         </tr>
@@ -70,6 +73,7 @@
               :add-author-function="addAuthor"
               :authors="bookCopy.authors"
               :delete-author-function="deleteAuthor"
+              class="w-full"
             />
           </td>
         </tr>
@@ -109,6 +113,7 @@
               v-model="bookCopy.price"
               currency="CHF"
               mode="currency"
+              class="w-full"
             />
           </td>
         </tr>
@@ -123,6 +128,7 @@
               v-model="bookCopy.amount"
               :show-buttons="false"
               name="amount"
+              class="w-full"
             />
           </td>
         </tr>
@@ -130,7 +136,7 @@
           <td>
             <label class="form-label" for="tags">{{ $t("tags") }}</label>
           </td>
-          <td>
+          <td class="p-fluid">
             <AutoComplete
               id="tags"
               v-model="bookCopy.tags"
@@ -245,6 +251,7 @@ const fillData = (data) => {
   }
   bookCopy.value.price = data.price;
   bookCopy.value.coverUrl = data.coverUrl;
+  bookCopy.value.hasCover = data.hasCover;
   bookCopy.value.tags = data.tags;
   console.debug("data filled");
 };
@@ -334,4 +341,5 @@ div >>> .p-hidden-accessible {
   position: absolute;
   width: 1px;
 }
+
 </style>

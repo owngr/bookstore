@@ -16,6 +16,7 @@ fun Book.toScrapperBook() = ScraperBook(
     amount = amount,
     price = price,
     hasCover = hasCover,
+    coverUrl = "/api/shop/$isbn",
     tags = tags.map(Tag::toTagDTO)
 )
 

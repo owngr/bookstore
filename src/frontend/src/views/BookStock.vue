@@ -4,7 +4,7 @@
     <PDialog
       v-model:visible="displayEditDialog"
       :header="$t('updateStockEntry')"
-      :style="{ width: '50vw' }"
+      :style="{ width: '56rem' }"
     >
       <StockEntryEdit
         v-model:book="book"
@@ -245,6 +245,8 @@ function updateStock(childBook) {
     distributor: childBook.distributor,
     description: childBook.description,
     price: childBook.price,
+    coverUrl: childBook.coverUrl,
+    hasCover: childBook.hasCover,
     amount: childBook.amount,
     tags: childBook.tags,
   };
