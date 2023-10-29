@@ -10,7 +10,7 @@ class Basket(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int = -1,
 
-    @OneToMany(mappedBy = "basketId")
+    @OneToMany(mappedBy = "basket")
     var basketBooks: MutableSet<BasketBook> = HashSet(),
 
     var timeClosed: LocalDateTime? = null,

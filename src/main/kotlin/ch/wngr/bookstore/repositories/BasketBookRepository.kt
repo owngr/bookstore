@@ -14,6 +14,6 @@ interface BasketBookRepository : CrudRepository<BasketBook, BasketBookId> {
     @Query(value = "SELECT new ch.wngr.bookstore.models.BasketRow(b.isbn, b.title, bb.quantity) " +
             "from BasketBook bb " +
             "join Book b on bb.bookId = b.id" +
-            " where bb.basketId = :basketId ")
+            " where bb.basket.id = :basketId ")
     fun findBasketDtoByBasket(basketId: Int): List<BasketRow>
 }

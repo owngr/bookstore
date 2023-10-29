@@ -37,7 +37,7 @@ class BasketServiceImpl @Autowired constructor(
                         basketBook = basket.basketBooks.first { bb -> bb.bookId == book.id }
                         basketBook.quantity += sale.quantity ?: 1
                     } catch (e: NoSuchElementException) {
-                        basketBook = BasketBook(basket.id, book.id, sale.quantity ?: 1)
+                        basketBook = BasketBook(basket, book.id, sale.quantity ?: 1)
                         basket.basketBooks.add(basketBook)
                     }
                     basketBookRepository.save(basketBook)

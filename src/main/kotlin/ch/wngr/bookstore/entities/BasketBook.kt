@@ -9,8 +9,10 @@ import jakarta.persistence.*
 @IdClass(BasketBookId::class)
 class BasketBook (
 
-    @Id
-    var basketId: Int = -1,
+
+    @ManyToOne
+    @JoinColumn(name = "basket_id")
+    var basket: Basket,
 
 
     @Id
@@ -24,6 +26,6 @@ class BasketBook (
 
 @EmptyConstructor
 data class BasketBookId(
-    var basketId: Int,
+    var basket: Basket,
     var bookId: Int,
 ) : Serializable
