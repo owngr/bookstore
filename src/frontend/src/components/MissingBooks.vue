@@ -39,6 +39,8 @@ const books = computed(() => {
     const saleQuantity = props.sales
         .filter(s => s.isbn === mb.isbn)
         .reduce((acc, s) => acc + s.quantity, 0)
+    console.debug("sale quantity")
+    console.debug(mb)
     const book = {
       isbn: mb.isbn,
       title: mb.title,
@@ -55,6 +57,8 @@ function addMissingBooks() {
   props.missingBooks.forEach(mb => {
     const missingSales = props.sales
         .filter(s => s.isbn === mb.isbn)
+    console.debug("missingSales")
+    console.debug(missingSales)
     missingSales[0].originalBook.amount = missingSales
         .reduce((acc, s) => acc + s.quantity, 0) - mb.amount
     promises.push(StockService.addBook(missingSales[0].originalBook))

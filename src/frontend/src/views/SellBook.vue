@@ -48,7 +48,7 @@
       <PColumn :header="$t('quantity')" field="quantity"></PColumn>
       <PColumn key="price" :header="$t('price')" field="fullPrice">
         <template #editor="{ data, field }">
-          <InputText v-model="data[field]" autofocus/>
+          <InputNumber v-model="data[field]" autofocus :show-buttons="false" currency="CHF" mode="currency"/>
         </template>
       </PColumn>
       <PColumn field="delete">

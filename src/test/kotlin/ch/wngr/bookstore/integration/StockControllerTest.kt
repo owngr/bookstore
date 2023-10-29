@@ -42,6 +42,7 @@ class StockControllerTest @Autowired constructor(
             description = "A test book",
             price = 10.5f,
             hasCover = false,
+            amount = 1,
             tags = arrayListOf(TagDto(0, true, "féminisme"), TagDto(1, false, "roman"))
         )
         val pageable: Pageable = PageRequest.of(0,50)

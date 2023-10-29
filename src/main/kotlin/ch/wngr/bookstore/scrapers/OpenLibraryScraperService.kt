@@ -82,6 +82,7 @@ class OpenLibraryScraperService : ScraperInterface {
                 price = null,
                 coverUrl = coverUrl,
                 hasCover = coverUrl != "",
+                amount = null,
                 tags = ArrayList(),
             )
         } catch (e: Exception) {

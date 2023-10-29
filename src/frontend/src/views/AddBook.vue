@@ -31,7 +31,9 @@ export default {
         description: null,
         price: null,
         coverUrl: null,
+        hasCover: null,
         amount: 1,
+        tags: [],
       },
       emitter: inject('emitter')
     }

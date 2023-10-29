@@ -17,14 +17,8 @@
           </td>
           <td rowspan="6">
             <img
-              v-if="!editMode"
+              v-if="bookCopy.hasCover"
               :src="bookCopy.coverUrl"
-              alt=""
-              style="width: 200px; height: auto"
-            />
-            <img
-              v-if="editMode && bookCopy.hasCover"
-              :src="'/api/shop/' + bookCopy.isbn"
               alt=""
               style="width: 200px; height: auto"
             />

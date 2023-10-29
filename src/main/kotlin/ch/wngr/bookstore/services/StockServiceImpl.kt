@@ -60,16 +60,16 @@ class StockServiceImpl @Autowired constructor(
                 distributor = distributor,
                 price = book.price,
                 hasCover = hasCover,
-                amount = book.amount,
+                amount = book.amount!!,
                 tags = book.tags.map(TagDto::toTag).toMutableSet()
             )
             bookRepository.save(newBook)
         } else {
-            if (book.coverUrl.isNotEmpty()) {
+            if (book.coverUrl.isNotEmpty() && !book.coverUrl.startsWith("/api/shop")) {
                 coverService.fetchAndUploadCover(book.coverUrl, book.isbn)
                 book.hasCover = true
             }
-            book.amount += existingBook.amount
+            book.amount = book.amount!! + existingBook.amount
             updateStock(book)
         }
     }
@@ -113,7 +113,7 @@ class StockServiceImpl @Autowired constructor(
     override fun updateStock(stockEntry: ScraperBook): ScraperBook {
         val book = bookRepository.findByIsbn(stockEntry.isbn)
         if (book != null) {
-            book.amount = stockEntry.amount
+            book.amount = stockEntry.amount!!
             book.isbn = stockEntry.isbn
             val authors: MutableSet<Author> = HashSet()
             for (authorName: String in stockEntry.authors) {
