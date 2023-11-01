@@ -4,9 +4,9 @@
   <router-view></router-view>
 </template>
 
-<script>
+<script lang="ts">
 import PageHeader from './components/PageHeader.vue';
-import AppNotification from "@/components/AppNotification";
+import AppNotification from "./components/AppNotification.vue";
 
 export default {
   name: 'App',

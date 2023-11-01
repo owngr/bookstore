@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import {computed} from "vue";
+import {computed, defineProps, defineEmits} from "vue";
 import StockService from "@/service/StockService";
 
 const props = defineProps(({

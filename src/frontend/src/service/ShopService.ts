@@ -8,7 +8,7 @@ class ShopService {
             .then(res => res.json())
     }
 
-    getPicture(isbn) {
+    getPicture(isbn: string) {
         return fetch("/api/shop/" + isbn)
             .then(handleErrors)
     }

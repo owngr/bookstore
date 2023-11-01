@@ -7,7 +7,7 @@ class TagService {
       .then((res) => res.json());
   }
 
-  updateTag(tag) {
+  updateTag(tag: TagDto) {
     const requestOptions = {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -18,7 +18,7 @@ class TagService {
       .then((res) => res.json());
   }
 
-  addTag(tag) {
+  addTag(tag: TagDto) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -29,7 +29,7 @@ class TagService {
       .then((res) => res.json());
   }
 
-  deleteTag(id) {
+  deleteTag(id: number) {
     const requestOptions = {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },

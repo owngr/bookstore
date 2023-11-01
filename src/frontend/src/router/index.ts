@@ -1,12 +1,12 @@
-import { createWebHashHistory, createRouter } from "vue-router"
+import { createWebHashHistory, createRouter } from 'vue-router'
 import Home from "@/views/HomePage.vue"
-import AddBook from "@/views/AddBook"
-import BookStock from "@/views/BookStock"
-import StockInventory from "@/views/StockInventory"
-import BookShop from "@/views/BookShop"
-import SellBook from "@/views/SellBook"
-import Sales from "@/views/BookSales"
-import BasketPage from "@/views/BasketPage";
+import AddBook from "@/views/AddBook.vue"
+import BookStock from "@/views/BookStock.vue"
+import StockInventory from "@/views/StockInventory.vue"
+import BookShop from "@/views/BookShop.vue"
+import SellBook from "@/views/SellBook.vue"
+import Sales from "@/views/BookSales.vue"
+import BasketPage from "@/views/BasketPage.vue";
 import TagPage from "@/views/TagPage.vue";
 
 const routes = [

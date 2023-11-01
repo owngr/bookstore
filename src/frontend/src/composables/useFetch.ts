@@ -38,7 +38,7 @@ export function useFetchDistributors() {
     return distributors
 }
 
-export function useFetchInvoices(startTime, endTime) {
+export function useFetchInvoices(startTime: Date, endTime: Date) {
     const invoices = ref([])
     SaleService.getSales(startTime, endTime)
         .then((response) => response.json())

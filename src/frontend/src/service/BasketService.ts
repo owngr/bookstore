@@ -2,13 +2,13 @@ import handleErrors from '@/helpers/httpHelper';
 
 class BasketService {
 
-    getBaskets(open) {
-        return fetch("/api/basket?" + new URLSearchParams({open: open}))
+    getBaskets(open: boolean) {
+        return fetch(`/api/basket?${new URLSearchParams({open: open.toString()})}`)
             .then(handleErrors)
             .then(res => res.json())
     }
 
-    closeBasket(basketId) {
+    closeBasket(basketId: string) {
         const requestOptions = {
             method: "DELETE",
         }

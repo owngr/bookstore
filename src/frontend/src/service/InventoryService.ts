@@ -8,7 +8,7 @@ class InventoryService {
             .then(res => res.json());
     }
 
-    updateStock(body) {
+    updateStock(body: ScraperBook) {
         const requestOptions = {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
@@ -19,7 +19,7 @@ class InventoryService {
             .then(res => res.json())
     }
 
-    addBook(body) {
+    addBook(body: ScraperBook) {
         const requestOptions = {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -29,7 +29,7 @@ class InventoryService {
             .then(handleErrors)
     }
 
-    addCover(formData, isbn) {
+    addCover(formData: any, isbn: string) {
         const requestOptions = {
             method: "POST",
             body: formData

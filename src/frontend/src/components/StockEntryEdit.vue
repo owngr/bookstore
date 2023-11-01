@@ -10,9 +10,9 @@
             <IsbnSearch
               :disabled="editMode"
               :init-isbn="book.isbn"
+              class="w-full"
               @book="fillData"
               @prevent-submit="enableSubmit"
-              class="w-full"
             />
           </td>
           <td rowspan="6">
@@ -52,8 +52,8 @@
               :options="editors"
               :placeholder="$t('select')"
               option-label="name"
-              @change="onEditorChange"
               class="w-full"
+              @change="onEditorChange"
             />
           </td>
         </tr>
@@ -325,7 +325,7 @@ const searchTags = (event) => {
 </script>
 
 <style scoped>
-div >>> .p-hidden-accessible {
+div :deep(.p-hidden-accessible) {
   border: 0;
   clip: rect(0 0 0 0);
   height: 1px;

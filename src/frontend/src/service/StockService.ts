@@ -2,7 +2,7 @@ import handleErrors from "@/helpers/httpHelper";
 
 class StockService {
 
-    getStock(params) {
+    getStock(params: any) {
         console.debug("lazy params")
         console.debug(params)
         const queryParams = params ? Object.keys(params).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k])).join('&') : '';
@@ -11,7 +11,7 @@ class StockService {
             .then(res => res.json());
     }
 
-    updateStock(body) {
+    updateStock(body: ScraperBook) {
         const requestOptions = {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
@@ -22,7 +22,7 @@ class StockService {
             .then(res => res.json())
     }
 
-    addBook(body) {
+    addBook(body: ScraperBook) {
         const requestOptions = {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -32,7 +32,7 @@ class StockService {
             .then(handleErrors)
     }
 
-    addCover(formData, isbn) {
+    addCover(formData: any, isbn: string) {
         const requestOptions = {
             method: "POST",
             body: formData,
@@ -52,7 +52,7 @@ class StockService {
             .then(handleErrors)
     }
 
-    getMissingBooks(sales) {
+    getMissingBooks(sales: SaleList) {
         const requestOptions = {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
@@ -61,7 +61,7 @@ class StockService {
         return fetch('/api/stock/missing',requestOptions)
     }
 
-    sellBooks(sales) {
+    sellBooks(sales: SaleList) {
         const requestOptions = {
             method: "PATCH",
             headers: {"Content-Type": "application/json"},

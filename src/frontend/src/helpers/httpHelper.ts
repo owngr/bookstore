@@ -1,7 +1,7 @@
-function handleErrors(response) {
+function handleErrors(response: any) {
     if (!response.ok) {
         return response.json()
-         .then((res) => {
+         .then((res: any) => {
              if (res.localizedMessage) {
                  throw res.localizedMessage
              } else {
