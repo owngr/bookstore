@@ -1,24 +1,26 @@
-<template>
+y<template>
   <div style="text-align: center">
-    <InlineMessage severity="warn">{{ $t('missingBooksDoYouWishToAddThem') }}</InlineMessage>
+    <InlineMessage severity="warn">{{ i18n.global.t('missingBooksDoYouWishToAddThem') }}</InlineMessage>
     <DataTable
         :value="books">
-      <PColumn :header="$t('isbn')" field="isbn"/>
-      <PColumn :header="$t('title')" field="title"/>
-      <PColumn :header="$t('saleQuantity')" field="saleQuantity"/>
-      <PColumn :header="$t('quantityInStock')" field="quantityInStock"/>
+      <PColumn :header="i18n.global.t('isbn')" field="isbn"/>
+      <PColumn :header="i18n.global.t('title')" field="title"/>
+      <PColumn :header="i18n.global.t('saleQuantity')" field="saleQuantity"/>
+      <PColumn :header="i18n.global.t('quantityInStock')" field="quantityInStock"/>
     </DataTable>
     <div class="card flex justify-content-center flex-wrap gap-3 pt-4">
-      <PButton class="p-button-danger" @click="cancel">{{ $t('cancel') }}</PButton>
-      <PButton @click="addMissingBooks">{{ $t('validate') }}</PButton>
+      <PButton class="p-button-danger" @click="cancel">{{ i18n.global.t('cancel') }}</PButton>
+      <PButton @click="addMissingBooks">{{ i18n.global.t('validate') }}</PButton>
     </div>
   </div>
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {computed, defineProps, defineEmits} from "vue";
 import StockService from "@/service/StockService";
+import i18n from "@/i18n";
+import {SaleList} from "@/models/SaleDto";
 
 const props = defineProps(({
   sales: {
@@ -26,7 +28,7 @@ const props = defineProps(({
     default: () => []
   },
   missingBooks: {
-    type: Array,
+    type: SaleList,
     default: () => []
   }
 }))
@@ -52,7 +54,7 @@ const books = computed(() => {
   return bookList
 })
 
-function addMissingBooks() {
+function addMissingBooks(): void {
   const promises = []
   props.missingBooks.forEach(mb => {
     const missingSales = props.sales
@@ -70,7 +72,7 @@ function addMissingBooks() {
   })
 }
 
-function cancel() {
+function cancel(): void {
   emit('canceled')
 }
 </script>

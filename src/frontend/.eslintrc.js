@@ -4,15 +4,19 @@ module.exports = {
     },
     extends: [
         'plugin:vue/vue3-essential',
-        'eslint:recommended',
         '@vue/eslint-config-typescript',
+        'plugin:@typescript-eslint/recommended',
         'prettier',
     ],
+    parserOptions: {
+        project: true,
+        tsconfigRootDir: __dirname,
+        extraFileExtensions: ['.vue']
+    },
+    parser: "vue-eslint-parser",
+    plugins: ['@typescript-eslint'],
     rules: {
-        // 'semi': ['error','never'],
         'vue/require-default-prop': 'off',
         'vue/require-prop-types': 'off',
-        // override/add rules settings here, such as:
-        // 'vue/no-unused-vars': 'error'
     }
 }

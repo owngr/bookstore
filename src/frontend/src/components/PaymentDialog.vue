@@ -3,12 +3,20 @@
     <table>
       <tr v-for="paymentOption in paymentOptions" :key="paymentOption.name">
         <td>
-          <PButton aria-labelledby="Cash" class="p-button-lg" @click="sellWithSinglePaymentOption(paymentOption.value)">
-            {{ $t(paymentOption.value) }}
+          <PButton
+            aria-labelledby="Cash"
+            class="p-button-lg"
+            @click="sellWithSinglePaymentOption(paymentOption.value)"
+          >
+            {{ i18n.global.t(paymentOption.value) }}
           </PButton>
         </td>
         <td>
-          <InputNumber v-model="paymentOption.price" mode="currency" currency="CHF"/>
+          <InputNumber
+            v-model="paymentOption.price"
+            currency="CHF"
+            mode="currency"
+          />
         </td>
       </tr>
       <tr>
@@ -16,24 +24,33 @@
           <label class="form-label" for="price">Reste</label>
         </td>
         <td>
-          <InputNumber v-model="remainingMoney" mode="currency" currency="CHF" :readonly="true"/>
+          <InputNumber
+            v-model="remainingMoney"
+            :readonly="true"
+            currency="CHF"
+            mode="currency"
+          />
         </td>
       </tr>
     </table>
-    <PButton :disabled="remainingMoney !== 0" @click="sellWithManyPaymentOptions">Valider</PButton>
+    <PButton
+      :disabled="remainingMoney !== 0"
+      @click="sellWithManyPaymentOptions"
+      >Valider</PButton
+    >
   </div>
 </template>
 
-<script setup>
-import {computed} from "vue";
-import {defineEmits, defineProps, ref} from "vue";
+<script lang="ts" setup>
+import { computed, defineEmits, defineProps, ref } from "vue";
+import i18n from "@/i18n";
 
 const props = defineProps({
   price: {
     type: Number,
     default: 0,
   },
-})
+});
 
 const paymentOptions = ref([
   {
@@ -52,31 +69,31 @@ const paymentOptions = ref([
     value: "VOUCHER",
     price: 0,
   },
-])
+]);
 
-const emit = defineEmits(['sell'])
+const emit = defineEmits(["sell"]);
 
-const sellWithSinglePaymentOption = (paymentOption) => {
-  sell([{value: paymentOption, price: props.price}])
+function sellWithSinglePaymentOption(paymentOption): void {
+  sell([{ value: paymentOption, price: props.price }]);
 }
 
-const sellWithManyPaymentOptions = () => {
+function sellWithManyPaymentOptions(): void {
   const payments = paymentOptions.value
-      .filter(po => po.price !== 0)
-      // eslint-disable-next-line no-unused-vars
-      .map(({name, ...rest}) => rest)
-  sell(payments)
+    .filter((po) => po.price !== 0)
+    // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+    .map(({ name, ...rest }) => rest);
+  sell(payments);
 }
 
-const sell = (payments) => {
-  emit('sell', payments)
+function sell(payments): void {
+  emit("sell", payments);
 }
+
 const remainingMoney = computed(() => {
-  return props.price - paymentOptions.value.reduce((sum, po) => sum + po.price, 0)
-})
-
+  return (
+    props.price - paymentOptions.value.reduce((sum, po) => sum + po.price, 0)
+  );
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

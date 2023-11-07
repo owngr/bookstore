@@ -33,6 +33,7 @@
   "couldntLoadInvoicesMessage": "Les factures n'ont pas pu être chargés",
   "coulntUploadPictureMessage": "L'image n'a pas pu être uploadé",
   "cover": "Couverture",
+  "date": "Date",
   "delete": "Supprimer",
   "deleteStock": "Supprimer le stock",
   "description": "Déscription",

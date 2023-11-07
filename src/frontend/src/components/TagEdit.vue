@@ -4,13 +4,13 @@
       <table>
         <tr v-if="editMode">
           <td>
-            <label class="form-label" for="id">{{ $t("id") }}</label>
+            <label class="form-label" for="id">{{ i18n.global.t("id") }}</label>
           </td>
           <td>{{tagCopy.id}}</td>
         </tr>
         <tr>
           <td>
-            <label class="form-label" for="name">{{ $t("name") }}</label>
+            <label class="form-label" for="name">{{ i18n.global.t("name") }}</label>
           </td>
           <td>
             <InputText
@@ -23,7 +23,7 @@
         </tr>
         <tr>
           <td>
-            <label class="form-label" for="primary">{{ $t("primary") }}</label>
+            <label class="form-label" for="primary">{{ i18n.global.t("primary") }}</label>
           </td>
           <td>
             <InputSwitch v-model="tagCopy.main" input-id="primary" />
@@ -32,21 +32,24 @@
       </table>
       <div class="card flex flex-wrap gap-2 p-1">
         <PButton :label="submitButtonText" type="submit" value="submit" />
-        <PButton v-if="editMode" :label="$t('delete')" class="p-button-danger" @click="deleteTag"/>
+        <PButton v-if="editMode" :label="i18n.global.t('delete')" class="p-button-danger" @click="deleteTag"/>
       </div>
 
     </form>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineEmits, defineProps, inject, ref } from "vue";
 import i18n from "@/i18n";
 import tagService from "@/service/TagService";
+import TagDto from "@/models/TagDto";
+import {Emitter} from "mitt";
+import {MessageEvent} from "@/classes/Message";
 
 
 const props = defineProps({
-  tag: {},
+  tag: TagDto,
   editMode: {
     type: Boolean,
     default: false,
@@ -58,13 +61,13 @@ const props = defineProps({
   processFormFunction: {},
 });
 
-let tagCopy = ref(JSON.parse(JSON.stringify(props.tag)));
+let tagCopy = ref<TagDto>(JSON.parse(JSON.stringify(props.tag)));
 
-const emitter = inject("emitter");
+const emitter: Emitter<MessageEvent> = inject("emitter") as Emitter<MessageEvent>
 let preventSubmit = ref(false);
 const emit = defineEmits(["close-dialog"]);
 
-function processForm() {
+function processForm() : void{
   console.debug("in processform")
   console.debug(preventSubmit)
   if (preventSubmit.value) {
@@ -84,7 +87,7 @@ function processForm() {
     );
 }
 
-function deleteTag() {
+function deleteTag() : void {
   tagService.deleteTag(tagCopy.value.id)
       .then(() => {
         emitter.emit('notify', {severity: 'success', content: i18n.global.t('tagDeletedMessage')})

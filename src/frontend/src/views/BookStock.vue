@@ -1,16 +1,16 @@
 <template>
-  <h1>{{ $t("stock") }}</h1>
+  <h1>{{ i18n.global.t("stock") }}</h1>
   <div>
     <PDialog
       v-model:visible="displayEditDialog"
-      :header="$t('updateStockEntry')"
+      :header="i18n.global.t('updateStockEntry')"
       :style="{ width: '56rem' }"
     >
       <StockEntryEdit
         v-model:book="book"
         :edit-mode="true"
         :process-form-function="updateStock"
-        :submit-button-text="$t('updateBook')"
+        :submit-button-text="i18n.global.t('updateBook')"
         @close-dialog="closeEditDialog"
       />
     </PDialog>
@@ -39,14 +39,14 @@
             <i class="pi pi-search" />
             <InputText
               v-model="filters['global'].value"
-              :placeholder="$t('search')"
+              :placeholder="i18n.global.t('search')"
               @keydown.enter="onFilter()"
             />
           </span>
           <AutoComplete
             id="tags"
             v-model="filters['tags'].value"
-            :placeholder="$t('tags')"
+            :placeholder="i18n.global.t('tags')"
             :suggestions="tagsSuggestions"
             dropdown
             multiple
@@ -55,51 +55,57 @@
             @complete="searchTags"
             @keydown.enter="onFilter()"
           />
-          <label class="ml-2" for="displayEmptyEntries">{{ $t('displayEmptyEntries') }}</label>
-          <InputSwitch v-model="filters['displayEmptyEntries'].value" input-id="displayEmptyEntries" @input="onFilter()"/>
+          <label class="ml-2" for="displayEmptyEntries">{{
+            i18n.global.t("displayEmptyEntries")
+          }}</label>
+          <InputSwitch
+            v-model="filters['displayEmptyEntries'].value"
+            input-id="displayEmptyEntries"
+            @input="onFilter()"
+          />
         </div>
       </template>
       <PColumn field="isbn" header="ISBN"></PColumn>
-      <PColumn :header="$t('title')" :sortable="true" field="title">
+      <PColumn :header="i18n.global.t('title')" :sortable="true" field="title">
         <template #body="slotProps">
           <a @click="openEditDialog(slotProps.data)">{{
             slotProps.data.title
           }}</a>
         </template>
       </PColumn>
-      <PColumn :header="$t('authors')" field="authors">
+      <PColumn :header="i18n.global.t('authors')" field="authors">
         <template #body="slotProps">
           <li v-for="author in slotProps.data.authors" :key="author">
             {{ author }}
           </li>
         </template>
       </PColumn>
-      <PColumn :header="$t('editor')" field="editor"></PColumn>
+      <PColumn :header="i18n.global.t('editor')" field="editor"></PColumn>
       <PColumn
-        :header="$t('summary')"
+        :header="i18n.global.t('summary')"
         :hidden="true"
         field="description"
       ></PColumn>
       <PColumn
         :exportable="false"
-        :header="$t('quantity')"
+        :header="i18n.global.t('quantity')"
         :sortable="true"
         field="amount"
       ></PColumn>
       <PColumn
         :exportable="false"
-        :header="$t('cover')"
+        :header="i18n.global.t('cover')"
         :sortable="true"
         field="hasCover"
       >
         <template #body="slotProps">
-          {{ $t(slotProps.data.hasCover.toString()) }}
+          {{ i18n.global.t(slotProps.data.hasCover.toString()) }}
         </template>
       </PColumn>
       <template #footer>
         <div class="flex justify-content-center flex-wrap">
           <label class="form-label m-2" for="paginatorDropdown">{{
-            $t("showingFromToOn", {
+            i18n.global.t("showingFromToOn", {
               start: offset,
               end: offset + pageSize,
               total: totalRecords,
@@ -114,7 +120,7 @@
             @change="onPageChange($event)"
           />
           <label class="form-label m-2" for="rowDropdown">{{
-            $t("numberOfItemsPerPage")
+            i18n.global.t("numberOfItemsPerPage")
           }}</label>
           <DropDown
             id="rowDropdown"
@@ -130,13 +136,15 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import StockService from "../service/StockService";
 import { FilterMatchMode } from "primevue/api";
 import StockEntryEdit from "@/components/StockEntryEdit";
 import { inject, ref } from "vue";
 import tagService from "@/service/TagService";
 import i18n from "@/i18n";
+import { Emitter } from "mitt";
+import { MessageEvent } from "@/classes/Message";
 
 const stockEntries = ref(null);
 const filters = ref({
@@ -165,7 +173,9 @@ const dt = ref();
 const tags = ref([]);
 const tagsSuggestions = ref([]);
 
-const emitter = inject("emitter");
+const emitter: Emitter<MessageEvent> = inject(
+  "emitter"
+) as Emitter<MessageEvent>;
 // lazyParams.value.rows = dt.value.rows
 fetchStock(lazyParams);
 
@@ -203,7 +213,7 @@ function fetchStock(lazyParams, loadIntoTable = true) {
   });
 }
 
-function createPageRange(totalPages) {
+function createPageRange(totalPages: number) {
   console.debug("total pages");
   console.debug(totalPages);
   // create a range from [1.. totalPages]

@@ -1,27 +1,26 @@
 <template>
   <InputText
-      id="isbn"
-      ref="isbnsearchRef"
-      v-model="isbn"
-      class="form-control"
-      type="number"
-      name="isnbn"
-      minlength="10"
-      maxlength="13"
-      :disabled="disabled"
-      @keyup.enter="searchIsbn"
-      @focusin="emitPreventSubmit(true)"
-      @focusout="emitPreventSubmit(false)"
+    id="isbn"
+    ref="isbnsearchRef"
+    v-model="isbn"
+    :disabled="disabled"
+    class="form-control"
+    maxlength="13"
+    minlength="10"
+    name="isnbn"
+    type="number"
+    @focusin="emitPreventSubmit(true)"
+    @focusout="emitPreventSubmit(false)"
+    @keyup.enter="searchIsbn"
   />
 </template>
 
-<script setup>
-import {ref, defineProps, defineEmits, onMounted, inject} from "vue"
+<script lang="ts" setup>
+import { defineEmits, defineProps, inject, onMounted, ref } from "vue";
 import i18n from "@/i18n";
 
-
-const emit = defineEmits(['book', 'preventSubmit'])
-const emitter = inject('emitter')
+const emit = defineEmits(["book", "preventSubmit"]);
+const emitter = inject("emitter");
 
 const props = defineProps({
   disabled: {
@@ -30,7 +29,7 @@ const props = defineProps({
   },
   apiPath: {
     type: String,
-    default: "/api/book/ISBN?isbn="
+    default: "/api/book/ISBN?isbn=",
   },
   resetOnFound: {
     type: Boolean,
@@ -40,46 +39,47 @@ const props = defineProps({
     type: String,
     default: "",
   },
-})
-console.log(props.initIsbn)
-const isbnsearchRef = ref(null)
-const isbn = ref(props.initIsbn)
-const preventSubmit = ref(false)
+});
+console.log(props.initIsbn);
+const isbnsearchRef = ref(null);
+const isbn = ref(props.initIsbn);
+const preventSubmit = ref(false);
 
 // we set the focus on isbn if no isbn is present
 onMounted(() => {
   if (!isbn.value) {
-    isbnsearchRef.value.$el.focus()
+    isbnsearchRef.value.$el.focus();
   }
-})
+});
 
-
-const searchIsbn = () => {
-  console.debug("fetching data")
-  console.log(isbn.value)
+function searchIsbn(): void {
+  console.debug("fetching data");
+  console.log(isbn.value);
   if (!preventSubmit.value) {
-    return
+    return;
   }
   if (isbn.value && isbn.value.length === 13) {
     fetch(props.apiPath + isbn.value)
-        .then((response) => response.text())
-        .then((data) => {
-          if (props.resetOnFound) {
-            isbn.value = ""
-          }
-          emit('book', JSON.parse(data))
+      .then((response) => response.text())
+      .then((data) => {
+        if (props.resetOnFound) {
+          isbn.value = "";
+        }
+        emit("book", JSON.parse(data));
+      })
+      .catch((e) =>
+        emitter.emit("notify", {
+          severity: "warn",
+          content: i18n.global.t("bookNotFoundMessage", { error: e }),
         })
-        .catch((e) => emitter.emit('notify', {severity: 'warn', content: i18n.global.t('bookNotFoundMessage', {error: e})}))
+      );
   }
 }
 
-const emitPreventSubmit = (prevent) => {
-  preventSubmit.value = prevent
-  emit('preventSubmit', prevent)
+function emitPreventSubmit(prevent: ref<boolean>) {
+  preventSubmit.value = prevent;
+  emit("preventSubmit", prevent);
 }
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

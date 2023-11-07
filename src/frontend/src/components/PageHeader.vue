@@ -1,7 +1,7 @@
 <template>
   <MenuBar :model="items"/>
 </template>
-<script setup>
+<script setup lang="ts">
 
 import i18n from "@/i18n";
 
