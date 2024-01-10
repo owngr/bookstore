@@ -204,7 +204,6 @@ function onCellEditComplete(event) {
   let { data, index, newValue, field } = event;
   if (parseFloat(newValue) >= 0) {
     data[field] = parseFloat(newValue);
-    sales.value[index].new = false;
     sales.value[index].price = parseFloat(newValue);
   } else {
     event.preventDefault();
