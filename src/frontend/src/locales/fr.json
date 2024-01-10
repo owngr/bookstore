@@ -53,6 +53,8 @@
   "message": "hello i18n !!",
   "missingBooks": "Livres manquants",
   "missingBooksDoYouWishToAddThem": "Des livres sont manquants du stock, souhaitez-vous les ajouter ?",
+  "missingDistributor": "Le Distributeur est requis",
+  "missingPublisher": "La maison d'édition est requise",
   "moneySum": "Somme d'argent",
   "more": "Plus",
   "name": "Nom",

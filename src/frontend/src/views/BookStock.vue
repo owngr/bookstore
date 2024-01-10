@@ -261,7 +261,11 @@ function updateStock(childBook) {
     tags: childBook.tags,
   };
   closeEditDialog();
-  return StockService.updateStock(body).then(fetchStock(lazyParams));
+  emitter.emit("notify", {
+    severity: "success",
+    content: i18n.global.t("stockHasBeenModifiedMessage")
+  });
+  return StockService.updateStock(body).then(() => fetchStock(lazyParams));
 }
 
 function onPageChange(event) {

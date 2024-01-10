@@ -283,6 +283,9 @@ function processForm(): void {
   if (preventSubmit.value) {
     return;
   }
+  if (!isFormValid()) {
+    return;
+  }
   props
     .processFormFunction(bookCopy.value)
     .then((data) => {
@@ -297,6 +300,25 @@ function processForm(): void {
         content: i18n.global.t("stockNotUpdatableMessage"),
       })
     );
+}
+
+function isFormValid(): boolean {
+  let isValid = true
+  let error = ""
+  if (!bookCopy.value.editor) {
+    error = "missingPublisher"
+    isValid = false
+  } else if (!bookCopy.value.distributor) {
+    error = "missingDistributor"
+    isValid = false
+  }
+  if (!isValid) {
+    emitter.emit("notify", {
+      severity: "error",
+      content: i18n.global.t(error),
+    })
+  }
+  return isValid
 }
 
 function onEditorChange(event: Ref) {
