@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class OpenLibraryScraperService : ScraperInterface {
-    @field:Autowired
-    private lateinit var authorRepository: AuthorRepository
     val OPEN_LIBRARY_API_URL = "https://openlibrary.org/api/books"
     var client: HttpHandler = ApacheClient()
 

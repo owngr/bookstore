@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class GoogleScraperService : ScraperInterface {
-    @field:Autowired
-    private lateinit var authorRepository: AuthorRepository
     val GOOGLE_API_URL = "https://www.googleapis.com/books/v1/volumes"
     var client: HttpHandler = ApacheClient()
 
@@ -33,39 +31,39 @@ class GoogleScraperService : ScraperInterface {
             try {
                 volumeInfo = (obj["items"] as JSONArray).getJSONObject(0)["volumeInfo"] as JSONObject
             } catch (e: JSONException) {
-                println("book not found")
+                println("google: book not found")
             }
             var coverUrl = ""
             try {
                 coverUrl = (volumeInfo["imageLinks"] as JSONObject)["thumbnail"] as String
                 coverUrl = coverUrl.replace("http:", "https:")
             } catch (e: JSONException) {
-                println("cover not found")
+                println("Google: cover not found")
             }
 
             var title = ""
             try {
                 title = volumeInfo["title"] as String
             } catch (e: JSONException) {
-                println("title not found")
+                println("google: title not found")
             }
             var publisher = ""
             try {
                 publisher = volumeInfo["publisher"] as String
             } catch (e: JSONException) {
-                println("publisher not found")
+                println("google: publisher not found")
             }
             var description = ""
             try {
                 description = volumeInfo["description"] as String
             } catch (e: JSONException) {
-                println("description not found")
+                println("google: description not found")
             }
             var authors = ArrayList<String>()
             try {
                 authors = jsonArrayToStringList(volumeInfo["authors"] as JSONArray)
             } catch (e: JSONException) {
-                println("authors not found")
+                println("google: authors not found")
             }
 
             return ScraperBook(

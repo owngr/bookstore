@@ -30,8 +30,9 @@ data class ScraperBook(
         if (description == "") {
             description = book.description
         }
-        if (coverUrl == "") {
+        if (!hasCover && book.coverUrl != "") {
             coverUrl = book.coverUrl
+            hasCover = true
         }
     }
     fun isBookComplete(): Boolean {
@@ -39,7 +40,7 @@ data class ScraperBook(
                 && authors.isNotEmpty()
                 && editor != null
                 && description != ""
-                && coverUrl != "")
+                && hasCover)
     }
 
 }
