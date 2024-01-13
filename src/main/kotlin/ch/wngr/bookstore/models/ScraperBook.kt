@@ -1,5 +1,6 @@
 package ch.wngr.bookstore.models
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -35,6 +36,8 @@ data class ScraperBook(
             hasCover = true
         }
     }
+
+    @JsonIgnore
     fun isBookComplete(): Boolean {
         return (title != ""
                 && authors.isNotEmpty()
